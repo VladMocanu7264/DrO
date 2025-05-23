@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <link rel="stylesheet" href="../../public/css/home.css">
+  <link rel="stylesheet" href="../../public/css/nav.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra.">
+  <title>Acasa</title>
+  <style>
+    body {
+      background-image: url("../public/poze/main.png");
+      background-size: cover;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <h1>DrO</h1>
+        <div class="menu">
+          <a href="#" class="is-active">Acasa</a>
+          <a href="../views/lists.html">Liste</a>
+          <a href="/grupuri">Grupuri</a>
+          <a href="/stats">Stats</a>
+          <a href="/rss">
+            <img id="rss-icon" src="/public/poze/rss.png" />
+          </a>
+          <a href="../views/login.html">Login</a>
+        </div>
+        <button class=" hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu">
+      <a href="../views/home.html">Acasa</a>
+      <a href="../views/lists.html">Liste</a>
+      <a href="/grupuri">Grupuri</a>
+      <a href="/stats">Stats</a>
+      <a href="/rss">
+        <img id="rss-icon" src="/public/poze/rss.png" />
+      </a>
+    </div>
+  </header>
+  <div class="catalog">
+    <aside class="sidebar">
+      <h2 class="filter-title">Filtrare</h2>
+      <form class="filter-form">
+
+        <div class="filter-search">
+          <input type="search" id="search-drink" placeholder="Caută băuturi..." />
+        </div>
+
+        <div class="filter-group">
+          <legend>După categorie</legend>
+          <div class="filter-list">
+            <div class="filter-item">
+              <input type="checkbox" id="filter-soda" name="category" value="soda" />
+              <label for="filter-soda">Suc</label>
+            </div>
+            <div class="filter-item">
+              <input type="checkbox" id="filter-energy" name="category" value="energy" />
+              <label for="filter-energy">Energizant</label>
+            </div>
+            <div class="filter-item">
+              <input type="checkbox" id="filter-tea" name="category" value="tea" />
+              <label for="filter-tea">Ceai</label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </aside>
+    <div class="cards-section">
+      <div class="sort-section">
+        <label for="sort-select" class="sort-label">Sortare:</label>
+        <select id="sort-select" class="sort-select">
+          <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
+          <option value="name-desc">Nume (Z → A)</option>
+          <option value="category-asc">Categorie (A → Z)</option>
+          <option value="category-desc">Categorie (Z → A)</option>
+        </select>
+      </div>
+      <div class="cards-container"></div>
+      <div class="pagination"></div>
+    </div>
+
+    <div id="text-box-container">
+    </div>
+
+    <div class="overlay hidden"></div>
+
+    <script src="../public/js/main.js"></script>
+    <script src="../public/js/home.js"></script>
+</body>
+
+</html>
