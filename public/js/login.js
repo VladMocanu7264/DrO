@@ -1,14 +1,14 @@
-const container = document.querySelector('.container');
-const registerBtn = document.querySelector('.register-btn');
-const loginBtn = document.querySelector('.login-btn');
+const wrapper = document.querySelector(".wrapper");
+const login = document.querySelector(".login-link");
+const register = document.querySelector(".login-register");
 
-registerBtn.addEventListener('click', () => {
-    container.classList.add('active');
+register.addEventListener("click", () => {
+  wrapper.classList.add("active");
+});
+login.addEventListener("click", () => {
+  wrapper.classList.remove("active");
 });
 
-loginBtn.addEventListener('click', () => {
-    container.classList.remove('active');
-});
 
 document.addEventListener("DOMContentLoaded", function () {
   const emailInput = document.querySelector(".email-input input");
