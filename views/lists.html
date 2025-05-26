@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <link rel="stylesheet" href="../../public/css/lists.css">
+    <link rel="stylesheet" href="../../public/css/nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aceasta pagina contine toate campaniile de prevenire a consumului de droguri.">
+    <title>Liste</title>
+    <style>
+        body {
+            background-image: url("../public/poze/main.png");
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>DrO</h1>
+                <div class="menu">
+                    <a href="../views/home.html">Acasa</a>
+                    <a href="#" class="is-active">Liste</a>
+                    <a href="../views/groups.html">Grupuri</a>
+                    <a href="/stats">Stats</a>
+                    <a href="/rss">
+                        <img id="rss-icon" src="/public/poze/rss.png" />
+                    </a>
+                    <a href="/login">Login</a>
+                </div>
+                <button class=" hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <a href="/home">Acasa</a>
+            <a href="/liste">Liste</a>
+            <a href="/grupuri">Grupuri</a>
+            <a href="/stats">Stats</a>
+            <a href="/rss">
+                <img id="rss-icon" src="/public/poze/rss.png" />
+            </a>
+        </div>
+    </header>
+    <div class="catalog">
+        <aside class="sidebar">
+            <h2 class="filter-title">Liste</h2>
+            <div class="favorites-panel">
+                <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon" />
+                <p>Favorite</p>
+            </div>
+            <form class="filter-form">
+                <div class="filter-group">
+                    <div class="filter-list">
+                    </div>
+                    <button type="button" id="deselect-list" class="add-list-button"
+                        onclick="handleDeselectList()">Deselectează</button>
+                </div>
+
+                <div class="filter-group">
+                    <legend>Adaugă o listă</legend>
+                    <input type="text" id="new-list-name" placeholder="Nume lista" />
+                    <button type="button" class="add-list-button" onclick="handleAddList()">Adaugă</button>
+                </div>
+
+            </form>
+        </aside>
+        <div class="cards-section">
+            <div class="search-options">
+                <div class="sort-section">
+                    <label for="sort-select" class="sort-label">Sortare:</label>
+                    <select id="sort-select" class="sort-select">
+                        <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
+                        <option value="name-desc">Nume (Z → A)</option>
+                        <option value="category-asc">Categorie (A → Z)</option>
+                        <option value="category-desc">Categorie (Z → A)</option>
+                    </select>
+                </div>
+                <div class="lists-dropdown">
+                    <!-- <button>Selectează o listă</button>
+                    <div class="lists-content">
+                        <a href="#" class="list-item">Lista 1</a>
+                        <a href="#" class="list-item">Lista 2</a>
+                        <a href="#" class="list-item">Lista 3</a>
+                    </div> -->
+                </div>
+                <div id="selected-list" style="display: none;"></div>
+            </div>
+            <button id="public-btn" style="display: none;" onclick="handleMakePublic()">Schimbă în public</button>
+            <div class="cards-container"></div>
+            <div class="pagination"></div>
+        </div>
+
+        <div id="text-box-container">
+        </div>
+
+        <div class="overlay hidden"></div>
+
+        <script src="../public/js/main.js"></script>
+        <script src="../public/js/lists.js"></script>
+</body>
+
+</html>
