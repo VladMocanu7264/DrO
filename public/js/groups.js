@@ -1,6 +1,6 @@
 const searchInput = document.getElementById("search-group");
 const sortSelect = document.getElementById("sort-select");
-
+const createGroupButton = document.getElementsByClassName("add-group-button");
 let originalData = [];
 let selectedGroupId = null;
 
@@ -158,6 +158,28 @@ function handleLikePost(postId) {
         post.likes += 1;
         handleSelectGroup();
     }
+}
+
+
+function handleAddGroup() {
+    const input = document.getElementById('new-group-name');
+    const exists = mockedGroups.find(g => g.name === input.value.trim());
+
+    if (exists) {
+        alert("Un grup cu acest nume există deja!");
+        input.value = '';
+        return;
+    }
+
+    mockedGroups.push({
+        id: mockedGroups.length > 0 ? mockedGroups[mockedGroups.length - 1].id + 1 : 1,
+        name: input.value.trim(),
+        drinks: []
+    });
+
+    input.value = '';
+    render();
+    console.log(mockedGroups)
 }
 
 function handleJoinGroup() {

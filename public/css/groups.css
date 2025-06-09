@@ -276,6 +276,30 @@
   border-radius: 8px;
 }
 
+#new-group-name {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--dark);
+  background-color: var(--dark);
+  color: white;
+  border-radius: 4px;
+}
+
+.add-group-button {
+  background-color: var(--secondary);
+  color: white;
+  padding: 7px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  font-size: 13px;
+}
+
+.add-group-button:hover {
+  background-color: var(--tertiary);
+}
+
 /* --- Responsive: small screens --- */
 
 @media (max-width: 900px) {
@@ -330,10 +354,10 @@
   .empty-post {
     font-size: 14px;
     margin: auto;
-    width: 400px;
+    width: 350px;
   }
 
   .empty-post h2 {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
