@@ -336,9 +336,8 @@
 #drink-title {
   display: flex;
   justify-content: center;
-  padding: 4px;
+  max-width: 150px;
   background-color: var(--dark);
-  width: 100px;
   color: white;
   border-radius: 0.25rem;
 }
@@ -406,7 +405,6 @@
 #drink-category {
   display: flex;
   align-items: start;
-  padding: 10px;
   background-color: var(--primary);
   color: white;
   border-radius: 0.25rem;

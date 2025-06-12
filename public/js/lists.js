@@ -17,21 +17,21 @@ const publicBtn = document.getElementById('public-btn');
 let selectedGroupId = null;
 
 const mockedDrinks = [
-    { id: 1, name: "Coca-Cola", category: "soda", image: "../public/poze/cocacola.png" },
-    { id: 2, name: "Pepsi", category: "soda", image: "../public/poze/pepsi.png" },
-    { id: 3, name: "Fanta", category: "soda", image: "../public/poze/fanta.png" },
-    { id: 4, name: "Sprite", category: "soda", image: "../public/poze/sprite.png" },
-    { id: 5, name: "Mountain Dew", category: "soda", image: "../public/poze/smoothie.png" },
-    { id: 6, name: "Dr Pepper", category: "soda", image: "../public/poze/drpepper.png" },
-    { id: 7, name: "7UP", category: "soda", image: "../public/poze/7up.png" },
-    { id: 8, name: "Schweppes", category: "soda", image: "../public/poze/smoothie.png" },
-    { id: 9, name: "Red Bull", category: "energy", image: "../public/poze/redbull.png" },
-    { id: 10, name: "Monster", category: "energy", image: "../public/poze/smoothie.png" },
-    { id: 11, name: "Rockstar", category: "energy", image: "../public/poze/rockstar.png" },
-    { id: 12, name: "NOS", category: "energy", image: "../public/poze/smoothie.png" }
+    { id: 1, name: "Coca-Cola", category: "soda", quantity: 500, image: "../public/poze/cocacola.png" },
+    { id: 2, name: "Pepsi", category: "soda", quantity: 250, image: "../public/poze/pepsi.png" },
+    { id: 3, name: "Fanta", category: "soda", quantity: 300, image: "../public/poze/fanta.png" },
+    { id: 4, name: "Sprite", category: "soda", quantity: 400, image: "../public/poze/sprite.png" },
+    { id: 5, name: "Mountain Dew", category: "soda", quantity: 100, image: "../public/poze/smoothie.png" },
+    { id: 6, name: "Dr Pepper", category: "soda", quantity: 250, image: "../public/poze/drpepper.png" },
+    { id: 7, name: "7UP", category: "soda", quantity: 300, image: "../public/poze/7up.png" },
+    { id: 8, name: "Schweppes", category: "soda", quantity: 400, image: "../public/poze/smoothie.png" },
+    { id: 9, name: "Red Bull", category: "energy", quantity: 100, image: "../public/poze/redbull.png" },
+    { id: 10, name: "Monster", category: "energy", quantity: 100, image: "../public/poze/smoothie.png" },
+    { id: 11, name: "Rockstar", category: "energy", quantity: 200, image: "../public/poze/rockstar.png" },
+    { id: 12, name: "NOS", category: "energy", quantity: 500, image: "../public/poze/smoothie.png" }
 ];
 
-const mockedGroups = [
+const mockedLists = [
     { id: 1, name: "Lista 1", drinks: [1, 2, 3, 4, 6, 7] },
     { id: 2, name: "Lista 2", drinks: [4, 5, 6, 7, 8, 9] },
     { id: 3, name: "Lista 3", drinks: [5, 6, 7, 8, 9, 10, 11, 12] },
@@ -84,6 +84,12 @@ function sortData(criterion) {
         case 'category-desc':
             drinksData.sort((a, b) => b.category.localeCompare(a.category));
             break;
+        case 'quantity-asc':
+            drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
+            break;
+        case 'quantity-desc':
+            drinksData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
+            break;
     }
 }
 
@@ -92,7 +98,8 @@ function applyFiltersAndRender() {
     drinksData = [...originalData];
 
     if (selectedGroupId) {
-        const selectedList = mockedGroups.find(l => l.id === selectedGroupId);
+        const selectedList = mockedLists
+            .find(l => l.id === selectedGroupId);
         if (selectedList) {
             drinksData = drinksData.filter(drink => selectedList.drinks.includes(drink.id));
         }
@@ -154,6 +161,7 @@ function createDrinkCard(drink) {
     </div>
     <h3>${drink.name}</h3>
       <p><strong>Categorie:</strong> ${drink.category}</p>
+      <p><strong>Cantitate:</strong> ${drink.quantity} Litri</p>
 
     <div class="btn">
       <button class="read-more" data-index="${drink.id}">Detalii</button>
@@ -177,7 +185,8 @@ function createDrinkModal(drink) {
       <p id="drink-title">${drink.name}</p>
       <div class="drink-content">
         <div class="drink-text">
-          <p id="drink-category"><strong>Categorie: </strong> ${drink.category}</p>
+          <p id="drink-category"><strong>Categorie:&nbsp;</strong> ${drink.category}</p>
+          <p id="drink-category"><strong>Cantitate:&nbsp;</strong> ${drink.quantity} Litri</p>
           <p id="drink-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
         </div>
         <div id="icons-container">
@@ -199,7 +208,8 @@ function createDrinkModal(drink) {
             <label for="favorite-list" class="favorite-label">Liste:</label>
             <select id="favorite-list-${drink.id}" class="favorite-select">
               <option value="" disabled selected>Selectează o listă</option>
-              ${mockedGroups.map(list => `
+              ${mockedLists
+            .map(list => `
                 <option value="${list.id}">${list.name}</option>
               `).join('')}
             </select> 
@@ -217,10 +227,13 @@ function createDrinkModal(drink) {
         }
 
         const drinkData = originalData.find(d => d.id == drink.id);
-        const listName = mockedGroups.find(l => l.id == selectedListId)?.name;
+        const listName = mockedLists
+            .find(l => l.id == selectedListId)?.name;
 
-        if (!mockedGroups.find(l => l.id == selectedListId).drinks.includes(drink.id)) {
-            mockedGroups.find(l => l.id == selectedListId).drinks.push(drink.id);
+        if (!mockedLists
+            .find(l => l.id == selectedListId).drinks.includes(drink.id)) {
+            mockedLists
+                .find(l => l.id == selectedListId).drinks.push(drink.id);
             alert(`Băutura a fost adăugată în lista ${listName}`);
         } else {
             alert("Băutura este deja în această listă!");
@@ -236,43 +249,44 @@ function generateRadioFilter(inputName = 'category') {
 
     container.innerHTML = '';
 
-    mockedGroups.forEach((list) => {
-        const item = document.createElement('div');
-        item.classList.add('filter-item');
+    mockedLists
+        .forEach((list) => {
+            const item = document.createElement('div');
+            item.classList.add('filter-item');
 
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.id = `filter-${list.id}`;
-        input.name = inputName;
-        input.value = list.id;
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.id = `filter-${list.id}`;
+            input.name = inputName;
+            input.value = list.id;
 
-        if (selectedGroupId === list.id) {
-            input.checked = true;
-        }
-
-        const label = document.createElement('label');
-        label.setAttribute('for', input.id);
-        label.textContent = list.name;
-
-        input.addEventListener('change', () => {
-            selectedGroupId = parseInt(input.value);
-            currentPage = 1;
-
-            if (selectedGroupId) {
-                selectedListDiv.style.display = 'block';
-                selectedListDiv.innerText = `${list.name}`;
-                publicBtn.style.display = 'block';
-            } else {
-                selectedListDiv.style.display = 'none';
+            if (selectedGroupId === list.id) {
+                input.checked = true;
             }
 
-            applyFiltersAndRender();
-        });
+            const label = document.createElement('label');
+            label.setAttribute('for', input.id);
+            label.textContent = list.name;
 
-        item.appendChild(input);
-        item.appendChild(label);
-        container.appendChild(item);
-    });
+            input.addEventListener('change', () => {
+                selectedGroupId = parseInt(input.value);
+                currentPage = 1;
+
+                if (selectedGroupId) {
+                    selectedListDiv.style.display = 'block';
+                    selectedListDiv.innerText = `${list.name}`;
+                    publicBtn.style.display = 'block';
+                } else {
+                    selectedListDiv.style.display = 'none';
+                }
+
+                applyFiltersAndRender();
+            });
+
+            item.appendChild(input);
+            item.appendChild(label);
+            container.appendChild(item);
+        });
 }
 
 
@@ -282,7 +296,8 @@ const handleAddDrinkToList = (drinkId, listId) => {
     drinkId = parseInt(drinkId);
     listId = parseInt(listId);
 
-    const list = mockedGroups.find(l => l.id === listId);
+    const list = mockedLists
+        .find(l => l.id === listId);
     if (!list) {
         alert("Lista selectată nu există!");
         return;
@@ -317,7 +332,8 @@ function closeAllModals() {
 
 function handleAddList() {
     const input = document.getElementById('new-list-name');
-    const exists = mockedGroups.find(l => l.name === input.value.trim());
+    const exists = mockedLists
+        .find(l => l.name === input.value.trim());
 
     if (exists) {
         alert("O listă cu acest nume există deja!");
@@ -325,11 +341,15 @@ function handleAddList() {
         return;
     }
 
-    mockedGroups.push({
-        id: mockedGroups.length > 0 ? mockedGroups[mockedGroups.length - 1].id + 1 : 1,
-        name: input.value.trim(),
-        drinks: []
-    });
+    mockedLists
+        .push({
+            id: mockedLists
+                .length > 0 ? mockedLists
+                [mockedLists
+                    .length - 1].id + 1 : 1,
+            name: input.value.trim(),
+            drinks: []
+        });
 
     input.value = '';
     render();

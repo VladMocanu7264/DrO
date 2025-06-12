@@ -9,24 +9,32 @@ const overlay = document.querySelector(".overlay");
 const body = document.body;
 const sortSelect = document.getElementById("sort-select");
 const searchInput = document.getElementById("search-drink");
-const categoryInputs = document.querySelectorAll('input[name="category"]');
-const priceRange = document.getElementById("price-range");
-const priceValue = document.getElementById("price-value");
+const quantityRange = document.getElementById("quantity-range");
+const quantityValue = document.getElementById("quantity-value");
 const paginationContainer = document.querySelector('.pagination');
+const filterList = document.querySelector('.filter-list');
+
+
+const mockedCategories = [
+  { id: 1, name: "soda" },
+  { id: 2, name: "energy" },
+  { id: 3, name: "juice" },
+  { id: 4, name: "water" },
+];
 
 const mockedDrinks = [
-  { id: 1, name: "Coca-Cola", category: "soda", image: "../public/poze/cocacola.png" },
-  { id: 2, name: "Pepsi", category: "soda", image: "../public/poze/pepsi.png" },
-  { id: 3, name: "Fanta", category: "soda", image: "../public/poze/fanta.png" },
-  { id: 4, name: "Sprite", category: "soda", image: "../public/poze/sprite.png" },
-  { id: 5, name: "Mountain Dew", category: "soda", image: "../public/poze/smoothie.png" },
-  { id: 6, name: "Dr Pepper", category: "soda", image: "../public/poze/drpepper.png" },
-  { id: 7, name: "7UP", category: "soda", image: "../public/poze/7up.png" },
-  { id: 8, name: "Schweppes", category: "soda", image: "../public/poze/smoothie.png" },
-  { id: 9, name: "Red Bull", category: "energy", image: "../public/poze/redbull.png" },
-  { id: 10, name: "Monster", category: "energy", image: "../public/poze/smoothie.png" },
-  { id: 11, name: "Rockstar", category: "energy", image: "../public/poze/rockstar.png" },
-  { id: 12, name: "NOS", category: "energy", image: "../public/poze/smoothie.png" }
+  { id: 1, name: "Coca-Cola", category: "soda", quantity: 500, image: "../public/poze/cocacola.png" },
+  { id: 2, name: "Pepsi", category: "soda", quantity: 250, image: "../public/poze/pepsi.png" },
+  { id: 3, name: "Fanta", category: "soda", quantity: 300, image: "../public/poze/fanta.png" },
+  { id: 4, name: "Sprite", category: "soda", quantity: 400, image: "../public/poze/sprite.png" },
+  { id: 5, name: "Mountain Dew", category: "soda", quantity: 100, image: "../public/poze/smoothie.png" },
+  { id: 6, name: "Dr Pepper", category: "soda", quantity: 250, image: "../public/poze/drpepper.png" },
+  { id: 7, name: "7UP", category: "soda", quantity: 300, image: "../public/poze/7up.png" },
+  { id: 8, name: "Schweppes", category: "soda", quantity: 400, image: "../public/poze/smoothie.png" },
+  { id: 9, name: "Red Bull", category: "energy", quantity: 100, image: "../public/poze/redbull.png" },
+  { id: 10, name: "Monster", category: "energy", quantity: 100, image: "../public/poze/smoothie.png" },
+  { id: 11, name: "Rockstar", category: "energy", quantity: 200, image: "../public/poze/rockstar.png" },
+  { id: 12, name: "NOS", category: "energy", quantity: 500, image: "../public/poze/smoothie.png" }
 ];
 
 const mockedListsNames = [
@@ -46,12 +54,14 @@ const fetchDrinks = async () => {
   return mockedDrinks;
 };
 
-async function getDrinks() {
+async function getGroups() {
   try {
     originalData = await fetchDrinks();
     setupSort();
+    loadCategoryFilters();
     setupFilterListeners();
     applyFiltersAndRender();
+    setupPriceRange();
     initEventListeners();
   } catch (err) {
     console.error("Eroare încărcare băuturi:", err);
@@ -66,19 +76,51 @@ function setupSort() {
   });
 }
 
+function loadCategoryFilters() {
+
+  if (!filterList) return;
+
+  mockedCategories.forEach(cat => {
+    const filterItem = document.createElement('div');
+    filterItem.classList.add('filter-item');
+    filterItem.innerHTML = `
+      <input type="checkbox" id="filter-${cat.name}" name="category" value="${cat.name}" />
+      <label for="filter-${cat.name}">${cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}</label>
+    `;
+    filterList.appendChild(filterItem);
+  });
+  const categoryInputs = filterList.querySelectorAll('input[name="category"]');
+  categoryInputs.forEach(cb =>
+    cb.addEventListener('change', () => {
+      currentPage = 1;
+      applyFiltersAndRender();
+    })
+  );
+
+}
+
+function setupPriceRange() {
+  const quantitySlider = document.getElementById('quantity-range');
+  const quantityValueDisplay = document.getElementById('quantity-value');
+
+  function updateQuantityValue() {
+    quantityValueDisplay.textContent = quantitySlider.value;
+  }
+
+  updateQuantityValue();
+  quantitySlider.addEventListener('input', updateQuantityValue);
+};
+
+
 function setupFilterListeners() {
   if (searchInput) searchInput.addEventListener("input", () => {
     currentPage = 1;
     applyFiltersAndRender();
   });
-  categoryInputs.forEach(cb => cb.addEventListener("change", () => {
-    currentPage = 1;
-    applyFiltersAndRender();
-  }));
-  if (priceRange && priceValue) {
-    priceValue.textContent = priceRange.value;
-    priceRange.addEventListener("input", () => {
-      priceValue.textContent = priceRange.value;
+  if (quantityRange && quantityValue) {
+    quantityValue.textContent = quantityRange.value;
+    quantityRange.addEventListener("input", () => {
+      quantityValue.textContent = quantityValue.value;
       currentPage = 1;
       applyFiltersAndRender();
     });
@@ -97,6 +139,8 @@ function applyFiltersAndRender() {
     }
   }
 
+  const categoryInputs = document.querySelectorAll('input[name="category"]');
+
   const selectedCats = Array.from(categoryInputs)
     .filter(cb => cb.checked)
     .map(cb => cb.value.toLowerCase());
@@ -106,10 +150,11 @@ function applyFiltersAndRender() {
     );
   }
 
-  if (priceRange) {
-    const max = parseFloat(priceRange.value);
+  if (quantityRange) {
+    const max = parseFloat(quantityRange.value);
+    console.log("Max quantity:", max);
     drinksData = drinksData.filter(d =>
-      d.price === undefined || d.price <= max
+      d.quantity === undefined || d.quantity <= max
     );
   }
 
@@ -132,6 +177,12 @@ function sortData(criterion) {
       break;
     case 'category-desc':
       drinksData.sort((a, b) => b.category.localeCompare(a.category));
+      break;
+    case 'quantity-asc':
+      drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
+      break;
+    case 'quantity-desc':
+      drinksData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
       break;
   }
 }
@@ -159,14 +210,14 @@ function createDrinkCard(drink) {
   card.classList.add('rectangle');
   card.innerHTML = `
       <div class="content">
-      <img class="drink-img" src="${drink.image}" alt="${drink.name}">
-    </div>
-    <h3>${drink.name}</h3>
+        <img class="drink-img" src="${drink.image}" alt="${drink.name}">
+      </div>
+      <h3>${drink.name}</h3>
       <p><strong>Categorie:</strong> ${drink.category}</p>
-
-    <div class="btn">
-      <button class="read-more" data-index="${drink.id}">Detalii</button>
-    </div>
+      <p><strong>Cantitate:</strong> ${drink.quantity}</p>
+      <div class="btn">
+        <button class="read-more" data-index="${drink.id}">Detalii</button>
+      </div>
   `;
   return card;
 }
@@ -194,7 +245,8 @@ function createDrinkModal(drink) {
       <p id="drink-title">${drink.name}</p>
       <div class="drink-content">
         <div class="drink-text">
-          <p id="drink-category"><strong>Categorie: </strong> ${drink.category}</p>
+          <p id="drink-category"><strong>Categorie:&nbsp;</strong> ${drink.category}</p>
+          <p id="drink-category"><strong>Cantitate:&nbsp;</strong> ${drink.quantity || 0} Litri</p>
           <p id="drink-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
         </div>
         <div id="icons-container">
@@ -290,4 +342,10 @@ function closeAllModals() {
   body.classList.remove('no-scroll');
 }
 
-document.addEventListener('DOMContentLoaded', getDrinks);
+
+function handleNavigateToRanking() {
+    window.location.href = `../views/ranking.html`;
+}
+
+
+document.addEventListener('DOMContentLoaded', getGroups);

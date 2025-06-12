@@ -11,7 +11,7 @@
   <meta name="description" content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra.">
   <title>Acasa</title>
   <style>
-    body {
+        body {
             background-image: url("../public/poze/main.png");
             background-size: cover;
             background-repeat: no-repeat;
@@ -65,7 +65,7 @@
         <div class="filter-group">
           <legend>După categorie</legend>
           <div class="filter-list">
-            <div class="filter-item">
+            <!-- <div class="filter-item">
               <input type="checkbox" id="filter-soda" name="category" value="soda" />
               <label for="filter-soda">Suc</label>
             </div>
@@ -76,8 +76,20 @@
             <div class="filter-item">
               <input type="checkbox" id="filter-tea" name="category" value="tea" />
               <label for="filter-tea">Ceai</label>
-            </div>
+            </div> -->
           </div>
+        </div>
+        <div class="filter-group">
+          <legend>Interval cantitate (Litri)</legend>
+          <div class="filter-item slider-item">
+            <input type="range" id="quantity-range" name="quantity" min="0" max="1000" step="100" value="1000" />
+          </div>
+          <label for="quantity-range" id="quantity-label">
+            Maxim: <span id="quantity-value">1000</span> Litri
+          </label>
+        </div>
+        <div class="trophy-section">
+          <img src="../public/poze/trophy.png" alt="Trophy Image" class="trophy-image" onclick="handleNavigateToRanking()">
         </div>
       </form>
     </aside>
@@ -89,6 +101,8 @@
           <option value="name-desc">Nume (Z → A)</option>
           <option value="category-asc">Categorie (A → Z)</option>
           <option value="category-desc">Categorie (Z → A)</option>
+          <option value="quantity-asc">Cantitate (Mic → Mare)</option>
+          <option value="quantity-desc">Cantitate (Mare → Mic)</option>
         </select>
       </div>
       <div class="cards-container"></div>
