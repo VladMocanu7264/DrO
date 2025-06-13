@@ -77,6 +77,28 @@ const DrinkTag = sequelize.define('DrinkTag', {});
 DrinkTag.belongsTo(Drink, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 DrinkTag.belongsTo(Tag, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
+// Reverse
+
+User.hasMany(Favorite, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Drink.hasMany(Favorite, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+User.hasMany(List, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+List.hasMany(ListDrink, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Drink.hasMany(ListDrink, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+User.hasMany(Group, { foreignKey: 'owner_id', onDelete: 'CASCADE' });
+Group.hasMany(Member, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+User.hasMany(Member, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+Member.hasMany(Post, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Drink.hasMany(Post, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Member.hasMany(Like, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Post.hasMany(Like, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+Drink.hasMany(DrinkTag, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+Tag.hasMany(DrinkTag, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
+
+
 module.exports = {
     sequelize,
     User,
