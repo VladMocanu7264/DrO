@@ -2,14 +2,13 @@
 <html lang="ro">
 
 <head>
-    <link rel="stylesheet" href="../../public/css/groups.css">
+    <link rel="stylesheet" href="../../public/css/help.css">
     <link rel="stylesheet" href="../../public/css/nav.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra.">
+    <meta name="description" content="Aceasta pagina contine statisticile referitoare la bauturile de pe platforma">
     <title>Acasa</title>
     <style>
         body {
@@ -30,7 +29,7 @@
                 <div class="menu">
                     <a href="../views/home.html">Acasa</a>
                     <a href="../views/lists.html">Liste</a>
-                    <a href="#" class="is-active">Grupuri</a>
+                    <a href="../views/groups.html">Grupuri</a>
                     <a href="../views/stats.html">Stats</a>
                     <a href="/rss">
                         <i class="fa-solid fa-rss"></i>
@@ -38,7 +37,7 @@
                     <a href="../views/about.html">
                         <i class="fa-solid fa-circle-info"></i>
                     </a>
-                    <a href="../views/help.html">
+                    <a href="../views/help.html" class="is-active">
                         <i class="fa-solid fa-circle-question"></i>
                     </a>
                     <a href="../views/login.html" id="login-link">Login</a>
@@ -53,8 +52,8 @@
         <div class="mobile-menu">
             <a href="../views/home.html">Acasa</a>
             <a href="../views/lists.html">Liste</a>
-            <a href="/grupuri">Grupuri</a>
-            <a href="/stats">Stats</a>
+            <a href="../views/groups.html">Grupuri</a>
+            <a href="../views/stats.html">Stats</a>
             <div class="mobile-action-icons">
                 <a href="/rss">
                     <i class="fa-solid fa-rss"></i>
@@ -62,7 +61,7 @@
                 <a href="../views/about.html">
                     <i class="fa-solid fa-circle-info"></i>
                 </a>
-                <a href="../views/help.html">
+                <a href="#">
                     <i class="fa-solid fa-circle-question"></i>
                 </a>
             </div>
@@ -70,43 +69,35 @@
         </div>
     </header>
     <div class="catalog">
-        <aside class="sidebar">
-            <h2 id="filter-title">Grupuri</h2>
-            <form class="filter-form">
-                <!-- <div class="filter-search">
-                    <input type="search" id="search-group" placeholder="Caută grupuri..." />
-                </div> -->
-                <div class="groups-list">
+        <h1 class="title">Help</h1>
+        <section id="suport-contact">
+            <h2>Suport &amp; Contact</h2>
+            <p>
+                Pentru întrebări tehnice sau rapoarte de erori, scrie-ne la:
+                <a href="mailto:support@drosite.example.com">support@drosite.example.com</a>.
+            </p>
+            <p>
+                Documentație completă este disponibilă pe
+                <a href="https://drosite.example.com/docs">drosite.example.com/docs</a>.
+            </p>
+        </section>
+        <section id="profile-contact">
+            <p>Echipa
+                <strong>DrO</strong> este aici pentru a te ajuta! Echipa este formată din:
+            </p>
+            <div class="description">
+                <div class="profile">
+                    <img src="../public/poze/7up.png" alt="Help Image">
+                    <p>Eduard</p>
                 </div>
-            </form>
-            <button id="create-group-button" class="create-group-button" onclick="handleJoinGroup()">Intră într-un
-                grup</button>
-            <div class="filter-group">
-                <legend>Crează un grup</legend>
-                <input type="text" id="new-group-name" placeholder="Nume grup" />
-                <button type="button" class="add-group-button" onclick="handleAddGroup()">Crează</button>
-            </div>
-        </aside>
-        <div class="cards-section">
-            <!-- <div class="sort-section">
-                <label for="sort-select" class="sort-label">Sortare:</label>
-                <select id="sort-select" class="sort-select">
-                    <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
-                    <option value="name-desc">Nume (Z → A)</option>
-                    <option value="category-asc">Categorie (A → Z)</option>
-                    <option value="category-desc">Categorie (Z → A)</option>
-                </select>
-            </div> -->
-            <div class="posts-container">
-                <div class="empty-post">
-                    <h2>Selectează un grup pentru a vedea detalii</h2>
-                    <p>Grupurile tale vor apărea aici.</p>
+                <div class="profile">
+                    <img src="../public/poze/pepsi.png" alt="Contact Image">
+                    <p>Vlad</p>
                 </div>
             </div>
-        </div>
-
+        </section>
         <script src="../public/js/main.js"></script>
-        <script src="../public/js/groups.js"></script>
+    </div>
 </body>
 
 </html>
