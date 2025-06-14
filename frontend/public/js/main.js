@@ -21,7 +21,7 @@ window.onload = function () {
       mobileLoginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
       mobileLoginLink.href = "../views/profile.html";
     }
-  } else{
-    window.location.href = "../views/login.html";
-  }
+  } //else{
+  //   window.location.href = "../views/login.html";
+  // }
 };
