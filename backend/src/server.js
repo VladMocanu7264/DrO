@@ -9,12 +9,12 @@ try {
 
     console.log("✅ Required core modules");
 
-    const drinkRoutes = require('./routes/drinks');
-    const authRoutes = require('./routes/auth');
-    const userRoutes = require('./routes/user');
-    console.log("✅ Loaded routes");
+    console.log("🧪 Skipping route imports for isolation test");
+// const drinkRoutes = require('./routes/drinks');
+// const authRoutes = require('./routes/auth');
+// const userRoutes = require('./routes/user');
+    const routes = []; // empty for now
 
-    const routes = [...drinkRoutes, ...authRoutes, ...userRoutes];
 
     const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
