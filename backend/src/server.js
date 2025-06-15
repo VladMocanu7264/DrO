@@ -1,44 +1,59 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-const http = require('http');
-const url = require('url');
+try {
+    console.log("Starting server.js");
 
-const drinkRoutes = require('./routes/drinks');
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
-const routes = [...drinkRoutes, ...authRoutes, ...userRoutes];
+    require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+    console.log("Loaded .env");
 
-const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
+    const http = require('http');
+    const url = require('url');
 
-const server = http.createServer((req, res) => {
-    const parsedUrl = url.parse(req.url, true);
-    req.pathname = parsedUrl.pathname;
-    req.query = parsedUrl.query;
+    console.log("Required core modules");
 
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    if (req.method === 'OPTIONS') {
-        res.writeHead(204);
-        return res.end();
-    }
+    console.log("Skipping route imports for isolation test");
+    const drinkRoutes = require('./routes/drinks');
+// const authRoutes = require('./routes/auth');
+// const userRoutes = require('./routes/user');
+    const routes = [...drinkRoutes]; // empty for now
 
-    if (LOG_ENABLED) console.log(`[${req.method}] ${req.pathname}`);
 
-    for (const route of routes) {
-        const match = route.match(req);
-        if (match) {
-            req.params = match.params || {};
-            return route.handle(req, res);
+    const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
+
+    const server = http.createServer((req, res) => {
+        const parsedUrl = url.parse(req.url, true);
+        req.pathname = parsedUrl.pathname;
+        req.query = parsedUrl.query;
+
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        if (req.method === 'OPTIONS') {
+            res.writeHead(204);
+            return res.end();
         }
-    }
 
-    if (LOG_ENABLED) console.warn(`404 Not Found: ${req.pathname}`);
+        if (LOG_ENABLED) console.log(`[${req.method}] ${req.pathname}`);
 
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not Found');
-});
+        for (const route of routes) {
+            const match = route.match(req);
+            if (match) {
+                req.params = match.params || {};
+                return route.handle(req, res);
+            }
+        }
 
-server.listen(3000, () => {
-    console.log('Server running at http://localhost:3000');
-});
+        if (LOG_ENABLED) console.warn(`404 Not Found: ${req.pathname}`);
+
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+    });
+
+    const PORT = process.env.PORT || 8080;
+    console.log("PORT:", PORT);
+
+    server.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+
+} catch (err) {
+    console.error("Fatal startup error:", err);
+}
