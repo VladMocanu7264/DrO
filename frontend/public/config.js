@@ -4,7 +4,7 @@
 
   window.env = {
     API_BASE_URL: isLocalhost
-      ? 'http://localhost:3000/api'
+      ? 'http://localhost:3000'
       : 'https://api.dro-app.com/api'
   };
 })();
