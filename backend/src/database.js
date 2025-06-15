@@ -98,22 +98,6 @@ Post.hasMany(Like, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Drink.hasMany(DrinkTag, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 Tag.hasMany(DrinkTag, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' });
 
-
-module.exports = {
-    sequelize,
-    User,
-    Drink,
-    Favorite,
-    List,
-    ListDrink,
-    Group,
-    Member,
-    Post,
-    Like,
-    Tag,
-    DrinkTag
-};
-
 async function syncUp({ alter = false, force = false } = {}) {
     try {
         await sequelize.authenticate();
@@ -130,4 +114,19 @@ async function syncUp({ alter = false, force = false } = {}) {
     }
 }
 
-//syncUp({ alter: true });
+syncUp({ alter: true });
+
+module.exports = {
+    sequelize,
+    User,
+    Drink,
+    Favorite,
+    List,
+    ListDrink,
+    Group,
+    Member,
+    Post,
+    Like,
+    Tag,
+    DrinkTag
+};
