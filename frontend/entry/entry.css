@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --primary: #1F2544;
+    --secondary: #474F7A;
+    --tertiary: #81689D;
+    --quaternary: #FFD0EC;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url("../public/poze/background.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.logo {
+    font-size: 7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    display: flex;
+    gap: 0.2em;
+}
+
+.logo .d {
+    color: white;
+}
+
+.logo .r {
+    color: white;
+}
+
+.logo .o {
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 550px;
+    height: 200px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+    margin: 20px;
+    overflow: hidden;
+}
+
+.container h1 {
+    font-size: 36px;
+    margin: -10px 0;
+}
+
+.glass {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.6),
+            rgba(255, 255, 255, 0.4));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+
+.btn {
+    width: 60%;
+    height: 48px;
+    background: #6123b3;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 600;
+}
+
+.container p {
+    font-size: 14.5px;
+    margin: 15px 0;
+}
+
+.logo-container {
+    display: flex;
+    gap: 1rem;
+    font-size: 6rem;
+    color: white;
+}
+
+.letter {
+    transition: transform 0.3s ease;
+    cursor: default;
+    user-select: none;
+}
+
+
+.letter:hover {
+    transform: scale(1.2) rotate(-3deg);
+}
+
+.link {
+    text-decoration: none;
+    color: white;
+}
+
+
+@media screen and (max-width: 570px) {
+    .container{
+               width: 350px;
+    }
+}
