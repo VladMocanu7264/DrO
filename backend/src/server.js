@@ -1,4 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+console.log("Environment variables loaded. PORT:", process.env.PORT);
+
 const http = require('http');
 const url = require('url');
 
@@ -39,7 +41,12 @@ const server = http.createServer((req, res) => {
     res.end('Not Found');
 });
 
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+try {
+    const PORT = process.env.PORT || 8080;
+    server.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+} catch (err) {
+    console.error("Fatal startup error:", err);
+}
+
