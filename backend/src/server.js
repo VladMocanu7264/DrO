@@ -3,7 +3,9 @@ const http = require('http');
 const url = require('url');
 
 const drinkRoutes = require('./routes/drinks');
-const routes = [...drinkRoutes];
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const routes = [...drinkRoutes, ...authRoutes, ...userRoutes];
 
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 

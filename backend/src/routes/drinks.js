@@ -1,4 +1,6 @@
 const { Drink, Tag, DrinkTag } = require('../database');
+const { isRelevantTag } = require('../helpers');
+
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
 function matchGetDrinkById(req) {
@@ -27,9 +29,8 @@ async function handleGetDrinkById(req, res) {
             return res.end(JSON.stringify({ error: 'Drink not found' }));
         }
 
-        const allTags = drink.DrinkTags.map(dt => dt.Tag.name);
-        const category = allTags.find(tag => !tag.includes('-')) || null;
-        const tags = allTags;
+        const allTags = drink.DrinkTags.map(dt => dt.Tag.name).filter(isRelevantTag);
+        const category = allTags[0] || null;
 
         const output = {
             id: drink.id,
@@ -40,7 +41,7 @@ async function handleGetDrinkById(req, res) {
             nutrition_grade: drink.nutrition_grade,
             quantity: drink.quantity,
             packaging: drink.packaging,
-            tags
+            tags: allTags
         };
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -66,7 +67,7 @@ async function handleGetFilters(req, res) {
                 { key: 'nutrition_grade', label: 'Nutrition Grade' }
             ],
             tags: tags
-                .filter(t => !t.name.includes('-'))
+                .filter(t => isRelevantTag(t.name))
                 .map(t => ({ id: t.id, name: t.name }))
         };
 
