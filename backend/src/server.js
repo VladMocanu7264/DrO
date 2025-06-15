@@ -1,19 +1,19 @@
 try {
-    console.log("🛠️ Starting server.js");
+    console.log("Starting server.js");
 
     require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-    console.log("✅ Loaded .env");
+    console.log("Loaded .env");
 
     const http = require('http');
     const url = require('url');
 
-    console.log("✅ Required core modules");
+    console.log("Required core modules");
 
-    console.log("🧪 Skipping route imports for isolation test");
-// const drinkRoutes = require('./routes/drinks');
+    console.log("Skipping route imports for isolation test");
+    const drinkRoutes = require('./routes/drinks');
 // const authRoutes = require('./routes/auth');
 // const userRoutes = require('./routes/user');
-    const routes = []; // empty for now
+    const routes = [...drinkRoutes]; // empty for now
 
 
     const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
@@ -48,12 +48,12 @@ try {
     });
 
     const PORT = process.env.PORT || 8080;
-    console.log("✅ PORT:", PORT);
+    console.log("PORT:", PORT);
 
     server.listen(PORT, () => {
-        console.log(`✅ Server running at http://localhost:${PORT}`);
+        console.log(`Server running at http://localhost:${PORT}`);
     });
 
 } catch (err) {
-    console.error("🔥 Fatal startup error:", err);
+    console.error("Fatal startup error:", err);
 }
