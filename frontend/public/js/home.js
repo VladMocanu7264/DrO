@@ -12,7 +12,8 @@ const searchInput = document.getElementById("search-drink");
 const quantityRange = document.getElementById("quantity-range");
 const quantityValue = document.getElementById("quantity-value");
 const paginationContainer = document.querySelector('.pagination');
-const filterList = document.querySelector('.filter-list');
+const categoryList = document.querySelector('.filter-list');
+const nutritionList = document.querySelector('.nutrition-list');
 
 
 const mockedCategories = [
@@ -22,19 +23,27 @@ const mockedCategories = [
   { id: 4, name: "water" },
 ];
 
+const mockedNutritionScores = [
+  { id: 1, name: "A" },
+  { id: 2, name: "B" },
+  { id: 3, name: "C" },
+  { id: 4, name: "D" },
+  { id: 5, name: "E" },
+];
+
 const mockedDrinks = [
-  { id: 1, name: "Coca-Cola", category: "soda", quantity: 500, image: "../public/poze/cocacola.png" },
-  { id: 2, name: "Pepsi", category: "soda", quantity: 250, image: "../public/poze/pepsi.png" },
-  { id: 3, name: "Fanta", category: "soda", quantity: 300, image: "../public/poze/fanta.png" },
-  { id: 4, name: "Sprite", category: "soda", quantity: 400, image: "../public/poze/sprite.png" },
-  { id: 5, name: "Mountain Dew", category: "soda", quantity: 100, image: "../public/poze/smoothie.png" },
-  { id: 6, name: "Dr Pepper", category: "soda", quantity: 250, image: "../public/poze/drpepper.png" },
-  { id: 7, name: "7UP", category: "soda", quantity: 300, image: "../public/poze/7up.png" },
-  { id: 8, name: "Schweppes", category: "soda", quantity: 400, image: "../public/poze/smoothie.png" },
-  { id: 9, name: "Red Bull", category: "energy", quantity: 100, image: "../public/poze/redbull.png" },
-  { id: 10, name: "Monster", category: "energy", quantity: 100, image: "../public/poze/smoothie.png" },
-  { id: 11, name: "Rockstar", category: "energy", quantity: 200, image: "../public/poze/rockstar.png" },
-  { id: 12, name: "NOS", category: "energy", quantity: 500, image: "../public/poze/smoothie.png" }
+  { id: 1, name: "Coca-Cola", category: "soda", nutrition_grade: "A", quantity: 500, image: "../public/poze/cocacola.png" },
+  { id: 2, name: "Pepsi", category: "soda", nutrition_grade: "A", quantity: 250, image: "../public/poze/pepsi.png" },
+  { id: 3, name: "Fanta", category: "soda", nutrition_grade: "B", quantity: 300, image: "../public/poze/fanta.png" },
+  { id: 4, name: "Sprite", category: "soda", nutrition_grade: "C", quantity: 400, image: "../public/poze/sprite.png" },
+  { id: 5, name: "Mountain Dew", category: "soda", nutrition_grade: "D", quantity: 100, image: "../public/poze/smoothie.png" },
+  { id: 6, name: "Dr Pepper", category: "soda", nutrition_grade: "D", quantity: 250, image: "../public/poze/drpepper.png" },
+  { id: 7, name: "7UP", category: "soda", nutrition_grade: "E", quantity: 300, image: "../public/poze/7up.png" },
+  { id: 8, name: "Schweppes", category: "soda", nutrition_grade: "E", quantity: 400, image: "../public/poze/smoothie.png" },
+  { id: 9, name: "Red Bull", category: "energy", nutrition_grade: "E", quantity: 100, image: "../public/poze/redbull.png" },
+  { id: 10, name: "Monster", category: "energy", nutrition_grade: "C", quantity: 100, image: "../public/poze/smoothie.png" },
+  { id: 11, name: "Rockstar", category: "energy", nutrition_grade: "C", quantity: 200, image: "../public/poze/rockstar.png" },
+  { id: 12, name: "NOS", category: "water", nutrition_grade: "A", quantity: 500, image: "../public/poze/smoothie.png" }
 ];
 
 const mockedListsNames = [
@@ -59,6 +68,7 @@ async function getGroups() {
     originalData = await fetchDrinks();
     setupSort();
     loadCategoryFilters();
+    loadNutritionFilters();
     setupFilterListeners();
     applyFiltersAndRender();
     setupPriceRange();
@@ -78,7 +88,7 @@ function setupSort() {
 
 function loadCategoryFilters() {
 
-  if (!filterList) return;
+  if (!categoryList) return;
 
   mockedCategories.forEach(cat => {
     const filterItem = document.createElement('div');
@@ -87,10 +97,33 @@ function loadCategoryFilters() {
       <input type="checkbox" id="filter-${cat.name}" name="category" value="${cat.name}" />
       <label for="filter-${cat.name}">${cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}</label>
     `;
-    filterList.appendChild(filterItem);
+    categoryList.appendChild(filterItem);
   });
-  const categoryInputs = filterList.querySelectorAll('input[name="category"]');
+  const categoryInputs = categoryList.querySelectorAll('input[name="category"]');
   categoryInputs.forEach(cb =>
+    cb.addEventListener('change', () => {
+      currentPage = 1;
+      applyFiltersAndRender();
+    })
+  );
+
+}
+
+function loadNutritionFilters() {
+
+  if (!nutritionList) return;
+
+  mockedNutritionScores.forEach(cat => {
+    const filterItem = document.createElement('div');
+    filterItem.classList.add('filter-item');
+    filterItem.innerHTML = `
+      <input type="checkbox" id="filter-${cat.name}" name="nutrition" value="${cat.name}" />
+      <label for="filter-${cat.name}">${cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}</label>
+    `;
+    nutritionList.appendChild(filterItem);
+  });
+  const nutritionInputs = nutritionList.querySelectorAll('input[name="nutrition"]');
+  nutritionInputs.forEach(cb =>
     cb.addEventListener('change', () => {
       currentPage = 1;
       applyFiltersAndRender();
@@ -140,6 +173,7 @@ function applyFiltersAndRender() {
   }
 
   const categoryInputs = document.querySelectorAll('input[name="category"]');
+  const nutritionInputs = document.querySelectorAll('input[name="nutrition"]');
 
   const selectedCats = Array.from(categoryInputs)
     .filter(cb => cb.checked)
@@ -150,9 +184,17 @@ function applyFiltersAndRender() {
     );
   }
 
+  const selectedNutrition = Array.from(nutritionInputs)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value.toLowerCase());
+  if (selectedNutrition.length) {
+    drinksData = drinksData.filter(d =>
+      selectedNutrition.includes(d.nutrition_grade.toLowerCase())
+    );
+  }
+
   if (quantityRange) {
     const max = parseFloat(quantityRange.value);
-    console.log("Max quantity:", max);
     drinksData = drinksData.filter(d =>
       d.quantity === undefined || d.quantity <= max
     );
@@ -344,7 +386,7 @@ function closeAllModals() {
 
 
 function handleNavigateToRanking() {
-    window.location.href = `../views/ranking.html`;
+  window.location.href = `../views/ranking.html`;
 }
 
 

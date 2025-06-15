@@ -2,6 +2,10 @@ const listContainer = document.querySelector('.lists-container');
 const drinkListSelect = document.getElementById('drink-list-select');
 const selectedList = '';
 
+const adminUsersBtn = document.getElementById('users-button');
+const adminDrinksBtn = document.getElementById('drinks-button');
+const adminGroupsBtn = document.getElementById('groups-button');
+
 const mockedListsNames = [
     { id: 1, name: "Lista 1", drinks: [1, 2, 3, 4, 5, 6] },
     { id: 2, name: "Lista 2", drinks: [4, 5] },
@@ -65,10 +69,16 @@ function loadDrinkList() {
     });
 }
 
-
-
-function init() {
-    loadDrinkList();
+function checkAdminAccess() {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole !== 'admin') {
+        adminUsersBtn.style.display = 'none';
+        adminDrinksBtn.style.display = 'none';
+        adminGroupsBtn.style.display = 'none';
+    }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    checkAdminAccess();
+    loadDrinkList();
+});
