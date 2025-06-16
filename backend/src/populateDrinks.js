@@ -177,8 +177,7 @@ async function fetchAndPopulateDrinks() {
     fs.writeFileSync(LOG_FILE, csv);
     console.log(`\nInserted: ${insertedCount}, Skipped: ${skippedCount}`);
     console.log(`CSV log saved to ${LOG_FILE}`);
-    await sequelize.close();
-    console.log("DB connection closed.");
 }
 
-fetchAndPopulateDrinks();
+
+module.exports = fetchAndPopulateDrinks;

@@ -114,7 +114,7 @@ async function syncUp({ alter = false, force = false } = {}) {
     }
 }
 
-syncUp({ alter: true });
+//syncUp({ alter: true });
 
 module.exports = {
     sequelize,

@@ -9,12 +9,10 @@ try {
 
     console.log("Required core modules");
 
-    console.log("Skipping route imports for isolation test");
     const drinkRoutes = require('./routes/drinks');
-// const authRoutes = require('./routes/auth');
-// const userRoutes = require('./routes/user');
-    const routes = [...drinkRoutes]; // empty for now
-
+    // const authRoutes = require('./routes/auth');
+    // const userRoutes = require('./routes/user');
+    const routes = [...drinkRoutes]; // Add the rest when ready
 
     const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
@@ -47,12 +45,35 @@ try {
         res.end('Not Found');
     });
 
-    const PORT = process.env.PORT || 8080;
-    console.log("PORT:", PORT);
+    const { sequelize, Drink } = require('./database');
+    const populateDrinks = require('./populateDrinks');
 
-    server.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
-    });
+    (async () => {
+        try {
+            await sequelize.authenticate();
+            console.log("Connected to database");
+
+            await sequelize.sync({ alter: true });
+            console.log("Database synchronized");
+
+            const drinkCount = await Drink.count();
+            if (drinkCount === 0) {
+                console.log("Drink table is empty. Populating...");
+                await populateDrinks();
+                console.log("Drink table populated");
+            } else {
+                console.log(`Drink table has ${drinkCount} entries. Skipping population.`);
+            }
+
+            const PORT = process.env.PORT || 8080;
+            server.listen(PORT, () => {
+                console.log(`Server running at http://localhost:${PORT}`);
+            });
+
+        } catch (err) {
+            console.error("Fatal DB/init error:", err);
+        }
+    })();
 
 } catch (err) {
     console.error("Fatal startup error:", err);
