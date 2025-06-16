@@ -181,5 +181,6 @@ async function fetchAndPopulateDrinks() {
     console.log(`CSV log saved to ${LOG_FILE}`);
 }
 
+console.log("Finished populateDrinks()");
 
 module.exports = fetchAndPopulateDrinks;
