@@ -1,3 +1,5 @@
+console.log("top of server.js reached");
+
 try {
     console.log("Starting server.js");
 
@@ -46,7 +48,9 @@ try {
     });
 
     const { sequelize, Drink } = require('./database');
+    console.log("Loading populateDrinks.js");
     const populateDrinks = require('./populateDrinks');
+    console.log("Loaded populateDrinks.js");
 
     (async () => {
         try {
@@ -59,8 +63,12 @@ try {
             const drinkCount = await Drink.count();
             if (drinkCount === 0) {
                 console.log("Drink table is empty. Populating...");
-                await populateDrinks();
-                console.log("Drink table populated");
+                try {
+                    await populateDrinks();
+                    console.log("Drink table populated");
+                } catch (e) {
+                    console.error("Error during population:", e);
+                }
             } else {
                 console.log(`Drink table has ${drinkCount} entries. Skipping population.`);
             }
