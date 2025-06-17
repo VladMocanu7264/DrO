@@ -1,6 +1,6 @@
 console.log("Inside populateDrinks.js");
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+require('dotenv').config();
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
