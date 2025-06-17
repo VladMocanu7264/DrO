@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'Production') {
+    require('dotenv').config();
+}
 const { Sequelize, DataTypes } = require('sequelize');
 
 const isProduction = process.env.NODE_ENV === 'production';

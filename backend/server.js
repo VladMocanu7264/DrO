@@ -5,7 +5,9 @@ console.log("top of server.js reached");
         console.log("Starting server.js");
 
         const path = require('path');
-        require('dotenv').config();
+        if (process.env.NODE_ENV !== 'Production') {
+            require('dotenv').config();
+        }
         console.log("Loaded .env");
 
         const http = require('http');
