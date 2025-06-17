@@ -64,7 +64,7 @@ try {
             if (drinkCount === 0) {
                 console.log("Drink table is empty. Populating...");
                 try {
-                    await populateDrinks();
+                    //await populateDrinks();
                     console.log("Drink table populated");
                 } catch (e) {
                     console.error("Error during population:", e);
@@ -73,11 +73,15 @@ try {
                 console.log(`Drink table has ${drinkCount} entries. Skipping population.`);
             }
 
+            console.log("About to call server.listen");
             const PORT = process.env.PORT || 8080;
             server.listen(PORT, () => {
                 console.log(`Server running at http://localhost:${PORT}`);
             });
 
+            setTimeout(() => {
+                console.log("Keeping the process alive...");
+            }, 600000); // 10 minutes
         } catch (err) {
             console.error("Fatal DB/init error:", err);
         }
