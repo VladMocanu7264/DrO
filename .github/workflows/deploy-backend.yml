@@ -1,4 +1,4 @@
-name: Build and Deploy NodeJS App to Azure Web App - DrO-backend
+name: Deploy Node.js backend to Azure
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
     defaults:
       run:
         working-directory: backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Zip app contents
-        run: zip -r ../backend.zip . -x "node_modules/*"
+      - name: Zip app for deployment
+        run: zip -r ../app.zip .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -36,5 +37,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'DrO-backend'
-          slot-name: 'Production'
-          package: backend.zip
+          package: app.zip
