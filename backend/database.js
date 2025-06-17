@@ -5,6 +5,14 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+console.log("Database config being used:");
+console.log("Host:", process.env.DB_HOST);
+console.log("Port:", process.env.DB_PORT);
+console.log("Database:", process.env.DB_NAME);
+console.log("User:", process.env.DB_USER);
+console.log("Password:", process.env.DB_PASS ? "[HIDDEN]" : "[MISSING]");
+console.log("SSL:", process.env.NODE_ENV === 'Production' ? "Required" : "Optional");
+
 const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
