@@ -22,10 +22,10 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build (if needed)
-        run: echo "No build step needed"
+      - name: Zip app contents
+        run: zip -r ../backend.zip . -x "node_modules/*"
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -37,4 +37,4 @@ jobs:
         with:
           app-name: 'DrO-backend'
           slot-name: 'Production'
-          package: ./backend
+          package: backend.zip
