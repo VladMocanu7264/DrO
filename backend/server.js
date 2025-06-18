@@ -15,7 +15,9 @@ console.log("top of server.js reached");
         console.log("Required core modules");
 
         const drinkRoutes = require('./routes/drinks');
-        const routes = [...drinkRoutes];
+        const authRoutes = require('./routes/auth');
+        const userRoutes = require('./routes/user');
+        const routes = [...drinkRoutes, ...authRoutes, ...userRoutes];
 
         const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
