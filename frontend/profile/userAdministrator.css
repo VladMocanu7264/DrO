@@ -1,0 +1,215 @@
+/* #users-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.4);
+    z-index: 100;
+
+    width: 90%;
+    max-width: 600px;
+    min-height: 50vh;
+    max-height: 90vh;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+} */
+
+#users-modal .modal-content {
+    flex-grow: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+#users-modal .modal-content h2 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    flex-shrink: 0;
+}
+
+.users-table-container {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    min-height: 0;
+}
+
+#users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: var(--secondary);
+}
+
+
+#users-table thead th {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+#users-table tbody td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #eef0f2;
+    vertical-align: middle;
+}
+
+#users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#users-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+#users-table .table-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#users-table .delete-user-button {
+    padding: 0.5rem 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+#users-table .edit-user-button:hover {
+    background-color: var(--tertiary);
+    transform: translateY(-1px);
+}
+
+#users-table .delete-user-button {
+    background-color: #e74c3c;
+}
+
+#users-table .delete-user-button:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .users-table-container {
+        overflow-x: visible;
+        border: none;
+        background-color: transparent;
+
+    }
+
+    #users-table thead {
+        display: none;
+    }
+
+    #users-table,
+    #users-table tbody,
+    #users-table tr,
+    #users-table td {
+        display: block;
+        width: 100%;
+    }
+
+    #users-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--quaternary);
+        border-radius: 8px;
+        padding: 0.75rem;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    #users-table td {
+        padding: 0.5rem 0.25rem;
+        text-align: left;
+        border-bottom: 1px dashed #e0e0e0;
+    }
+
+    #users-table tr td:last-child {
+        border-bottom: none;
+    }
+
+    #users-table td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    #users-table td[data-label="Acțiuni:"] {
+        padding-top: 0.5rem;
+        padding-bottom: 0.25rem;
+    }
+
+    #users-table td[data-label="Acțiuni:"]::before {
+        margin-bottom: 0.5rem;
+    }
+
+    #users-table .table-actions {
+        justify-content: flex-start;
+        margin-top: 0.25rem;
+    }
+
+    #users-table .edit-user-button,
+    #users-table .delete-user-button {
+        flex-grow: 1;
+        min-width: 100px;
+
+    }
+}
+
+@media (max-width: 420px) {
+
+
+    #users-table tr {
+        padding: 0.6rem;
+    }
+
+    #users-table td {
+        padding: 0.4rem 0.1rem;
+    }
+
+    #users-table td::before {
+        font-size: 0.75rem;
+    }
+
+    #users-table .table-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #users-table .edit-user-button,
+    #users-table .delete-user-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        flex-grow: 0;
+    }
+
+    #users-table .delete-user-button {
+        margin-bottom: 0;
+    }
+}

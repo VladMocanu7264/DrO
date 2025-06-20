@@ -14,14 +14,14 @@ window.onload = function () {
   if (token) {
     if (loginLink) {
       loginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
-      loginLink.href = "../views/profile.html";
+      loginLink.href = "../profile/index.html";
     }
 
     if (mobileLoginLink) {
       mobileLoginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
-      mobileLoginLink.href = "../views/profile.html";
+      mobileLoginLink.href = "../profile/index.html";
     }
   } //else{
   //   window.location.href = "../views/login.html";
   // }
-};
+}
