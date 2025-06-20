@@ -1,5 +1,17 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+if (process.env.NODE_ENV !== 'Production') {
+    require('dotenv').config();
+}
 const { Sequelize, DataTypes } = require('sequelize');
+
+const isProduction = process.env.NODE_ENV === 'Production';
+
+console.log("Database config being used:");
+console.log("Host:", process.env.DB_HOST);
+console.log("Port:", process.env.DB_PORT);
+console.log("Database:", process.env.DB_NAME);
+console.log("User:", process.env.DB_USER);
+console.log("Password:", process.env.DB_PASS ? "[HIDDEN]" : "[MISSING]");
+console.log("SSL:", process.env.NODE_ENV === 'Production' ? "Required" : "Optional");
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -10,6 +22,12 @@ const sequelize = new Sequelize(
         port: process.env.DB_PORT || 5432,
         dialect: 'postgres',
         logging: false,
+        dialectOptions: isProduction ? {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        } : {}
     }
 );
 
@@ -114,7 +132,7 @@ async function syncUp({ alter = false, force = false } = {}) {
     }
 }
 
-syncUp({ alter: true });
+//syncUp({ alter: true });
 
 module.exports = {
     sequelize,

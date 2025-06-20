@@ -28,3 +28,5 @@ async function handleDeleteMe(req, res) {
 module.exports = [
     { match: matchDeleteMe, handle: withAuth(handleDeleteMe) }
 ];
+
+// I am dying trying to make this work

@@ -1,4 +1,8 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+console.log("Inside populateDrinks.js");
+
+if (process.env.NODE_ENV !== 'Production') {
+    require('dotenv').config();
+}
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
@@ -177,8 +181,8 @@ async function fetchAndPopulateDrinks() {
     fs.writeFileSync(LOG_FILE, csv);
     console.log(`\nInserted: ${insertedCount}, Skipped: ${skippedCount}`);
     console.log(`CSV log saved to ${LOG_FILE}`);
-    await sequelize.close();
-    console.log("DB connection closed.");
 }
 
-fetchAndPopulateDrinks();
+console.log("Finished populateDrinks()");
+
+module.exports = fetchAndPopulateDrinks;
