@@ -386,6 +386,11 @@
 const API_BASE_URL = window.env.API_BASE_URL;
 let token = localStorage.getItem("token");
 
+if (!token) {
+  alert("Trebuie să fii autentificat pentru a accesa această pagină.");
+  window.location.href = "/login/";
+}
+
 let originalData = [];
 let drinksData = [];
 let currentPage = 1;
@@ -399,6 +404,7 @@ const sortSelect = document.getElementById("sort-select");
 const paginationContainer = document.querySelector('.pagination');
 const selectedListDiv = document.getElementById('selected-list');
 const publicBtn = document.getElementById('public-btn');
+const createListBtn = document.getElementById('create-list-btn');
 
 let selectedGroupId = null;
 
@@ -419,8 +425,39 @@ async function fetchDrinksFromAPI() {
 }
 
 async function fetchListsFromAPI() {
-  // Simulat pentru acum, până se integrează endpointul real
-  return fallbackLists;
+  try {
+    const res = await fetch(`${API_BASE_URL}/lists`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Eșec API Lists");
+    return await res.json();
+  } catch (err) {
+    console.warn("Folosim fallback mock lists", err);
+    return fallbackLists;
+  }
+}
+
+async function updateListPublicStatus(id, value) {
+  await fetch(`${API_BASE_URL}/lists/${id}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ public: value }),
+  });
+}
+
+async function createNewList(name) {
+  const res = await fetch(`${API_BASE_URL}/lists`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, public: false }),
+  });
+  return await res.json();
 }
 
 async function getGroups() {
@@ -459,10 +496,10 @@ function sortData(criterion) {
       drinksData.sort((a, b) => b.name.localeCompare(a.name));
       break;
     case 'category-asc':
-      drinksData.sort((a, b) => a.category.localeCompare(b.category));
+      drinksData.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
       break;
     case 'category-desc':
-      drinksData.sort((a, b) => b.category.localeCompare(a.category));
+      drinksData.sort((a, b) => (b.category || '').localeCompare(a.category || ''));
       break;
     case 'quantity-asc':
       drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
@@ -477,9 +514,9 @@ function applyFiltersAndRender() {
   drinksData = [...originalData];
 
   if (selectedGroupId) {
-    const selectedList = mockedLists.find(l => l.id === selectedGroupId);
-    if (selectedList) {
-      drinksData = drinksData.filter(drink => selectedList.drinks.includes(drink.id));
+    const selectedList = mockedLists.find(l => l.id == selectedGroupId);
+    if (selectedList && selectedList.drinks) {
+      drinksData = drinksData.filter(drink => selectedList.drinks.some(d => d.id === drink.id));
     }
   }
 
@@ -587,10 +624,10 @@ function generateRadioFilter() {
     input.name = 'category';
     input.id = `filter-${list.id}`;
     input.value = list.id;
-    if (selectedGroupId === list.id) input.checked = true;
+    if (selectedGroupId == list.id) input.checked = true;
 
     input.addEventListener('change', () => {
-      selectedGroupId = parseInt(input.value);
+      selectedGroupId = input.value;
       currentPage = 1;
       selectedListDiv.textContent = list.name;
       selectedListDiv.style.display = 'block';
