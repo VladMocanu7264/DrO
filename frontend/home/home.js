@@ -392,146 +392,257 @@
 
 // document.addEventListener('DOMContentLoaded', getGroups);
 
-const API_BASE_URL = window.env.API_BASE_URL;
+// home.js reconstruit complet cu API real, dar cu logica mock păstrată
 
-// ✅ Verificăm dacă utilizatorul este autentificat
+const API_BASE_URL = window.env.API_BASE_URL;
 const token = localStorage.getItem("token");
 if (!token) {
   alert("Trebuie să fii autentificat pentru a accesa această pagină.");
   window.location.href = "/login/";
 }
 
-const state = {
-  currentPage: 1,
-  limit: 8,
-  sortKey: "",
-  selectedTags: [],
-};
+let originalData = [];
+let drinksData = [];
+let currentPage = 1;
+const itemsPerPage = 10;
 
-// Obține filtrele disponibile
-async function getFilters() {
+const cardsContainer = document.querySelector(".cards-container");
+const modalsContainer = document.querySelector("#text-box-container");
+const overlay = document.querySelector(".overlay");
+const body = document.body;
+const sortSelect = document.getElementById("sort-select");
+const searchInput = document.getElementById("search-drink");
+const quantityRange = document.getElementById("quantity-range");
+const quantityValue = document.getElementById("quantity-value");
+const paginationContainer = document.querySelector('.pagination');
+const categoryList = document.querySelector('.filter-list');
+const nutritionList = document.querySelector('.nutrition-list');
+
+const mockedListsNames = [
+  { id: 1, name: "Lista 1" },
+  { id: 2, name: "Lista 2" },
+  { id: 3, name: "Lista 3" },
+  { id: 4, name: "Lista 4" },
+];
+
+const fetchDrinks = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/drinks/filters`);
-    if (!res.ok) throw new Error("Eroare la filtre");
-    return await res.json();
-  } catch (err) {
-    console.error("Eroare la filtre:", err);
-    return { sortOptions: [], tags: [] };
-  }
-}
-
-// Obține băuturile în funcție de opțiunile curente
-async function getDrinks({ page = 1, limit = 8, sort = "", tags = [] }) {
-  try {
-    const url = new URL(`${API_BASE_URL}/drinks/feed`);
-    url.searchParams.set("page", page);
-    url.searchParams.set("limit", limit);
-    if (sort) url.searchParams.set("sort", sort);
-    if (tags.length) url.searchParams.set("tags", tags.join(","));
-
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await fetch(`${API_BASE_URL}/drinks/feed?limit=9999`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    if (!res.ok) throw new Error("Eroare la băuturi");
+    if (!res.ok) throw new Error("Eroare la preluarea băuturilor");
     return await res.json();
   } catch (err) {
-    console.error("Eroare la băuturi:", err);
+    console.error("Eroare API:", err);
     return [];
   }
-}
+};
 
-// Populează sidebarul cu filtrele
-function renderFilters(sortOptions, tags) {
-  const sortContainer = document.querySelector(".sort-options");
-  const tagContainer = document.querySelector(".tag-filters");
-
-  sortContainer.innerHTML = "";
-  tagContainer.innerHTML = "";
-
-  sortOptions.forEach(({ key, label }) => {
-    const btn = document.createElement("button");
-    btn.textContent = label;
-    btn.classList.add("sort-button");
-    btn.addEventListener("click", () => {
-      state.sortKey = key;
-      renderDrinks();
-    });
-    sortContainer.appendChild(btn);
-  });
-
-  tags.forEach(({ id, name }) => {
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.id = `tag-${id}`;
-    checkbox.value = id;
-
-    checkbox.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        state.selectedTags.push(id);
-      } else {
-        state.selectedTags = state.selectedTags.filter((tag) => tag !== id);
-      }
-      renderDrinks();
-    });
-
-    const label = document.createElement("label");
-    label.htmlFor = checkbox.id;
-    label.textContent = name;
-
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("tag-option");
-    wrapper.appendChild(checkbox);
-    wrapper.appendChild(label);
-
-    tagContainer.appendChild(wrapper);
-  });
-}
-
-// Afișează băuturile în interfață
-function renderDrinkList(drinks) {
-  const listContainer = document.querySelector(".drink-list");
-  listContainer.innerHTML = "";
-
-  if (!drinks.length) {
-    listContainer.innerHTML = "<p>Nu s-au găsit băuturi.</p>";
-    return;
+async function getGroups() {
+  try {
+    originalData = await fetchDrinks();
+    setupSort();
+    loadCategoryFilters();
+    loadNutritionFilters();
+    setupFilterListeners();
+    applyFiltersAndRender();
+    setupPriceRange();
+    initEventListeners();
+  } catch (err) {
+    console.error("Eroare generală:", err);
   }
+}
 
-  drinks.forEach((drink) => {
-    const card = document.createElement("div");
-    card.classList.add("drink-card");
+function setupSort() {
+  if (!sortSelect) return;
+  sortSelect.addEventListener("change", () => {
+    currentPage = 1;
+    applyFiltersAndRender();
+  });
+}
 
-    card.innerHTML = `
-      <img src="${drink.image_url}" alt="${drink.name}" />
-      <h3>${drink.name}</h3>
-      <p><strong>Brand:</strong> ${drink.brand}</p>
-      <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
-      <p><strong>Cantitate:</strong> ${drink.quantity}ml</p>
-      <p><strong>Ambalaj:</strong> ${drink.packaging}</p>
+function loadCategoryFilters() {
+  if (!categoryList) return;
+  const uniqueCategories = [...new Set(originalData.map(d => d.category))];
+  uniqueCategories.forEach(cat => {
+    const filterItem = document.createElement('div');
+    filterItem.classList.add('filter-item');
+    filterItem.innerHTML = `
+      <input type="checkbox" id="filter-${cat}" name="category" value="${cat}" />
+      <label for="filter-${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</label>
     `;
+    categoryList.appendChild(filterItem);
+  });
+  categoryList.querySelectorAll('input[name="category"]').forEach(cb =>
+    cb.addEventListener('change', () => {
+      currentPage = 1;
+      applyFiltersAndRender();
+    })
+  );
+}
 
-    listContainer.appendChild(card);
+function loadNutritionFilters() {
+  if (!nutritionList) return;
+  const uniqueScores = [...new Set(originalData.map(d => d.nutrition_grade))];
+  uniqueScores.forEach(score => {
+    const filterItem = document.createElement('div');
+    filterItem.classList.add('filter-item');
+    filterItem.innerHTML = `
+      <input type="checkbox" id="filter-${score}" name="nutrition" value="${score}" />
+      <label for="filter-${score}">${score}</label>
+    `;
+    nutritionList.appendChild(filterItem);
+  });
+  nutritionList.querySelectorAll('input[name="nutrition"]').forEach(cb =>
+    cb.addEventListener('change', () => {
+      currentPage = 1;
+      applyFiltersAndRender();
+    })
+  );
+}
+
+function setupPriceRange() {
+  if (!quantityRange || !quantityValue) return;
+  function updateValue() {
+    quantityValue.textContent = quantityRange.value;
+  }
+  updateValue();
+  quantityRange.addEventListener('input', () => {
+    updateValue();
+    currentPage = 1;
+    applyFiltersAndRender();
   });
 }
 
-// Afișează toate băuturile curente
-async function renderDrinks() {
-  const drinks = await getDrinks({
-    page: state.currentPage,
-    limit: state.limit,
-    sort: state.sortKey,
-    tags: state.selectedTags,
+function setupFilterListeners() {
+  if (searchInput) searchInput.addEventListener("input", () => {
+    currentPage = 1;
+    applyFiltersAndRender();
   });
-
-  renderDrinkList(drinks);
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const filters = await getFilters();
-  renderFilters(filters.sortOptions, filters.tags);
-  renderDrinks();
-});
+function applyFiltersAndRender() {
+  drinksData = [...originalData];
+  const term = searchInput?.value.trim().toLowerCase();
+  if (term) drinksData = drinksData.filter(d => d.name.toLowerCase().includes(term));
+
+  const selectedCats = [...document.querySelectorAll('input[name="category"]:checked')].map(cb => cb.value);
+  if (selectedCats.length) drinksData = drinksData.filter(d => selectedCats.includes(d.category));
+
+  const selectedNutri = [...document.querySelectorAll('input[name="nutrition"]:checked')].map(cb => cb.value);
+  if (selectedNutri.length) drinksData = drinksData.filter(d => selectedNutri.includes(d.nutrition_grade));
+
+  const max = parseFloat(quantityRange?.value);
+  if (!isNaN(max)) drinksData = drinksData.filter(d => d.quantity <= max);
+
+  sortData(sortSelect?.value);
+  render();
+  initEventListeners();
+}
+
+function sortData(criterion) {
+  switch (criterion) {
+    case 'name-asc': drinksData.sort((a, b) => a.name.localeCompare(b.name)); break;
+    case 'name-desc': drinksData.sort((a, b) => b.name.localeCompare(a.name)); break;
+    case 'quantity-asc': drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0)); break;
+    case 'quantity-desc': drinksData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0)); break;
+  }
+}
+
+function render() {
+  cardsContainer.innerHTML = '';
+  modalsContainer.innerHTML = '';
+  const totalPages = Math.ceil(drinksData.length / itemsPerPage);
+  const pageData = drinksData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  pageData.forEach(drink => {
+    cardsContainer.appendChild(createDrinkCard(drink));
+    modalsContainer.appendChild(createDrinkModal(drink));
+  });
+  renderPagination(totalPages);
+}
+
+function createDrinkCard(drink) {
+  const card = document.createElement('div');
+  card.classList.add('rectangle');
+  card.innerHTML = `
+    <div class="content">
+      <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
+    </div>
+    <h3>${drink.name}</h3>
+    <p><strong>Categorie:</strong> ${drink.category}</p>
+    <p><strong>Cantitate:</strong> ${drink.quantity}</p>
+    <div class="btn">
+      <button class="read-more" data-index="${drink.id}">Detalii</button>
+    </div>`;
+  return card;
+}
+
+function createDrinkModal(drink) {
+  const modal = document.createElement('div');
+  modal.classList.add('text-box', 'hidden');
+  modal.id = `text-box-${drink.id}`;
+  modal.innerHTML = `
+    <button class="close-modal" data-index="${drink.id}">&times;</button>
+    <div class="drink-details">
+      <p id="drink-title">${drink.name}</p>
+      <div class="drink-content">
+        <div class="drink-text">
+          <p><strong>Categorie:&nbsp;</strong>${drink.category}</p>
+          <p><strong>Cantitate:&nbsp;</strong>${drink.quantity || 0} ml</p>
+          <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
+        </div>
+        <div id="icons-container">
+          <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
+        </div>
+      </div>
+    </div>`;
+  return modal;
+}
+
+function renderPagination(totalPages) {
+  if (!paginationContainer) return;
+  paginationContainer.innerHTML = '';
+  for (let p = 1; p <= totalPages; p++) {
+    const btn = document.createElement('button');
+    btn.textContent = p;
+    btn.classList.add('page-btn');
+    if (p === currentPage) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      currentPage = p;
+      applyFiltersAndRender();
+    });
+    paginationContainer.appendChild(btn);
+  }
+}
+
+function initEventListeners() {
+  document.querySelectorAll('.read-more').forEach(btn =>
+    btn.addEventListener('click', () => toggleModal(btn.dataset.index, true))
+  );
+  document.querySelectorAll('.close-modal').forEach(btn =>
+    btn.addEventListener('click', () => toggleModal(btn.dataset.index, false))
+  );
+  overlay.addEventListener('click', closeAllModals);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAllModals();
+  });
+}
+
+function toggleModal(idx, show) {
+  const m = document.getElementById(`text-box-${idx}`);
+  if (!m) return;
+  m.classList.toggle('hidden', !show);
+  overlay.classList.toggle('hidden', !show);
+  body.classList.toggle('no-scroll', show);
+}
+
+function closeAllModals() {
+  document.querySelectorAll('.text-box:not(.hidden)')
+    .forEach(m => m.classList.add('hidden'));
+  overlay.classList.add('hidden');
+  body.classList.remove('no-scroll');
+}
+
+document.addEventListener('DOMContentLoaded', getGroups);
+
 
