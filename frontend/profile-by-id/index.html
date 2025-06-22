@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <link rel="stylesheet" href="profile-by-id.css">
+    <link rel="stylesheet" href="../public/css/nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aceasta este pagina in care utilizatorul/adminul isi gestioneaza contul.">
+    <title>Liste</title>
+    <style>
+        body {
+            background-image: url("../public/poze/main.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>DrO</h1>
+                <div class="menu">
+                    <a href="../home/index.html">Acasa</a>
+                    <a href="../lists/index.html">Liste</a>
+                    <a href="../groups/index.html">Grupuri</a>
+                    <a href="../stats/index.html">Stats</a>
+                    <a href="/rss">
+                        <i class="fa-solid fa-rss"></i>
+                    </a>
+                    <a href="../about/index.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </a>
+                    <a href="../help/index.html">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </a>
+                    <a href="#" id="login-link">Login</a>
+                </div>
+                <button class=" hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <a href="/home">Acasa</a>
+            <a href="/liste">Liste</a>
+            <a href="/grupuri">Grupuri</a>
+            <a href="/stats">Stats</a>
+            <div class="mobile-action-icons">
+                <a href="/rss">
+                    <i class="fa-solid fa-rss"></i>
+                </a>
+                <a href="../about/index.html">
+                    <i class="fa-solid fa-circle-info"></i>
+                </a>
+                <a href="../help/index.html">
+                    <i class="fa-solid fa-circle-question"></i>
+                </a>
+            </div>
+            <a href="../login/index.html" id="login-link">Login</a>
+        </div>
+    </header>
+    <div class="catalog">
+        <div class="content">
+            <div class="left-part">
+                <img id="user-image" src="" alt="Lists Image">
+            </div>
+            <div class="right-part">
+                <div class="user-info">
+                    <h2>Profil</h2>
+                    <p class="username">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Username: <span id="username-text"></span></span>
+                    </p>
+                    <p class="email">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>Email: <span id="email-text"></span></span>
+                    </p>
+                    <p class="description">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span>Descriere</span>
+                    </p>
+                    <p id="user-description">
+                    </p>
+                </div>
+                <div class="drinks-list">
+                    <div class="drink-list-header">
+                        <h2>Liste publice:</h2>
+                        <select id="drink-list-select">
+                        </select>
+                    </div>
+                    <div class="lists-container">
+                        <div class="drink-card">
+                            <p>Selectează o listă din dropdown.</p>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="../public/js/main.js"></script>
+            <script src="profile-by-id.js"></script>
+</body>
+
+</html>
