@@ -27,8 +27,7 @@ async function copyList(listId) {
 }
 
 
-async function fetchUserData() {
-    const username = "user";
+async function fetchUserData(username) {
     const token = checkAuth();
     try {
         const response = await fetch(`${API_BASE_URL}/users/${username}`, {
@@ -42,6 +41,7 @@ async function fetchUserData() {
         }
 
         const userData = await response.json();
+        console.log("User data fetched:", userData);
         return userData;
     } catch (error) {
         alert("Eroare: " + error.message);
@@ -49,17 +49,19 @@ async function fetchUserData() {
 }
 
 async function loadUserData() {
-    const userData = await fetchUserData();
+    const params = new URLSearchParams(window.location.search);
+    username = params.get('username');
+    const userData = await fetchUserData(username);
     if (!userData) {
         console.error("No user data found");
         return;
     }
-    const username = document.getElementById('username-text');
+    const usernameElement = document.getElementById('username-text');
     const email = document.getElementById('email-text');
     const description = document.getElementById('user-description');
     const profileImage = document.getElementById('user-image');
     const profileImageUrl = userData.profileImage || "../public/poze/7up.png";
-    username.textContent = userData.username;
+    usernameElement.textContent = userData.username;
     email.textContent = userData.email;
     description.textContent = userData.description || "No description provided";
     profileImage.src = profileImageUrl;
