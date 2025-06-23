@@ -270,16 +270,31 @@ function renderPagination() {
 
   paginationContainer.innerHTML = "";
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.classList.add("page-btn");
-    if (i === currentPage) btn.classList.add("active");
-    btn.textContent = i;
-    btn.addEventListener("click", () => {
-      currentPage = i;
+  const label = document.createElement("span");
+  label.textContent = `${currentPage} / ${totalPages}`;
+  label.classList.add("pagination-label");
+  paginationContainer.appendChild(label);
+
+  if (currentPage > 1) {
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "‹";
+    prevBtn.classList.add("page-btn");
+    prevBtn.addEventListener("click", () => {
+      currentPage--;
       resetAndLoad();
     });
-    paginationContainer.appendChild(btn);
+    paginationContainer.insertBefore(prevBtn, label);
+  }
+
+  if (currentPage < totalPages) {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "›";
+    nextBtn.classList.add("page-btn");
+    nextBtn.addEventListener("click", () => {
+      currentPage++;
+      resetAndLoad();
+    });
+    paginationContainer.appendChild(nextBtn);
   }
 }
 
