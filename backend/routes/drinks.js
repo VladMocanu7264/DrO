@@ -1,6 +1,6 @@
 const { Drink, Tag, DrinkTag, Favorite } = require('../database');
 const { isRelevantTag, withAuth} = require('../helpers');
-const { Op } = require('sequelize');
+const { Op, fn, col, literal } = require('sequelize');
 
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
@@ -54,34 +54,6 @@ async function handleGetDrinkById(req, res) {
     }
 }
 
-function matchGetFilters(req) {
-    return req.pathname === '/drinks/filters' && req.method === 'GET';
-}
-
-async function handleGetFilters(req, res) {
-    try {
-        const tags = await Tag.findAll({ attributes: ['id', 'name'] });
-        const response = {
-            sortOptions: [
-                { key: 'name', label: 'Name' },
-                { key: 'brand', label: 'Brand' },
-                { key: 'nutrition_grade', label: 'Nutrition Grade' }
-            ],
-            tags: tags
-                .filter(t => isRelevantTag(t.name))
-                .map(t => ({ id: t.id, name: t.name }))
-        };
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(response));
-    } catch (error) {
-        if (LOG_ENABLED) console.error('Error in handleGetFilters:', error);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
-    }
-}
-
-
 function matchGetFeed(req) {
     return req.pathname === '/drinks/feed' && req.method === 'GET';
 }
@@ -92,21 +64,44 @@ async function handleGetFeed(req, res) {
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
         const sort = req.query.sort || 'name';
-        const tagFilter = req.query.tags ? req.query.tags.split(',') : null;
+        const tags = req.query.tags ? req.query.tags.split(',') : null;
+        const grades = req.query.nutrition_grades ? req.query.nutrition_grades.split(',') : null;
+        const search = req.query.search || null;
+        const minQty = req.query.min_quantity ? parseInt(req.query.min_quantity) : null;
+        const maxQty = req.query.max_quantity ? parseInt(req.query.max_quantity) : null;
 
         const allowedSorts = ['name', 'brand', 'nutrition_grade'];
         const order = allowedSorts.includes(sort) ? [[sort, 'ASC']] : [['name', 'ASC']];
 
+        const where = {};
+
+        if (grades) {
+            where.nutrition_grade = { [Op.in]: grades.map(g => g.toLowerCase()) };
+        }
+
+        if (search) {
+            where[Op.or] = [
+                { name: { [Op.iLike]: `%${search}%` } },
+                { brand: { [Op.iLike]: `%${search}%` } }
+            ];
+        }
+
+        if (minQty !== null || maxQty !== null) {
+            where.quantity = {};
+            if (minQty !== null) where.quantity[Op.gte] = minQty;
+            if (maxQty !== null) where.quantity[Op.lte] = maxQty;
+        }
+
         const include = [];
-        if (tagFilter) {
+        if (tags) {
             include.push({
                 model: DrinkTag,
                 include: {
                     model: Tag,
                     where: {
                         [Op.or]: [
-                            { name: { [Op.in]: tagFilter } },
-                            { id: { [Op.in]: tagFilter.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
+                            { name: { [Op.in]: tags } },
+                            { id: { [Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
                         ]
                     },
                     required: true
@@ -115,6 +110,7 @@ async function handleGetFeed(req, res) {
         }
 
         const drinks = await Drink.findAll({
+            where,
             include,
             limit,
             offset,
@@ -135,6 +131,49 @@ async function handleGetFeed(req, res) {
         res.end(JSON.stringify(result));
     } catch (err) {
         if (LOG_ENABLED) console.error('Feed error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
+function matchGetFilters(req) {
+    return req.pathname === '/drinks/filters' && req.method === 'GET';
+}
+async function handleGetFilters(req, res) {
+    try {
+        const tags = await Tag.findAll({ attributes: ['id', 'name'] });
+        const grades = await Drink.findAll({
+            attributes: [[fn('DISTINCT', col('nutrition_grade')), 'nutrition_grade']],
+            raw: true
+        });
+        const quantities = await Drink.findOne({
+            attributes: [
+                [fn('MIN', col('quantity')), 'min_quantity'],
+                [fn('MAX', col('quantity')), 'max_quantity']
+            ],
+            raw: true
+        });
+
+        const response = {
+            sortOptions: [
+                { key: 'name', label: 'Name' },
+                { key: 'brand', label: 'Brand' },
+                { key: 'nutrition_grade', label: 'Nutrition Grade' }
+            ],
+            tags: tags
+                .filter(tag => isRelevantTag(tag.name))
+                .map(t => ({ id: t.id, name: t.name })),
+            nutrition_grades: grades
+                .map(g => g.nutrition_grade)
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b)),
+            quantity: quantities || { min_quantity: 0, max_quantity: 0 }
+        };
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(response));
+    } catch (error) {
+        if (LOG_ENABLED) console.error('Error in handleGetFilters:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
     }
