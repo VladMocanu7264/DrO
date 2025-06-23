@@ -109,6 +109,7 @@ async function handleGetFeed(req, res) {
             });
         }
 
+        const total = await Drink.count({ where, include });
         const drinks = await Drink.findAll({
             where,
             include,
@@ -128,7 +129,10 @@ async function handleGetFeed(req, res) {
         }));
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result));
+        res.end(JSON.stringify({
+            max_pages: Math.ceil(total / limit),
+            drinks: result
+        }));
     } catch (err) {
         if (LOG_ENABLED) console.error('Feed error:', err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -174,6 +178,31 @@ async function handleGetFilters(req, res) {
         res.end(JSON.stringify(response));
     } catch (error) {
         if (LOG_ENABLED) console.error('Error in handleGetFilters:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
+function matchGetFavorites(req) {
+    return req.pathname === '/favorites' && req.method === 'GET';
+}
+
+async function handleGetFavorites(req, res) {
+    try {
+        const favorites = await Favorite.findAll({
+            where: { UserId: req.user.id },
+            include: {
+                model: Drink,
+                attributes: ['id', 'name', 'brand', 'image_url', 'nutrition_grade', 'quantity', 'packaging']
+            }
+        });
+
+        const result = favorites.map(fav => fav.Drink);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+    } catch (error) {
+        if (LOG_ENABLED) console.error('Error in handleGetFavorites:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
     }
@@ -241,6 +270,7 @@ module.exports = [
     { match: matchGetDrinkById, handle: handleGetDrinkById },
     { match: matchGetFilters, handle: handleGetFilters },
     { match: matchGetFeed, handle: withAuth(handleGetFeed) },
+    { match: matchGetFavorites, handle: withAuth(handleGetFavorites)},
     { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
     { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) }
 ];
