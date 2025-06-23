@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -59,10 +60,25 @@
         <div class="filter-search">
           <input id="search-drink" type="search" placeholder="Caută băuturi..." />
         </div>
+
         <div class="filter-group">
           <legend>După categorie</legend>
           <div class="filter-list"></div>
         </div>
+
+        <div class="filter-group">
+          <legend>După scor nutriție</legend>
+          <div class="nutrition-list" id="nutrition-list"></div>
+        </div>
+
+        <div class="filter-group">
+          <legend>Interval cantitate (ml)</legend>
+          <input type="range" id="quantity-slider-min" />
+          <input type="range" id="quantity-slider-max" />
+          <p id="quantity-range-text">Interval: 0 - 1000 ml</p>
+          <button id="apply-filters-btn" class="btn" type="button">Aplică filtrele</button>
+        </div>
+
         <div class="trophy-section">
           <img class="trophy-image" src="../public/poze/trophy.png" alt="Trophy Image" onclick="handleNavigateToRanking()" />
         </div>

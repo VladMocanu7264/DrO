@@ -29,7 +29,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-right: 2rem;
-  max-height: calc(100vh - 7rem);
+  max-height: calc(100vh - 3rem);
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
@@ -283,6 +283,14 @@
 #quantity-label {
   font-size: 14px;
 }
+
+#quantity-range-text {
+  white-space: nowrap;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
 
 
 input[type="range"] {
