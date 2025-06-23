@@ -1,141 +1,131 @@
-// const openGroupsBtn = document.getElementById('groups-button');
-// const closeGroupsBtn = document.getElementById('close-group-modal');
-// const groupsModal = document.getElementById('groups-modal');
-// const groupsOverlay = document.getElementById('overlay');
-// const groupList = document.getElementById('groups-list');
-
-// const groups = [
-//     { id: 1, name: 'Group A', description: 'Description for Group A' },
-//     { id: 2, name: 'Group B', description: 'Description for Group B' },
-//     { id: 3, name: 'Group C', description: 'Description for Group C' },
-//     { id: 4, name: 'Group D', description: 'Description for Group D' },
-// ]
-
-// openGroupsBtn.addEventListener('click', () => {
-//     groupsModal.classList.remove('hidden');
-//     groupsOverlay.classList.remove('hidden');
-// });
-
-// closeGroupsBtn.addEventListener('click', () => {
-//     groupsModal.classList.add('hidden');
-//     groupsOverlay.classList.add('hidden');
-// });
-
-// overlay.addEventListener('click', () => {
-//     groupsModal.classList.add('hidden');
-//     groupsOverlay.classList.add('hidden');
-// });
-
-
-// function loadGroups() {
-//     groupList.innerHTML = '';
-//     groups.forEach((group) => {
-//         groupRow = document.createElement('tr');
-//         groupRow.innerHTML = `
-//             <td>${group.name}</td>
-//             <td>
-//                 <button class="delete-user-button">Șterge</button>
-//             </td>
-//         `
-//         groupList.appendChild(groupRow);
-//     })
-// }
-
-// document.addEventListener('DOMContentLoaded', loadGroups);
-
 const openGroupsBtn = document.getElementById('groups-button');
 const closeGroupsBtn = document.getElementById('close-group-modal');
 const groupsModal = document.getElementById('groups-modal');
 const groupsOverlay = document.getElementById('overlay');
 const groupList = document.getElementById('groups-list');
-const searchInput = document.getElementById('search-group-admin');
+const searchGroupInput = document.getElementById("search-group-admin");
+const searchGroupButton = document.getElementById('search-group-icon');
+const clearGroupSearchButton = document.getElementById('clear-group-search-icon');
 
-const API_BASE_URL = window.env.API_BASE_URL;
-const token = localStorage.getItem("token");
+async function deleteGroup(groupId) {
+    if (!groupId) {
+        alert("ID-ul grupului lipsește.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/groups/${groupId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la ștergerea grupului");
+        }
+        alert("Grup șters cu succes!");
+        return true;
+    } catch (error) {
+        alert(`Eroare: ${error.message}`);
+        return false;
+    }
+}
 
-// Deschide/închide modal
+async function getGroupsByQuery(query) {
+    console.log("Căutare grupuri:", query);
+    if (!query) {
+        alert("Căutarea nu poate fi goală.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/groups?search=${query}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la căutarea grupului");
+        }
+        const groups = await response.json();
+        if (groups.length === 0) {
+            alert("Nu s-au găsit grupuri care să corespundă căutării.");
+            return;
+        }
+        return groups;
+    } catch (error) {
+        alert(`Eroare: ${error.message}`);
+        return [];
+    }
+}
+
 openGroupsBtn.addEventListener('click', () => {
-  groupsModal.classList.remove('hidden');
-  groupsOverlay.classList.remove('hidden');
+    groupsModal.classList.remove('hidden');
+    groupsOverlay.classList.remove('hidden');
 });
 
 closeGroupsBtn.addEventListener('click', () => {
-  groupsModal.classList.add('hidden');
-  groupsOverlay.classList.add('hidden');
+    groupsModal.classList.add('hidden');
+    groupsOverlay.classList.add('hidden');
+    clearGroupSearch();
 });
 
-groupsOverlay.addEventListener('click', () => {
-  groupsModal.classList.add('hidden');
-  groupsOverlay.classList.add('hidden');
+overlay.addEventListener('click', () => {
+    groupsModal.classList.add('hidden');
+    groupsOverlay.classList.add('hidden');
+    clearGroupSearch();
 });
 
-// Fetch grupuri din API
-async function fetchGroups(search = "") {
-  try {
-    const res = await fetch(`${API_BASE_URL}/admin/groups?search=${encodeURIComponent(search)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
 
-    if (!res.ok) throw new Error("Eroare la încărcarea grupurilor");
-    return await res.json();
-  } catch (err) {
-    console.error("Eroare API grupuri:", err);
-    return [];
-  }
+function loadGroups(groups) {
+    groupList.innerHTML = '';
+    groups.forEach((group) => {
+        const groupRow = document.createElement('tr');
+        groupRow.innerHTML = `
+            <td>${group.name}</td>
+            <td>
+                <button class="delete-group-button" 
+                data-group-id="${group.id}"
+                >Șterge</button>
+            </td>
+        `
+        const deleteGroupBtn = groupRow.querySelector('.delete-group-button');
+        deleteGroupBtn.addEventListener('click', async (event) => {
+            const groupId = event.target.getAttribute('data-group-id');
+            const wasDeleted = await deleteGroup(groupId);
+            if (wasDeleted) {
+                groupRow.remove();
+            }
+        }
+        );
+        groupList.appendChild(groupRow);
+    })
 }
 
-// Șterge grup
-async function deleteGroup(id) {
-  if (!confirm("Sigur doriți să ștergeți acest grup?")) return;
+const searchGroupByQuery = async () => {
+    const query = searchGroupInput.value.trim();
+    if (query === "") {
+        groupList.innerHTML = "";
+        groupList.classList.add('hidden');
+        return;
+    }
+    const filteredGroups = await getGroupsByQuery(query);
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/admin/groups/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) throw new Error("Eroare la ștergere");
-    alert("Grup șters cu succes!");
-    loadGroups(searchInput.value);
-  } catch (err) {
-    console.error("Eroare ștergere grup:", err);
-    alert("Eroare la ștergere grup.");
-  }
+    if (filteredGroups.length === 0) {
+        groupList.innerHTML = "";
+        groupList.classList.add('hidden');
+    } else {
+        loadGroups(filteredGroups);
+    }
 }
 
-// Încarcă grupurile în tabel
-async function loadGroups(search = "") {
-  const groups = await fetchGroups(search);
-  groupList.innerHTML = "";
-
-  groups.forEach((group) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td data-label="Nume">${group.name}</td>
-      <td data-label="Acțiuni:">
-        <div class="table-actions">
-          <button class="delete-user-button" data-id="${group.id}">Șterge</button>
-        </div>
-      </td>
-    `;
-    groupList.appendChild(row);
-  });
-
-  // Atasează eveniment de ștergere
-  document.querySelectorAll(".delete-user-button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      deleteGroup(id);
-    });
-  });
+function clearGroupSearch() {
+    searchGroupInput.value = "";
+    groupList.innerHTML = "";
 }
 
-// Caută grupuri
-searchInput?.addEventListener("input", () => {
-  loadGroups(searchInput.value);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadGroups();
-});
-
+clearGroupSearchButton.addEventListener('click', clearGroupSearch);
+searchGroupButton.addEventListener('click', searchGroupByQuery);

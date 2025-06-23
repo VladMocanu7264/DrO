@@ -130,6 +130,7 @@ h3 {
     color: white;
     border-radius: 10px;
     max-width: 700px;
+    min-width: 700px;
     background-color: var(--tertiary);
     padding: 1.25rem;
 }
@@ -356,7 +357,7 @@ h3 {
 .modal-content {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .modal h2 {
@@ -379,6 +380,7 @@ h3 {
 }
 
 .modal input[type="text"],
+.modal input[type="number"],
 .modal input[type="email"],
 .modal input[type="password"],
 .modal textarea,
@@ -443,6 +445,7 @@ h3 {
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
+    gap: 5px;
 }
 
 .form-actions .button {
@@ -460,6 +463,16 @@ h3 {
     cursor: pointer;
 }
 
+.trash-icon {
+    cursor: pointer;
+    color: red
+}
+
+#description {
+    height: 70px;
+    resize: none;
+}
+
 /* --- Responsive: small screens --- */
 @media (max-width: 900px) {
     .content {
@@ -469,7 +482,11 @@ h3 {
         margin-left: 1rem;
         margin-right: 1rem;
         padding: 0.5rem;
-        height: 800px;
+        height: 600px;
+    }
+
+    .user-info {
+        min-width: 500px;
     }
 
     #user-image {
@@ -504,9 +521,7 @@ h3 {
     }
 
     #description {
-        width: 200px;
-        height: 100px;
-        resize: none;
+        height: 50px;
     }
 
     .drink-card img {
@@ -534,7 +549,7 @@ h3 {
     .button {
         width: 100px;
         height: 20px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     .lists-container {
@@ -542,7 +557,7 @@ h3 {
     }
 
     h3 {
-        font-size: 9px;
+        font-size: 16px;
     }
 }
 
@@ -550,14 +565,27 @@ h3 {
     .lists-container {
         width: 400px;
     }
+
+    .user-info {
+        min-width: 450px;
+    }
+
 }
 
 @media (max-width:450px) {
+    .user-info {
+        min-width: 300px;
+    }
+
     .content {
-        height: 800px;
+        height: 550px;
     }
 
     .lists-container {
         width: 250px;
+    }
+
+    .drink-list-header {
+        flex-direction: column;
     }
 }

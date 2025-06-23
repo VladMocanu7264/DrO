@@ -61,7 +61,7 @@
     align-items: center;
 }
 
-#groups-table .delete-user-button {
+#groups-table .delete-group-button {
     padding: 0.5rem 0.9rem;
     border: none;
     border-radius: 5px;
@@ -77,18 +77,23 @@
     min-width: 80px;
 }
 
-#groups-table .edit-user-button:hover {
-    background-color: var(--tertiary);
-    transform: translateY(-1px);
-}
 
-#groups-table .delete-user-button {
+#groups-table .delete-group-button {
     background-color: #e74c3c;
 }
 
-#groups-table .delete-user-button:hover {
+#groups-table .delete-group-button:hover {
     background-color: #c0392b;
     transform: translateY(-1px);
+}
+
+.search-group-input {
+    margin: auto;
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 @media (max-width: 600px) {

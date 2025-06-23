@@ -112,6 +112,15 @@
     transform: translateY(-1px);
 }
 
+.search-user-input {
+    margin: auto;
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 @media (max-width: 600px) {
     .users-table-container {
         overflow-x: visible;
@@ -178,8 +187,9 @@
     #users-table .delete-user-button {
         flex-grow: 1;
         min-width: 100px;
-
     }
+
+
 }
 
 @media (max-width: 420px) {
@@ -212,4 +222,6 @@
     #users-table .delete-user-button {
         margin-bottom: 0;
     }
+
+
 }

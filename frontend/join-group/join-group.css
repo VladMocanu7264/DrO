@@ -110,6 +110,7 @@
     display: flex;
     align-items: flex-start;
     gap: 16px;
+    width: 100%;
 }
 
 .group-info {
@@ -118,6 +119,7 @@
     align-items: flex-start;
     gap: 12px;
     font-size: 0.85rem;
+    width: 100%;
 }
 
 .group-image {
@@ -136,6 +138,11 @@
     background-color: var(--tertiary);
     padding: 10px;
     border-radius: 0.5rem;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 .join-group-button {
@@ -150,6 +157,34 @@
 
 .join-group-button:hover {
     background-color: var(--tertiary);
+}
+
+#total-pages,
+#current-page {
+    color: white;
+}
+
+#prev-page,
+#next-page {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.75rem;
+}
+
+#prev-page:disabled,
+#next-page:disabled {
+    background-color: var(--secondary);
+    cursor: not-allowed;
+}
+
+.pagination-button {
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    font-size: 13px;
 }
 
 /* --- Responsive: small screens --- */

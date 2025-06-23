@@ -73,7 +73,7 @@
         <div class="search-container">
             <input type="text" id="search-group" placeholder="Caută grupuri..." class="filter-search">
             <i class="fa-solid fa-magnifying-glass search-icon" onclick="handleSearchGroups()"></i>
-
+            <i id="clear-search-icon" class="fa-solid fa-eraser search-icon" onclick="clearGroups()"></i>
         </div>
         <div class="groups-container">
             <div class="empty-group">
@@ -82,6 +82,11 @@
                 </h2>
                 <p>Grupurile tale vor apărea aici.</p>
             </div>
+        </div>
+        <div class="pagination hidden">
+            <button id="prev-page" disabled><i class="fa-solid fa-chevron-left pagination-button"></i></button>
+            <span id="current-page">1</span> / <span id="total-pages">1</span>
+            <button id="next-page" disabled><i class="fa-solid fa-chevron-right pagination-button"></i></button>
         </div>
     </div>
 

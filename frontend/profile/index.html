@@ -80,6 +80,7 @@
                     <button id="users-button" class="action-button">Utilizatori</button>
                     <button id="groups-button" class="action-button">Grupuri</button>
                     <button id="drinks-button" class="action-button">Băuturi</button>
+                    <button id="delete-account-button" class="action-button">Șterge contul</button>
                     <button id="logout-button" class="action-button">Logout</button>
                 </div>
             </div>
@@ -105,19 +106,6 @@
                         pariatur fuga molestiae adipisci illo rerum? Quaerat!
                     </p>
                 </div>
-                <div class="drinks-list">
-                    <div class="drink-list-header">
-                        <h2>Liste publice:</h2>
-                        <select id="drink-list-select">
-                        </select>
-                    </div>
-                    <div class="lists-container">
-                        <div class="drink-card">
-                            <p>Selectează o listă din dropdown.</p>
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div id="overlay" class="overlay hidden"></div>
@@ -127,7 +115,7 @@
                 <div class="modal-content">
                     <h2>Editează Profil</h2>
 
-                    <form id="edit-profile-form">
+                    <div id="edit-profile-form">
                         <div class="form-row">
                             <label for="username">Username</label>
                             <input type="text" id="username" name="username" placeholder="username">
@@ -140,38 +128,55 @@
                         </div>
 
                         <div class="form-row">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="email@example.com">
-                        </div>
-
-                        <div class="form-row form-passwords">
-                            <div class="pw-field">
-                                <label for="password">Parolă nouă</label>
-                                <input type="password" id="password" name="password"
-                                    placeholder="Introduceți parola nouă">
-                            </div>
-                            <div class="pw-field">
-                                <label for="confirm-password">Confirmă parola</label>
-                                <input type="password" id="confirm-password" name="confirm-password"
-                                    placeholder="Confirmați parola">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
                             <label for="profile-image">Imagine profil</label>
                             <input type="file" id="profile-image" name="profile-image" accept="image/*">
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="button">Salvează modificările</button>
+                            <button type="submit" id="edit-main-info-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-main-info-btn" class="button">Anulează</button>
                         </div>
-                    </form>
+
+                        <div class="form-row">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="edit-email-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-email-btn" class="button">Anulează</button>
+                        </div>
+
+                        <div class="form-row form-passwords">
+                            <div class="pw-field">
+                                <label for="old-password">Parola curentă</label>
+                                <input type="password" id="old-password" name="old-password"
+                                    placeholder="Introduceți parola curentă">
+                            </div>
+                            <div class="pw-field">
+                                <label for="password">Parolă nouă</label>
+                                <input type="password" id="password" name="password"
+                                    placeholder="Introduceți parola nouă">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="edit-password-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-password-btn" class="button">Anulează</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="users-modal" class="modal hidden">
                 <button id="close-user-modal" class="close-btn">×</button>
                 <div class="modal-content">
                     <h2>Administrează utilizatorii</h2>
+                    <div class="search-user">
+                        <div class="search-user-input">
+                            <input type="text" id="search-user-admin" placeholder="Caută utilizatori">
+                            <i id="search-user-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i id="clear-user-search-icon" class="fa-solid fa-eraser search-icon"></i>
+                        </div>
+                    </div>
                     <div class="users-table-container">
                         <table id="users-table">
                             <thead>
@@ -191,6 +196,13 @@
                 <button id="close-group-modal" class="close-btn">×</button>
                 <div class="modal-content">
                     <h2>Administrează grupurile</h2>
+                    <div class="search-group">
+                        <div class="search-group-input">
+                            <input type="text" id="search-group-admin" placeholder="Caută grupuri">
+                            <i id="search-group-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i id="clear-group-search-icon" class="fa-solid fa-eraser search-icon"></i>
+                        </div>
+                    </div>
                     <div class="groups-table-container">
                         <table id="groups-table">
                             <thead>
@@ -211,7 +223,7 @@
                     <h2>Administrează băuturile</h2>
                     <div class="search-drink">
                         <div class="search-drink-input">
-                            <input type="text" id="search-drink-admin" placeholder="Introdu numele">
+                            <input type="text" id="search-drink-admin" placeholder="Caută băuturi">
                             <i id="search-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
                             <i id="clear-search-icon" class="fa-solid fa-eraser search-icon"></i>
                         </div>
@@ -220,10 +232,20 @@
                     </div>
                     <div class="add-drink">
                         <h3>Adaugă băutură</h3>
+                        <input type="text" id="drink-id" class="drink-input" placeholder="Id băutură">
                         <input type="text" id="drink-name" class="drink-input" placeholder="Nume băutură">
                         <input type="text" id="drink-type" class="drink-input" placeholder="Categorie băutură">
+                        <input type="text" id="drink-brand" class="drink-input" placeholder="Marcă băutură">
+                        <input type="text" id="drink-nutrition-grade" class="drink-input"
+                            placeholder="Grad nutrițional">
+                        <input type="number" id="drink-quantity" class="drink-input" placeholder="Cantitate (ml)">
+                        <input type="text" id="drink-packaging" class="drink-input" placeholder="Ambalaj">
+                        <input type="text" id="drink-tags" placeholder="Tags (separate prin virgulă)">
                         <input type="file" id="drink-image" class="drink-input" accept="image/*">
-                        <button id="add-drink-button" class="action-button">Adaugă</button>
+                        <div class="drink-actions">
+                            <button id="add-drink-button" class="action-button">Adaugă</button>
+                            <button id="clear-drink-button" class="action-button">Anulează</button>
+                        </div>
                     </div>
                 </div>
             </div>

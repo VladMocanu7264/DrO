@@ -1,139 +1,157 @@
-// const searchInput = document.getElementById("search-group");
-
-// const mockedGroups = [
-//     { id: 1, name: 'Băuturi Carbogazoase', image: '../public/poze/cocacola.png', descriere: 'Băuturile carbogazoase sunt băuturi răcoritoare care conțin dioxid de carbon, oferind o senzație efervescentă și un gust revigorant. Acestea pot fi indulcite sau neindulcite și sunt adesea consumate ca alternative la apa obișnuită sau sucurile naturale.', posts: [1, 2, 3, 4, 5] },
-//     { id: 2, name: 'Băuturi Energetice', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [6, 7] },
-//     { id: 3, name: 'Băuturi cu Ceai', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [9, 10, 11] },
-//     { id: 4, name: 'Băuturi Fără Zahăr', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [12] },
-//     { id: 5, name: 'Băuturi Mixte', image: '../public/poze/cocacola.png', posts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
-//     { id: 6, name: 'Băuturi Răcoritoare', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
-//     { id: 7, name: 'Băuturi cu Aromă de Citric', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [1, 2, 3, 4, 5] },
-//     { id: 8, name: 'Băuturi cu Aromă de Fructe', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [9, 10, 11] },
-//     { id: 9, name: 'Băuturi cu Aromă de Lămâie', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [1, 4] },
-//     { id: 10, name: 'Băuturi cu Aromă de Portocale', image: '../public/poze/cocacola.png', descriere: 'Băuturile energetice sunt băuturi care conțin ingrediente stimulante, cum ar fi cafeina, taurina și vitaminele B, destinate să ofere un impuls de energie și concentrare. Acestea sunt adesea consumate de persoanele active sau care au nevoie de un plus de energie în timpul zilei.', posts: [2] }
-// ];
-
-// function handleSearchGroups() {
-//     const searchValue = searchInput.value.toLowerCase().trim();
-
-//     const filteredGroups = mockedGroups.filter(g => g.name.toLowerCase().includes(searchValue));
-//     generateGroups(filteredGroups)
-// }
-
-// function generateGroups(groups) {
-//     const container = document.querySelector('.groups-container');
-//     container.innerHTML = '';
-//     if (groups.length === 0) {
-//         container.innerHTML = '<div class="empty-group">Nu s-au găsit grupuri pentru căutarea ta.</div>';
-//         return;
-//     }
-//     groups.forEach(group => {
-//         const div = generateGroupContainer(group);
-//         container.appendChild(div);
-//     });
-// }
-
-// function handleJoinGroup(event) {
-//     if (event.target.classList.contains('join-group-button')) {
-//         const groupId = event.target.getAttribute('data-group-id');
-//         alert(`Te-ai alăturat grupului cu ID: ${groupId}`);
-//     }
-// }
-
-// function generateGroupContainer(group) {
-//     const groupDiv = document.createElement('div');
-//     groupDiv.classList.add('group');
-
-//     groupDiv.innerHTML = `
-//       <div class="group-content">
-//         <img src="${group.image}" alt="${group.image}" class="group-image">
-//         <div class="group-info">
-//             <p class="group-title">${group.name}</p>
-//             <p class="group-text">${group.descriere ? group.descriere : 'Grupul nu are o descriere'}</p>
-//             <button class="join-group-button" data-group-id="${group.id}" onclick="handleJoinGroup(event)">Alătură-te</button>
-//         </div>
-//       </div>
-//     `;
-//     return groupDiv;
-
-// }
-
+const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
 const searchInput = document.getElementById("search-group");
-const container = document.querySelector(".groups-container");
 
-const token = localStorage.getItem("token");
-if (!token) {
-  alert("Trebuie să fii autentificat pentru a accesa această pagină.");
-  window.location.href = "/login/";
+let currentPage = 1;
+let totalPages = 1;
+const limit = 5;
+
+let searchValue = "";
+
+async function getAvailableGroups(page = 1, limit = 10, search = "") {
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/available?page=${page}&limit=${limit}&search=${search}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la obținerea grupurilor disponibile");
+        }
+        const data = await response.json();
+        currentPage = page;
+        totalPages = data.totalPages || 0;
+        updatePaginationControls();
+        return data.groups || [];
+    } catch (error) {
+        currentPage = 1;
+        totalPages = 1;
+        updatePaginationControls();
+        alert("Eroare:" + error.message);
+        return [];
+    }
 }
 
-let groupsData = [];
-
-async function fetchGroupsFromAPI(search = "") {
-  try {
-    const res = await fetch(`${window.env.API_BASE_URL}/groups/available?limit=100&search=${encodeURIComponent(search)}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    if (!res.ok) throw new Error("Eroare la încărcarea grupurilor");
-    groupsData = await res.json();
-    generateGroups(groupsData);
-  } catch (err) {
-    console.warn("Fallback la grupuri mock:", err.message);
-    groupsData = mockedGroups;
-    generateGroups(groupsData);
-  }
+async function joinGroup(groupId) {
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/${groupId}/join`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (response.status === 400) {
+            throw new Error("Ești deja în acest grup.");
+        }
+        if (response.status === 404) {
+            throw new Error("Grupul nu a fost găsit.");
+        }
+        if (!response.ok) {
+            throw new Error("Eroare la alăturarea grupului");
+        }
+        alert("Te-ai alăturat grupului cu succes!");
+        await getAvailableGroups(currentPage, limit, searchValue)
+            .then(generateGroups);
+    } catch (error) {
+        alert("Eroare:" + error.message);
+    }
 }
 
-function handleSearchGroups() {
-  const value = searchInput.value.toLowerCase().trim();
-  fetchGroupsFromAPI(value);
+async function handleSearchGroups() {
+    searchValue = searchInput.value.toLowerCase().trim();
+    const fetchedGroups = await getAvailableGroups(1, limit, searchValue);
+    if (!fetchedGroups || fetchedGroups.length === 0) {
+        generateGroups([]);
+        return;
+    }
+    generateGroups(fetchedGroups)
 }
 
 function generateGroups(groups) {
-  container.innerHTML = '';
-  if (groups.length === 0) {
-    container.innerHTML = '<div class="empty-group">Nu s-au găsit grupuri pentru căutarea ta.</div>';
-    return;
-  }
+    const container = document.querySelector('.groups-container');
+    container.innerHTML = '';
+    if (groups.length === 0) {
+        container.innerHTML = '<div class="empty-group">Nu s-au găsit grupuri pentru căutarea ta.</div>';
+        return;
+    }
+    groups.forEach(group => {
+        const div = generateGroupContainer(group);
+        container.appendChild(div);
+    });
+}
 
-  groups.forEach(group => {
-    const div = document.createElement('div');
-    div.classList.add('group');
-    div.innerHTML = `
+function handleJoinGroup(event) {
+    if (event.target.classList.contains('join-group-button')) {
+        const groupId = event.target.getAttribute('data-group-id');
+        joinGroup(groupId);
+    }
+}
+
+function generateGroupContainer(group) {
+    const groupDiv = document.createElement('div');
+    groupDiv.classList.add('group');
+
+    groupDiv.innerHTML = `
       <div class="group-content">
-        <img src="${group.image || '../public/poze/cocacola.png'}" alt="${group.name}" class="group-image">
         <div class="group-info">
-          <p class="group-title">${group.name}</p>
-          <p class="group-text">${group.description || 'Grupul nu are o descriere'}</p>
-          <button class="join-group-button" data-group-id="${group.id}">Alătură-te</button>
+            <p class="group-title">${group.name}</p>
+            <p class="group-text">${group.description ? group.description : 'Grupul nu are o descriere'}</p>
+            <button class="join-group-button" data-group-id="${group.id}" onclick="handleJoinGroup(event)">Alătură-te</button>
         </div>
       </div>
     `;
-    container.appendChild(div);
-  });
+    return groupDiv;
 }
 
-container.addEventListener("click", async (event) => {
-  if (!event.target.classList.contains("join-group-button")) return;
+function updatePaginationControls() {
+    const pagination = document.querySelector('.pagination');
+    if (totalPages >= 1) {
+        pagination.classList.remove('hidden');
+    } else {
+        pagination.classList.add('hidden');
+    }
+    document.getElementById('current-page').textContent = currentPage;
+    document.getElementById('total-pages').textContent = totalPages;
+    document.getElementById('prev-page').disabled = currentPage <= 1;
+    document.getElementById('next-page').disabled = currentPage >= totalPages;
+}
 
-  const groupId = event.target.getAttribute("data-group-id");
-  try {
-    const res = await fetch(`${window.env.API_BASE_URL}/groups/${groupId}/join`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.error || data.message || "Eroare necunoscută");
-    alert(`Te-ai alăturat grupului!`);
-    fetchGroupsFromAPI(searchInput.value.trim());
-  } catch (err) {
-    alert("Eroare la alăturare: " + err.message);
-  }
+document.getElementById('prev-page').addEventListener('click', () => {
+    if (currentPage > 1) {
+        getAvailableGroups(currentPage - 1, limit, searchValue).then(generateGroups);
+    }
+});
+document.getElementById('next-page').addEventListener('click', () => {
+    if (currentPage < totalPages) {
+        getAvailableGroups(currentPage + 1, limit, searchValue).then(generateGroups);
+    }
 });
 
-document.addEventListener("DOMContentLoaded", () => fetchGroupsFromAPI());
+function clearGroups() {
+    searchValue = "";
+    currentPage = 1;
+    totalPages = 1;
+
+    searchInput.value = "";
+
+    const container = document.querySelector('.groups-container');
+    container.innerHTML = "";
+
+    const pagination = document.querySelector('.pagination');
+    pagination.classList.add('hidden');
+
+    container.innerHTML = `
+                <div class="empty-group">
+                <h2>
+                    Caută grupuri
+                </h2>
+                <p>Grupurile tale vor apărea aici.</p>
+            </div>
+  `;
+}
+
+

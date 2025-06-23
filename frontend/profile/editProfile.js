@@ -1,30 +1,149 @@
-// const openBtn = document.getElementById('edit-profile-button');
-// const closeBtn = document.getElementById('close-modal');
-// const modal = document.getElementById('edit-modal');
-// const overlay = document.getElementById('overlay');
-
-// openBtn.addEventListener('click', () => {
-//     modal.classList.remove('hidden');
-//     overlay.classList.remove('hidden');
-// });
-
-// closeBtn.addEventListener('click', () => {
-//     modal.classList.add('hidden');
-//     overlay.classList.add('hidden');
-// });
-
-// overlay.addEventListener('click', () => {
-//     modal.classList.add('hidden');
-//     overlay.classList.add('hidden');
-// });
-
-const API_BASE_URL = window.env.API_BASE_URL;
-const token = localStorage.getItem("token");
-
 const openBtn = document.getElementById('edit-profile-button');
 const closeBtn = document.getElementById('close-modal');
 const modal = document.getElementById('edit-modal');
 const overlay = document.getElementById('overlay');
+const deleteAccountBtn = document.getElementById('delete-account-button');
+const logoutBtn = document.getElementById('logout-button');
+const mainInfoBtn = document.getElementById('edit-main-info-btn');
+const clearMainInfoBtn = document.getElementById('clear-main-info-btn');
+const emailBtn = document.getElementById('edit-email-btn');
+const clearEmailBtn = document.getElementById('clear-email-btn');
+const passwordBtn = document.getElementById('edit-password-btn');
+const clearPasswordBtn = document.getElementById('clear-password-btn');
+
+const passwordInput = document.getElementById('password');
+const oldPasswordInput = document.getElementById('old-password');
+
+async function deleteAccount() {
+    if (confirm('Sigur doriți să ștergeți contul? Această acțiune nu poate fi anulată.')) {
+        const token = checkAuth();
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/me`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error("Eroare la ștergerea contului");
+            }
+            alert("Cont șters cu success!");
+            localStorage.removeItem('token');
+            window.location.href = '../login/index.html';
+        } catch (error) {
+            alert("Eroare:", error);
+        }
+    }
+}
+
+async function logout() {
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la deconectare");
+        }
+        localStorage.removeItem('token');
+        window.location.href = '../login/index.html';
+    } catch (error) {
+        alert("Eroare:", error);
+    }
+}
+
+async function editMainInfo() {
+    const usernameValue = document.getElementById('username').value.trim();
+    const descriptionValue = document.getElementById('description').value.trim();
+
+    const imageInput = document.getElementById('profile-image');
+    const imageFile = imageInput.files[0];
+
+    const formData = new FormData();
+    formData.append('username', usernameValue);
+    formData.append('description', descriptionValue);
+
+    if (imageFile) {
+        formData.append('profile_image', imageFile);
+    }
+
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/me`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Eroare la actualizarea profilului`);
+        }
+        alert('Profil actualizat cu succes!');
+        clearMainInfoForm();
+    } catch (err) {
+        alert(`Eroare: ${err.message}`);
+    }
+}
+
+async function editEmail() {
+    const emailValue = document.getElementById('email').value.trim();
+    if (!emailValue || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        alert('Vă rugăm să introduceți o adresă de email validă.');
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/me/email`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ email: emailValue })
+        });
+        if (!response.ok) {
+            throw new Error(`Actualizarea email-ului a eșuat`);
+        }
+        alert('Email actualizat cu succes!');
+        clearEmailForm();
+    } catch (err) {
+        alert(`Eroare la trimiterea datelor: ${err.message}`);
+    }
+}
+async function editPassword() {
+    const passwordValue = passwordInput.value.trim();
+    const oldPasswordValue = oldPasswordInput.value.trim();
+    if (!passwordValue || !oldPasswordValue) {
+        alert('Vă rugăm să introduceți o parolă validă.');
+        return;
+    }
+
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/me/password`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ oldPassword: oldPasswordValue, newPassord: passwordValue })
+        });
+        if (!response.ok) {
+            throw new Error(`Actualizarea parolei a eșuat`);
+        }
+        alert('Parolă actualizată cu succes!');
+        clearPasswordForm();
+    } catch (err) {
+        alert(`Eroare la trimiterea datelor: ${err.message}`);
+    }
+}
 
 openBtn.addEventListener('click', () => {
     modal.classList.remove('hidden');
@@ -34,109 +153,43 @@ openBtn.addEventListener('click', () => {
 closeBtn.addEventListener('click', () => {
     modal.classList.add('hidden');
     overlay.classList.add('hidden');
+    clearAllForms();
 });
 
 overlay.addEventListener('click', () => {
     modal.classList.add('hidden');
     overlay.classList.add('hidden');
+    clearAllForms();
 });
 
-// Actualizare profil (username, descriere, imagine)
-document.getElementById("update-profile-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const username = document.getElementById("new-username").value.trim();
-    const description = document.getElementById("description").value.trim();
-    const imagePath = document.getElementById("image-url").value.trim();
+const clearMainInfoForm = () => {
+    document.getElementById('username').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('profile-image').value = '';
+}
 
-    if (!username && !description && !imagePath) {
-        alert("Introduceți cel puțin un câmp pentru actualizare!");
-        return;
-    }
+const clearEmailForm = () => {
+    document.getElementById('email').value = '';
+}
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ username, description, image_path: imagePath }),
-        });
+const clearPasswordForm = () => {
+    passwordInput.value = '';
+    oldPasswordInput.value = '';
+}
 
-        const data = await response.json();
+const clearAllForms = () => {
+    clearMainInfoForm();
+    clearEmailForm();
+    clearPasswordForm();
+}
 
-        if (!response.ok) throw new Error(data.message || "Eroare necunoscută");
 
-        alert("Profil actualizat cu succes!");
-        location.reload();
-    } catch (error) {
-        alert("Eroare actualizare profil: " + error.message);
-    }
-});
-
-// Actualizare email
-document.getElementById("update-email-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const newEmail = document.getElementById("new-email").value.trim();
-
-    if (!newEmail) {
-        alert("Introduceți o adresă de email nouă!");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/users/me/email`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ email: newEmail }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) throw new Error(data.message || "Eroare necunoscută");
-
-        alert("Email actualizat cu succes!");
-        location.reload();
-    } catch (error) {
-        alert("Eroare actualizare email: " + error.message);
-    }
-});
-
-// Schimbare parolă
-document.getElementById("update-password-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const oldPassword = document.getElementById("old-password").value.trim();
-    const newPassword = document.getElementById("new-password").value.trim();
-
-    if (!oldPassword || !newPassword) {
-        alert("Completați ambele câmpuri pentru parolă!");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/users/me/password`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ oldPassword, newPassword }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) throw new Error(data.message || "Eroare necunoscută");
-
-        alert("Parolă schimbată cu succes!");
-        document.getElementById("old-password").value = "";
-        document.getElementById("new-password").value = "";
-    } catch (error) {
-        alert("Eroare schimbare parolă: " + error.message);
-    }
-});
+deleteAccountBtn.addEventListener('click', deleteAccount);
+logoutBtn.addEventListener('click', logout);
+mainInfoBtn.addEventListener('click', editMainInfo);
+clearMainInfoBtn.addEventListener('click', clearMainInfoForm);
+emailBtn.addEventListener('click', editEmail);
+clearEmailBtn.addEventListener('click', clearEmailForm);
+passwordBtn.addEventListener('click', editPassword);
+clearPasswordBtn.addEventListener('click', clearPasswordForm);

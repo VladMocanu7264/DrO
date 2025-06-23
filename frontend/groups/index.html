@@ -73,9 +73,6 @@
         <aside class="sidebar">
             <h2 id="filter-title">Grupuri</h2>
             <form class="filter-form">
-                <!-- <div class="filter-search">
-                    <input type="search" id="search-group" placeholder="Caută grupuri..." />
-                </div> -->
                 <div class="groups-list">
                 </div>
             </form>
@@ -88,25 +85,21 @@
             </div>
         </aside>
         <div class="cards-section">
-            <!-- <div class="sort-section">
-                <label for="sort-select" class="sort-label">Sortare:</label>
-                <select id="sort-select" class="sort-select">
-                    <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
-                    <option value="name-desc">Nume (Z → A)</option>
-                    <option value="category-asc">Categorie (A → Z)</option>
-                    <option value="category-desc">Categorie (Z → A)</option>
-                </select>
-            </div> -->
             <div class="posts-container">
                 <div class="empty-post">
                     <h2>Selectează un grup pentru a vedea detalii</h2>
                     <p>Grupurile tale vor apărea aici.</p>
                 </div>
             </div>
+            <div class="pagination hidden">
+                <button id="prev-page" disabled><i class="fa-solid fa-chevron-left pagination-button"></i></button>
+                <span id="current-page">1</span> / <span id="total-pages">1</span>
+                <button id="next-page" disabled><i class="fa-solid fa-chevron-right pagination-button"></i></button>
+            </div>
         </div>
-
         <script src="../public/js/main.js"></script>
         <script src="groups.js"></script>
+    </div>
 </body>
 
 </html>

@@ -1,64 +1,77 @@
-// const openUsersBtn = document.getElementById('users-button');
-// const closeUsersBtn = document.getElementById('close-user-modal');
-// const usersModal = document.getElementById('users-modal');
-// const usersOverlay = document.getElementById('overlay');
-// const userList = document.getElementById('users-list');
+const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
 
-// const users = [
-//     { id: 1, name: 'Alice', email: 'alice@yahoo.com', role: 'Admin' },
-//     { id: 2, name: 'Bob', email: 'bob@yahoo.com', role: 'User' },
-//     { id: 3, name: 'Charlie', email: 'charlie@yahoo.com', role: 'User' },
-//     { id: 4, name: 'David', email: 'david@yahoo.com', role: 'User' },
-//     { id: 1, name: 'Alice', email: 'alice@yahoo.com', role: 'Admin' },
-//     { id: 2, name: 'Bob', email: 'bob@yahoo.com', role: 'User' },
-//     { id: 3, name: 'Charlie', email: 'charlie@yahoo.com', role: 'User' },
-//     { id: 4, name: 'David', email: 'david@yahoo.com', role: 'User' },
-// ]
+async function deleteUser(userId) {
+    if (!userId) {
+        alert("ID-ul utilizatorului lipsește.");
+        return false;
+    }
 
-// openUsersBtn.addEventListener('click', () => {
-//     usersModal.classList.remove('hidden');
-//     usersOverlay.classList.remove('hidden');
-// });
+    const token = checkAuth();
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/admin/users/${userId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+        if (!response.ok) {
+            alert("Eroare la ștergerea utilizatorului");
+            return false;
+        }
+        alert("Utilizator șters cu succes!");
+        return true;
+    } catch (error) {
+        alert(`Eroare de rețea: ${error}`);
+        return false;
+    }
+}
 
-// closeUsersBtn.addEventListener('click', () => {
-//     usersModal.classList.add('hidden');
-//     usersOverlay.classList.add('hidden');
-// });
 
-// overlay.addEventListener('click', () => {
-//     usersModal.classList.add('hidden');
-//     usersOverlay.classList.add('hidden');
-// });
-
-
-// function loadUsers() {
-//     userList.innerHTML = '';
-//     users.forEach((user) => {
-//         userRow = document.createElement('tr');
-//         userRow.innerHTML = `
-//             <td>${user.name}</td>
-//             <td>${user.email}</td>
-//             <td>
-//                 <button class="delete-user-button">Șterge</button>
-//             </td>
-//         `
-//         userList.appendChild(userRow);
-//     })
-// }
-
-// document.addEventListener('DOMContentLoaded', loadUsers);
-
-const API_BASE_URL = window.env.API_BASE_URL;
-const token = localStorage.getItem("token");
+async function getUserByName(name) {
+    if (!name) {
+        alert("Numele utilizatorului lipsește.");
+        return [];
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/admin/users?search=${name}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+        if (!response.ok) {
+            alert("Eroare la căutarea utilizatorului");
+            return [];
+        }
+        const users = await response.json();
+        if (users.length === 0) {
+            alert("Nu s-au găsit utilizatori cu acest nume.");
+        }
+        return users;
+    } catch (error) {
+        alert(`Eroare de rețea: ${error}`);
+        return [];
+    }
+}
 
 const openUsersBtn = document.getElementById('users-button');
 const closeUsersBtn = document.getElementById('close-user-modal');
 const usersModal = document.getElementById('users-modal');
 const usersOverlay = document.getElementById('overlay');
 const userList = document.getElementById('users-list');
-const searchInput = document.getElementById('admin-user-search');
+const searchUserInput = document.getElementById("search-user-admin");
+const searchUserButton = document.getElementById('search-user-icon');
+const clearUserSearchButton = document.getElementById('clear-user-search-icon');
 
-let fetchedUsers = [];
 
 openUsersBtn.addEventListener('click', () => {
     usersModal.classList.remove('hidden');
@@ -68,70 +81,69 @@ openUsersBtn.addEventListener('click', () => {
 closeUsersBtn.addEventListener('click', () => {
     usersModal.classList.add('hidden');
     usersOverlay.classList.add('hidden');
+    clearUserSearch();
 });
 
-usersOverlay.addEventListener('click', () => {
+overlay.addEventListener('click', () => {
     usersModal.classList.add('hidden');
     usersOverlay.classList.add('hidden');
+    clearUserSearch();
 });
 
-function renderUsers(users) {
+
+function loadUsers(arrayOfUsers) {
     userList.innerHTML = '';
-    users.forEach((user) => {
+
+    arrayOfUsers.forEach((user) => {
         const userRow = document.createElement('tr');
         userRow.innerHTML = `
-            <td>${user.username}</td>
-            <td>${user.email}</td>
-            <td class="table-actions">
-                <button class="delete-user-button" data-user-id="${user.id}">Șterge</button>
-            </td>
-        `;
-        userList.appendChild(userRow);
-    });
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td>
+        <button 
+          class="delete-user-button"
+          data-user-id="${user.id}"
+        >
+          Șterge
+        </button>
+      </td>
+    `;
+        const deleteUserBtn = userRow.querySelector('.delete-user-button');
+        deleteUserBtn.addEventListener('click', async () => {
+            const id = deleteUserBtn.getAttribute('data-user-id');
 
-    document.querySelectorAll(".delete-user-button").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const userId = e.target.dataset.userId;
-            if (!confirm("Sigur vrei să ștergi acest utilizator?")) return;
-
-            try {
-                const res = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || "Eroare ștergere");
-
-                fetchedUsers = fetchedUsers.filter(u => u.id !== userId);
-                renderUsers(fetchedUsers);
-            } catch (err) {
-                alert("Eroare la ștergere: " + err.message);
+            const wasDeleted = await deleteUser(id);
+            if (wasDeleted) {
+                userRow.remove();
             }
         });
+
+        userList.appendChild(userRow);
     });
 }
 
-async function loadUsers(query = "") {
-    try {
-        const res = await fetch(`${API_BASE_URL}/admin/users?search=${encodeURIComponent(query)}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Eșec la încărcarea utilizatorilor");
+const searchUserByName = async () => {
+    const query = searchUserInput.value.trim();
 
-        fetchedUsers = await res.json();
-        renderUsers(fetchedUsers);
-    } catch (err) {
-        alert("Eroare la încărcarea utilizatorilor: " + err.message);
+    if (query === "") {
+        userListContainer.innerHTML = "";
+        userListContainer.classList.add('hidden');
+        return;
+    }
+    const filteredUsers = await getUserByName(query);
+
+    if (filteredUsers.length === 0) {
+        userListContainer.innerHTML = "";
+        userListContainer.classList.add('hidden');
+    } else {
+        loadUsers(filteredUsers);
     }
 }
 
-searchInput?.addEventListener("input", (e) => {
-    const searchTerm = e.target.value;
-    loadUsers(searchTerm);
-});
+function clearUserSearch() {
+    searchUserInput.value = "";
+    userList.innerHTML = "";
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadUsers();
-});
+clearUserSearchButton.addEventListener('click', clearUserSearch);
+searchUserButton.addEventListener('click', searchUserByName);

@@ -1,231 +1,233 @@
-// const openDrinksBtn = document.getElementById('drinks-button');
-// const closeDrinksBtn = document.getElementById('close-drink-modal');
-// const drinksModal = document.getElementById('drinks-modal');
-// const drinksOverlay = document.getElementById('overlay');
-// const searchInput = document.getElementById("search-drink-admin");
-// const listsContainer = document.getElementById('admin-drink-list');
-// const searchButton = document.getElementById('search-icon');
-// const clearSearchButton = document.getElementById('clear-search-icon');
-
-// const mockedDrinks = [
-//     { id: 1, name: "Coca-Cola", category: "soda", image: "../public/poze/cocacola.png" },
-//     { id: 2, name: "Pepsi", category: "soda", image: "../public/poze/pepsi.png" },
-//     { id: 3, name: "Fanta", category: "soda", image: "../public/poze/fanta.png" },
-//     { id: 4, name: "Sprite", category: "soda", image: "../public/poze/sprite.png" },
-//     { id: 5, name: "Mountain Dew", category: "soda", image: "../public/poze/smoothie.png" },
-//     { id: 6, name: "Dr Pepper", category: "soda", image: "../public/poze/drpepper.png" },
-//     { id: 7, name: "7UP", category: "soda", image: "../public/poze/7up.png" },
-//     { id: 8, name: "Schweppes", category: "soda", image: "../public/poze/smoothie.png" },
-//     { id: 9, name: "Red Bull", category: "energy", image: "../public/poze/redbull.png" },
-//     { id: 10, name: "Monster", category: "energy", image: "../public/poze/smoothie.png" },
-//     { id: 11, name: "Rockstar", category: "energy", image: "../public/poze/rockstar.png" },
-//     { id: 12, name: "NOS", category: "energy", image: "../public/poze/smoothie.png" }
-// ];
-
-// openDrinksBtn.addEventListener('click', () => {
-//     drinksModal.classList.remove('hidden');
-//     drinksOverlay.classList.remove('hidden');
-// });
-
-// closeDrinksBtn.addEventListener('click', () => {
-//     drinksModal.classList.add('hidden');
-//     drinksOverlay.classList.add('hidden');
-// });
-
-// overlay.addEventListener('click', () => {
-//     drinksModal.classList.add('hidden');
-//     drinksOverlay.classList.add('hidden');
-// });
-
-
-// searchButton.addEventListener('click', () => {
-//     const query = searchInput.value.trim().toLowerCase();
-
-//     if (query === "") {
-//         listsContainer.innerHTML = "";
-//         listsContainer.classList.add('hidden');
-//         return;
-//     }
-
-//     const filtered = mockedDrinks.filter(drink =>
-//         drink.name.toLowerCase().includes(query)
-//     );
-
-//     if (filtered.length === 0) {
-//         listsContainer.innerHTML = "";
-//         listsContainer.classList.add('hidden');
-//     } else {
-//         renderDrinks(filtered);
-//     }
-// });
-
-// // 5. Afișează card-urile și ascunde chenar mov
-// function renderDrinks(arrayOfDrinks) {
-//     listsContainer.innerHTML = "";
-//     listsContainer.classList.remove('hidden');
-
-//     arrayOfDrinks.forEach(drink => {
-//         const card = document.createElement('div');
-//         card.classList.add('admin-drink-card');
-//         card.innerHTML = `
-//         <div class="admin-drink-card-header">
-//             <p>${drink.name}</p>
-//             <i class="fa-solid fa-trash"></i>
-//         </div>
-//         <p>${capitalizeFirstLetter(drink.category)}</p>
-//         <img src="${drink.image}" alt="${drink.name} Image">
-//     `;
-//         listsContainer.appendChild(card);
-//     });
-// }
-
-// function capitalizeFirstLetter(str) {
-//     return str.charAt(0).toUpperCase() + str.slice(1);
-// }
-
-// function clearSearch() {
-//     searchInput.value = "";
-//     listsContainer.innerHTML = "";
-//     listsContainer.classList.add('hidden');
-// }
-
-// clearSearchButton.addEventListener('click', clearSearch);
-
-const API_BASE_URL = window.env.API_BASE_URL;
-const token = localStorage.getItem("token");
-
 const openDrinksBtn = document.getElementById('drinks-button');
 const closeDrinksBtn = document.getElementById('close-drink-modal');
 const drinksModal = document.getElementById('drinks-modal');
 const drinksOverlay = document.getElementById('overlay');
-const drinksList = document.getElementById('drinks-list');
-const searchInput = document.getElementById('search-drink-admin');
+const searchInput = document.getElementById("search-drink-admin");
+const listsContainer = document.getElementById('admin-drink-list');
+const searchButton = document.getElementById('search-icon');
+const clearSearchButton = document.getElementById('clear-search-icon');
 
-const addDrinkForm = document.getElementById("add-drink-form");
+async function getDrinkByQuery(query) {
+    if (!query) {
+        alert("Căutarea nu poate fi goală.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/drinks?search=${query}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la căutarea băuturii");
+        }
+        const drinks = await response.json();
+        console.log(drinks);
+        if (drinks.length === 0) {
+            alert("Nu s-au găsit băuturi care să corespundă căutării.");
+            return;
+        }
+        return drinks;
+    } catch (error) {
+        alert(`Eroare: ${error.message}`);
+        return [];
+    }
+}
 
-// Deschide/închide modal
+async function postDrink(drinkData) {
+    if (!drinkData || !drinkData.name || !drinkData.category) {
+        alert("Datele băuturii sunt incomplete.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/drinks`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(drinkData)
+        });
+        if (!response.status === 201) {
+            throw new Error("Eroare la adăugarea băuturii");
+        }
+        alert("Băutură adăugată cu succes!");
+        return true;
+    } catch (error) {
+        alert(`Eroare: ${error.message}`);
+        return false;
+    }
+}
+
+async function deleteDrink(drinkId) {
+    if (!drinkId) {
+        alert("ID-ul băuturii lipsește.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin/drinks/${drinkId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la ștergerea băuturii");
+        }
+        alert("Băutură ștearsă cu succes!");
+        return true;
+    } catch (error) {
+        alert(`Eroare: ${error.message}`);
+        return false;
+    }
+}
+
+
 openDrinksBtn.addEventListener('click', () => {
-  drinksModal.classList.remove('hidden');
-  drinksOverlay.classList.remove('hidden');
+    drinksModal.classList.remove('hidden');
+    drinksOverlay.classList.remove('hidden');
 });
 
 closeDrinksBtn.addEventListener('click', () => {
-  drinksModal.classList.add('hidden');
-  drinksOverlay.classList.add('hidden');
+    drinksModal.classList.add('hidden');
+    drinksOverlay.classList.add('hidden');
+    clearDrinkSearch();
+    clearDrinkForm();
 });
 
-drinksOverlay.addEventListener('click', () => {
-  drinksModal.classList.add('hidden');
-  drinksOverlay.classList.add('hidden');
+overlay.addEventListener('click', () => {
+    drinksModal.classList.add('hidden');
+    drinksOverlay.classList.add('hidden');
+    clearDrinkSearch();
+    clearDrinkForm();
 });
 
-// Caută băuturi
-async function fetchDrinks(search = "") {
-  try {
-    const res = await fetch(`${API_BASE_URL}/admin/drinks?search=${encodeURIComponent(search)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Eroare la fetch drinks");
-    return await res.json();
-  } catch (err) {
-    console.error("Eroare API:", err);
-    return [];
-  }
+async function searchDrinkByName() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    if (query === "") {
+        listsContainer.innerHTML = "";
+        listsContainer.classList.add('hidden');
+        return;
+    }
+
+    const filtered = await getDrinkByQuery(query);
+
+    if (filtered.length === 0) {
+        listsContainer.innerHTML = "";
+        listsContainer.classList.add('hidden');
+    } else {
+        renderDrinks(filtered);
+    }
 }
 
-// Șterge băutură
-async function deleteDrink(id) {
-  if (!confirm("Sigur doriți să ștergeți această băutură?")) return;
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/admin/drinks/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+function renderDrinks(arrayOfDrinks) {
+    listsContainer.innerHTML = "";
+    listsContainer.classList.remove('hidden');
 
-    if (!res.ok) throw new Error("Eroare la ștergere");
+    arrayOfDrinks.forEach(drink => {
+        const card = document.createElement('div');
+        card.classList.add('admin-drink-card');
 
-    alert("Băutură ștearsă!");
-    loadDrinks(searchInput.value);
-  } catch (err) {
-    console.error("Eroare ștergere:", err);
-    alert("Eroare la ștergere băutură.");
-  }
-}
-
-// Încarcă băuturi
-async function loadDrinks(search = "") {
-  const drinks = await fetchDrinks(search);
-  drinksList.innerHTML = "";
-
-  drinks.forEach((drink) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td data-label="Nume">${drink.name}</td>
-      <td data-label="Brand">${drink.brand}</td>
-      <td data-label="Acțiuni">
-        <div class="table-actions">
-          <button class="delete-user-button" data-id="${drink.id}">Șterge</button>
-        </div>
-      </td>
+        card.innerHTML = `
+      <div class="admin-drink-card-header">
+        <p>${drink.name}</p>
+        <!-- one class attribute, and correct data- attribute -->
+        <i 
+          class="fa-solid fa-trash trash-icon delete-drink-button" 
+          data-drink-id="${drink.id}"
+          title="Șterge băutura"
+        ></i>
+      </div>
+      <p>${capitalizeFirstLetter(drink.brand)}</p>
+      <!-- fix the quotes and alt text -->
+      <img src="../public/poze/cocacola.png" alt="${drink.name} Image">
     `;
-    drinksList.appendChild(row);
-  });
 
-  document.querySelectorAll(".delete-user-button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      deleteDrink(id);
+        const deleteDrinkBtn = card.querySelector('.delete-drink-button');
+        deleteDrinkBtn.addEventListener('click', async () => {
+            const id = deleteDrinkBtn.getAttribute('data-drink-id');
+            const wasDeleted = await deleteDrink(id);
+            if (wasDeleted) {
+                card.remove();
+            }
+        });
+
+        listsContainer.appendChild(card);
     });
-  });
 }
 
-// Adaugă băutură nouă
-addDrinkForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
 
-  const formData = new FormData(addDrinkForm);
-  const tagsRaw = formData.get("tags") || "";
-  const payload = {
-    id: formData.get("id"),
-    name: formData.get("name"),
-    brand: formData.get("brand"),
-    image_url: formData.get("image_url"),
-    nutrition_grade: formData.get("nutrition_grade"),
-    quantity: parseInt(formData.get("quantity")),
-    packaging: formData.get("packaging"),
-    tags: tagsRaw.split(",").map(t => t.trim()).filter(Boolean)
-  };
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/admin/drinks`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+function clearDrinkSearch() {
+    searchInput.value = "";
+    listsContainer.innerHTML = "";
+    listsContainer.classList.add('hidden');
+}
 
-    const data = await res.json();
 
-    if (!res.ok) throw new Error(data.message || "Eroare la adăugare");
+const addDrink = async () => {
+    const name = document.getElementById("drink-name").value.trim();
+    const category = document.getElementById("drink-type").value.trim();
+    const brand = document.getElementById("drink-brand").value.trim();
+    const nutrition_grade = document.getElementById("drink-nutrition-grade")
+        .value.trim();
+    const quantity = document.getElementById("drink-quantity").value.trim();
+    const packaging = document.getElementById("drink-packaging").value.trim();
 
-    alert("Băutura a fost adăugată!");
-    addDrinkForm.reset();
-    loadDrinks(); // Reîncarcă lista
-  } catch (err) {
-    console.error("Eroare adăugare:", err);
-    alert("Eroare la adăugare băutură.");
-  }
-});
+    const rawTags = document.getElementById("drink-tags").value;
+    const tags = rawTags
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag);
 
-// Caută în timp real
-searchInput?.addEventListener("input", () => {
-  loadDrinks(searchInput.value);
-});
+    const fileInput = document.getElementById("drink-image");
+    const file = fileInput.files[0];
+    if (!file) {
+        alert("Trebuie să selectezi o imagine.");
+        return;
+    }
+    const image_url = URL.createObjectURL(file);
 
-// Init
-document.addEventListener("DOMContentLoaded", () => {
-  loadDrinks();
-});
+    const drinkData = {
+        name,
+        category,
+        brand,
+        nutrition_grade,
+        quantity,
+        packaging,
+        image_url,
+        tags
+    };
+    const wasAdded = await postDrink(drinkData);
+    if (!wasAdded) {
+        return;
+    }
+    clearDrinkForm();
+};
+
+const clearDrinkForm = () => {
+    document.getElementById("drink-name").value = "";
+    document.getElementById("drink-type").value = "";
+    document.getElementById("drink-brand").value = "";
+    document.getElementById("drink-nutrition-grade").value = "";
+    document.getElementById("drink-quantity").value = "";
+    document.getElementById("drink-packaging").value = "";
+    document.getElementById("drink-tags").value = "";
+    document.getElementById("drink-image").value = "";
+}
+
+document.getElementById("add-drink-button").addEventListener("click", addDrink);
+document.getElementById("clear-drink-button").addEventListener("click", clearDrinkForm);
+clearSearchButton.addEventListener('click', clearDrinkSearch);
+searchButton.addEventListener('click', searchDrinkByName);
