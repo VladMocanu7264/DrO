@@ -10,9 +10,13 @@ let currentPage = 1;
 let isLoading = false;
 let hasMorePages = true;
 let selectedTags = [];
+let selectedNutritionGrades = [];
 let searchTerm = "";
 let selectedSort = "";
 let drinksData = [];
+let minQuantity = 0;
+let maxQuantity = 1000;
+let maxQuantityAvailable = 1000;
 
 const cardsContainer = document.querySelector(".cards-container");
 const modalsContainer = document.getElementById("text-box-container");
@@ -21,6 +25,10 @@ const body = document.body;
 const categoryList = document.querySelector(".filter-list");
 const sortSelect = document.getElementById("sort-select");
 const searchInput = document.getElementById("search-drink");
+const nutritionList = document.getElementById("nutrition-list");
+const quantityMinSlider = document.getElementById("quantity-slider-min");
+const quantityMaxSlider = document.getElementById("quantity-slider-max");
+const quantityRangeText = document.getElementById("quantity-range-text");
 
 async function fetchFilters() {
   try {
@@ -30,6 +38,8 @@ async function fetchFilters() {
 
     populateSortOptions(data.sortOptions);
     populateTags(data.tags);
+    populateNutritionGrades(data.nutrition_grades);
+    setupQuantitySliders(data.quantity);
   } catch (err) {
     console.error("Eroare filtre:", err.message);
   }
@@ -45,7 +55,7 @@ function populateSortOptions(options) {
   });
   sortSelect.addEventListener("change", () => {
     selectedSort = sortSelect.value;
-    resetAndLoad();
+
   });
 }
 
@@ -64,14 +74,71 @@ function populateTags(tags) {
   categoryList.querySelectorAll("input[type='checkbox']").forEach(cb => {
     cb.addEventListener("change", () => {
       selectedTags = Array.from(categoryList.querySelectorAll("input:checked")).map(cb => cb.value);
-      resetAndLoad();
+  
     });
   });
 }
 
+function populateNutritionGrades(grades) {
+  nutritionList.innerHTML = "";
+  grades.forEach(g => {
+    const container = document.createElement("div");
+    container.classList.add("filter-item");
+    container.innerHTML = `
+      <input type="checkbox" id="grade-${g}" value="${g}" />
+      <label for="grade-${g}">${g.toUpperCase()}</label>
+    `;
+    nutritionList.appendChild(container);
+  });
+  nutritionList.querySelectorAll("input[type='checkbox']").forEach(cb => {
+    cb.addEventListener("change", () => {
+      selectedNutritionGrades = Array.from(nutritionList.querySelectorAll("input:checked")).map(cb => cb.value);
+  
+    });
+  });
+}
+
+function setupQuantitySliders(range) {
+  minQuantity = range.min_quantity;
+  maxQuantityAvailable = range.max_quantity;
+  maxQuantity = range.max_quantity;
+
+  quantityMinSlider.min = minQuantity;
+  quantityMinSlider.max = maxQuantityAvailable;
+  quantityMinSlider.value = minQuantity;
+
+  quantityMaxSlider.min = minQuantity;
+  quantityMaxSlider.max = maxQuantityAvailable;
+  quantityMaxSlider.value = maxQuantity;
+
+  updateQuantityText();
+
+  quantityMinSlider.addEventListener("input", () => {
+    if (parseInt(quantityMinSlider.value) > parseInt(quantityMaxSlider.value)) {
+      quantityMinSlider.value = quantityMaxSlider.value;
+    }
+    minQuantity = parseInt(quantityMinSlider.value);
+    updateQuantityText();
+
+  });
+
+  quantityMaxSlider.addEventListener("input", () => {
+    if (parseInt(quantityMaxSlider.value) < parseInt(quantityMinSlider.value)) {
+      quantityMaxSlider.value = quantityMinSlider.value;
+    }
+    maxQuantity = parseInt(quantityMaxSlider.value);
+    updateQuantityText();
+
+  });
+}
+
+function updateQuantityText() {
+  quantityRangeText.textContent = `Interval: ${minQuantity} - ${maxQuantity} ml`;
+}
+
 searchInput.addEventListener("input", () => {
   searchTerm = searchInput.value.trim().toLowerCase();
-  render();
+  resetAndLoad();
 });
 
 async function fetchDrinks(page = 1) {
@@ -81,6 +148,12 @@ async function fetchDrinks(page = 1) {
     params.set("limit", 12);
     if (selectedSort) params.set("sort", selectedSort);
     if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
+    if (selectedNutritionGrades.length > 0) params.set("nutrition_grades", selectedNutritionGrades.join(","));
+    if (searchTerm) params.set("search", searchTerm);
+    if (maxQuantity) {
+      params.set("min_quantity", minQuantity);
+      params.set("max_quantity", maxQuantity);
+    }
 
     const res = await fetch(`${API_BASE_URL}/drinks/feed?${params.toString()}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -187,6 +260,7 @@ async function resetAndLoad() {
   hasMorePages = true;
   cardsContainer.innerHTML = "";
   await loadNextPage();
+
 }
 
 async function loadNextPage() {
@@ -217,4 +291,12 @@ function handleNavigateToRanking() {
 document.addEventListener("DOMContentLoaded", async () => {
   await fetchFilters();
   await loadNextPage();
+
+const applyFiltersBtn = document.getElementById("apply-filters-btn");
+if (applyFiltersBtn) {
+  applyFiltersBtn.addEventListener("click", () => {
+    resetAndLoad();
+  });
+}
+
 });
