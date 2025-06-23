@@ -1,5 +1,6 @@
-const { Drink, Tag, DrinkTag } = require('../database');
-const { isRelevantTag } = require('../helpers');
+const { Drink, Tag, DrinkTag, Favorite } = require('../database');
+const { isRelevantTag, withAuth} = require('../helpers');
+const { Op } = require('sequelize');
 
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
@@ -80,7 +81,127 @@ async function handleGetFilters(req, res) {
     }
 }
 
+
+function matchGetFeed(req) {
+    return req.pathname === '/drinks/feed' && req.method === 'GET';
+}
+
+async function handleGetFeed(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+        const sort = req.query.sort || 'name';
+        const tagFilter = req.query.tags ? req.query.tags.split(',') : null;
+
+        const allowedSorts = ['name', 'brand', 'nutrition_grade'];
+        const order = allowedSorts.includes(sort) ? [[sort, 'ASC']] : [['name', 'ASC']];
+
+        const include = [];
+        if (tagFilter) {
+            include.push({
+                model: DrinkTag,
+                include: {
+                    model: Tag,
+                    where: {
+                        [Op.or]: [
+                            { name: { [Op.in]: tagFilter } },
+                            { id: { [Op.in]: tagFilter.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
+                        ]
+                    },
+                    required: true
+                }
+            });
+        }
+
+        const drinks = await Drink.findAll({
+            include,
+            limit,
+            offset,
+            order
+        });
+
+        const result = drinks.map(drink => ({
+            id: drink.id,
+            name: drink.name,
+            brand: drink.brand,
+            image_url: drink.image_url,
+            nutrition_grade: drink.nutrition_grade,
+            quantity: drink.quantity,
+            packaging: drink.packaging
+        }));
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+    } catch (err) {
+        if (LOG_ENABLED) console.error('Feed error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
+function matchPostFavorite(req) {
+    return req.pathname === '/favorites' && req.method === 'POST';
+}
+
+async function handlePostFavorite(req, res) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+        try {
+            const { drinkId } = JSON.parse(body);
+            if (!drinkId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ error: 'Missing drinkId' }));
+            }
+
+            const drink = await Drink.findByPk(drinkId);
+            if (!drink) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ error: 'Drink not found' }));
+            }
+
+            await Favorite.findOrCreate({
+                where: { UserId: req.user.id, DrinkId: drinkId }
+            });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Added to favorites' }));
+        } catch (err) {
+            if (LOG_ENABLED) console.error('Post favorite error:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+    });
+}
+
+function matchDeleteFavorite(req) {
+    const match = req.pathname.match(/^\/favorites\/([a-zA-Z0-9]+)$/);
+    if (match && req.method === 'DELETE') {
+        return { params: { drinkId: match[1] } };
+    }
+    return false;
+}
+
+async function handleDeleteFavorite(req, res) {
+    try {
+        const deleted = await Favorite.destroy({
+            where: { UserId: req.user.id, DrinkId: req.params.drinkId }
+        });
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Removed from favorites' }));
+    } catch (err) {
+        if (LOG_ENABLED) console.error('Delete favorite error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
 module.exports = [
     { match: matchGetDrinkById, handle: handleGetDrinkById },
-    { match: matchGetFilters, handle: handleGetFilters }
+    { match: matchGetFilters, handle: handleGetFilters },
+    { match: matchGetFeed, handle: withAuth(handleGetFeed) },
+    { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
+    { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) }
 ];

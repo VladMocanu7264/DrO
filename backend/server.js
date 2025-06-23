@@ -17,7 +17,8 @@ console.log("top of server.js reached");
         const drinkRoutes = require('./routes/drinks');
         const authRoutes = require('./routes/auth');
         const userRoutes = require('./routes/user');
-        const routes = [...drinkRoutes, ...authRoutes, ...userRoutes];
+        const listsRoutes = require('./routes/lists');
+        const routes = [...drinkRoutes, ...authRoutes, ...userRoutes, ...listsRoutes];
 
         const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
@@ -64,7 +65,7 @@ console.log("top of server.js reached");
         const drinkCount = await Drink.count();
         if (drinkCount === 0) {
             console.log("Drink table is empty. Populating...");
-            // await populateDrinks();
+            await populateDrinks();
             console.log("Drink table populated");
         } else {
             console.log(`Drink table has ${drinkCount} entries. Skipping population.`);
@@ -75,11 +76,6 @@ console.log("top of server.js reached");
         server.listen(PORT, () => {
             console.log(`Server running at http://localhost:${PORT}`);
         });
-
-        setTimeout(() => {
-            console.log("Keeping the process alive...");
-        }, 600000); // 10 minutes
-
     } catch (err) {
         console.error("Fatal startup error:", err.stack || err);
     }
