@@ -474,6 +474,28 @@ input[type="range"]:focus::-moz-range-thumb {
   cursor: pointer;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--secondary);
+  background-color: white;
+  color: var(--primary);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.page-btn.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+
 /* --- Responsive: small screens --- */
 @media (max-width: 900px) {
   .drink-details {

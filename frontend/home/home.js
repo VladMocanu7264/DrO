@@ -7,8 +7,7 @@ if (!token) {
 }
 
 let currentPage = 1;
-let isLoading = false;
-let hasMorePages = true;
+let totalPages = 1;
 let selectedTags = [];
 let selectedNutritionGrades = [];
 let searchTerm = "";
@@ -55,7 +54,6 @@ function populateSortOptions(options) {
   });
   sortSelect.addEventListener("change", () => {
     selectedSort = sortSelect.value;
-
   });
 }
 
@@ -74,7 +72,6 @@ function populateTags(tags) {
   categoryList.querySelectorAll("input[type='checkbox']").forEach(cb => {
     cb.addEventListener("change", () => {
       selectedTags = Array.from(categoryList.querySelectorAll("input:checked")).map(cb => cb.value);
-  
     });
   });
 }
@@ -93,7 +90,6 @@ function populateNutritionGrades(grades) {
   nutritionList.querySelectorAll("input[type='checkbox']").forEach(cb => {
     cb.addEventListener("change", () => {
       selectedNutritionGrades = Array.from(nutritionList.querySelectorAll("input:checked")).map(cb => cb.value);
-  
     });
   });
 }
@@ -119,7 +115,6 @@ function setupQuantitySliders(range) {
     }
     minQuantity = parseInt(quantityMinSlider.value);
     updateQuantityText();
-
   });
 
   quantityMaxSlider.addEventListener("input", () => {
@@ -128,12 +123,11 @@ function setupQuantitySliders(range) {
     }
     maxQuantity = parseInt(quantityMaxSlider.value);
     updateQuantityText();
-
   });
 }
 
 function updateQuantityText() {
-  quantityRangeText.textContent = `Interval: ${minQuantity} - ${maxQuantity} ml`;
+  quantityRangeText.textContent = `Interval: ${minQuantity} - ${maxQuantity} Litri`;
 }
 
 searchInput.addEventListener("input", () => {
@@ -160,8 +154,9 @@ async function fetchDrinks(page = 1) {
     });
     if (!res.ok) throw new Error("Eroare la feed");
 
-    const data = await res.json();
-    return data;
+    const json = await res.json();
+    totalPages = json.max_pages || 1;
+    return json.drinks || [];
   } catch (err) {
     console.error("Eroare feed:", err.message);
     return [];
@@ -172,16 +167,13 @@ function render() {
   cardsContainer.innerHTML = "";
   modalsContainer.innerHTML = "";
 
-  const filtered = searchTerm
-    ? drinksData.filter(d => d.name.toLowerCase().includes(searchTerm))
-    : drinksData;
-
-  filtered.forEach(drink => {
+  drinksData.forEach(drink => {
     cardsContainer.appendChild(createDrinkCard(drink));
     modalsContainer.appendChild(createDrinkModal(drink));
   });
 
   initEventListeners();
+  renderPagination();
 }
 
 function createDrinkCard(drink) {
@@ -255,48 +247,42 @@ function closeAllModals() {
 }
 
 async function resetAndLoad() {
-  drinksData = [];
-  currentPage = 1;
-  hasMorePages = true;
-  cardsContainer.innerHTML = "";
-  await loadNextPage();
-
-}
-
-async function loadNextPage() {
-  if (isLoading || !hasMorePages) return;
-  isLoading = true;
-
-  const newDrinks = await fetchDrinks(currentPage);
-  if (newDrinks.length === 0) {
-    hasMorePages = false;
-  } else {
-    drinksData.push(...newDrinks);
-    render();
-    currentPage++;
-  }
-
-  isLoading = false;
-}
-
-window.addEventListener("scroll", () => {
-  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
-  if (nearBottom) loadNextPage();
-});
-
-function handleNavigateToRanking() {
-  window.location.href = "/ranking/";
+  drinksData = await fetchDrinks(currentPage);
+  render();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   await fetchFilters();
-  await loadNextPage();
+  await resetAndLoad();
 
-const applyFiltersBtn = document.getElementById("apply-filters-btn");
-if (applyFiltersBtn) {
-  applyFiltersBtn.addEventListener("click", () => {
-    resetAndLoad();
-  });
+  const applyFiltersBtn = document.getElementById("apply-filters-btn");
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener("click", () => {
+      currentPage = 1;
+      resetAndLoad();
+    });
+  }
+});
+
+function renderPagination() {
+  const paginationContainer = document.querySelector(".pagination");
+  if (!paginationContainer) return;
+
+  paginationContainer.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.classList.add("page-btn");
+    if (i === currentPage) btn.classList.add("active");
+    btn.textContent = i;
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      resetAndLoad();
+    });
+    paginationContainer.appendChild(btn);
+  }
 }
 
-});
+function handleNavigateToRanking() {
+  window.location.href = "/ranking/";
+}

@@ -1,5 +1,5 @@
 const { Drink, Tag, DrinkTag, Favorite } = require('../database');
-const { isRelevantTag, withAuth} = require('../helpers');
+const { isRelevantTag, withAuth } = require('../helpers');
 const { Op, fn, col, literal } = require('sequelize');
 
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
@@ -96,27 +96,28 @@ async function handleGetFeed(req, res) {
         if (tags) {
             include.push({
                 model: DrinkTag,
-                include: {
+                required: true,
+                include: [{
                     model: Tag,
+                    required: true,
                     where: {
                         [Op.or]: [
                             { name: { [Op.in]: tags } },
                             { id: { [Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
                         ]
-                    },
-                    required: true
-                }
+                    }
+                }]
             });
         }
 
-        const total = await Drink.count({ where, include });
-        const drinks = await Drink.findAll({
+        const allMatching = await Drink.findAll({
             where,
             include,
-            limit,
-            offset,
             order
         });
+
+        const total = allMatching.length;
+        const drinks = allMatching.slice(offset, offset + limit);
 
         const result = drinks.map(drink => ({
             id: drink.id,
@@ -128,6 +129,7 @@ async function handleGetFeed(req, res) {
             packaging: drink.packaging
         }));
 
+        console.log(Math.ceil(total / limit), total, limit);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             max_pages: Math.ceil(total / limit),
@@ -270,7 +272,7 @@ module.exports = [
     { match: matchGetDrinkById, handle: handleGetDrinkById },
     { match: matchGetFilters, handle: handleGetFilters },
     { match: matchGetFeed, handle: withAuth(handleGetFeed) },
-    { match: matchGetFavorites, handle: withAuth(handleGetFavorites)},
+    { match: matchGetFavorites, handle: withAuth(handleGetFavorites) },
     { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
     { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) }
 ];
