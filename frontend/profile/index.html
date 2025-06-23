@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="../public/css/nav.css">
+    <link rel="stylesheet" href="userAdministrator.css">
+    <link rel="stylesheet" href="drinkAdministrator.css">
+    <link rel="stylesheet" href="groupAdministrator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aceasta este pagina in care utilizatorul/adminul isi gestioneaza contul.">
+    <title>Liste</title>
+    <style>
+        body {
+            background-image: url("../public/poze/main.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1>DrO</h1>
+                <div class="menu">
+                    <a href="../home/index.html">Acasa</a>
+                    <a href="../lists/index.html">Liste</a>
+                    <a href="../groups/index.html">Grupuri</a>
+                    <a href="../stats/index.html">Stats</a>
+                    <a href="/rss">
+                        <i class="fa-solid fa-rss"></i>
+                    </a>
+                    <a href="../about/index.html">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </a>
+                    <a href="../help/index.html">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </a>
+                    <a href="#" id="login-link" class="is-active">Login</a>
+                </div>
+                <button class=" hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <a href="/home">Acasa</a>
+            <a href="/liste">Liste</a>
+            <a href="/grupuri">Grupuri</a>
+            <a href="/stats">Stats</a>
+            <div class="mobile-action-icons">
+                <a href="/rss">
+                    <i class="fa-solid fa-rss"></i>
+                </a>
+                <a href="../about/index.html">
+                    <i class="fa-solid fa-circle-info"></i>
+                </a>
+                <a href="../help/index.html">
+                    <i class="fa-solid fa-circle-question"></i>
+                </a>
+            </div>
+            <a href="../login/index.html" id="login-link">Login</a>
+        </div>
+    </header>
+    <div class="catalog">
+        <div class="content">
+            <div class="left-part">
+                <img id="user-image" src="../public/poze/7up.png" alt="Lists Image">
+                <div class="buttons">
+                    <button id="edit-profile-button" class="action-button">Editează Profil</button>
+                    <button id="users-button" class="action-button">Utilizatori</button>
+                    <button id="groups-button" class="action-button">Grupuri</button>
+                    <button id="drinks-button" class="action-button">Băuturi</button>
+                    <button id="delete-account-button" class="action-button">Șterge contul</button>
+                    <button id="logout-button" class="action-button">Logout</button>
+                </div>
+            </div>
+            <div class="right-part">
+                <div class="user-info">
+                    <h2>Profil</h2>
+                    <p class="username">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Username: username</span>
+                    </p>
+                    <p class="email">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>Email: email@yahoo.com</span>
+                    </p>
+                    <p class="description">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span>Descriere</span>
+                    </p>
+                    <p id="user-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, fugit
+                        amet.
+                        Perspiciatis quo dolores dolorem accusamus cum, asperiores iure, officia quia tenetur,
+                        cupiditate
+                        pariatur fuga molestiae adipisci illo rerum? Quaerat!
+                    </p>
+                </div>
+            </div>
+
+            <div id="overlay" class="overlay hidden"></div>
+
+            <div id="edit-modal" class="modal hidden">
+                <button id="close-modal" class="close-btn">×</button>
+                <div class="modal-content">
+                    <h2>Editează Profil</h2>
+
+                    <div id="edit-profile-form">
+                        <div class="form-row">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="username">
+                        </div>
+
+                        <div class="form-row">
+                            <label for="description">Descriere</label>
+                            <textarea id="description" name="description" rows="4"
+                                placeholder="O scurtă descriere…"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="profile-image">Imagine profil</label>
+                            <input type="file" id="profile-image" name="profile-image" accept="image/*">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="edit-main-info-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-main-info-btn" class="button">Anulează</button>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="email@example.com">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="edit-email-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-email-btn" class="button">Anulează</button>
+                        </div>
+
+                        <div class="form-row form-passwords">
+                            <div class="pw-field">
+                                <label for="old-password">Parola curentă</label>
+                                <input type="password" id="old-password" name="old-password"
+                                    placeholder="Introduceți parola curentă">
+                            </div>
+                            <div class="pw-field">
+                                <label for="password">Parolă nouă</label>
+                                <input type="password" id="password" name="password"
+                                    placeholder="Introduceți parola nouă">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="edit-password-btn" class="button">Salvează</button>
+                            <button type="button" id="clear-password-btn" class="button">Anulează</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="users-modal" class="modal hidden">
+                <button id="close-user-modal" class="close-btn">×</button>
+                <div class="modal-content">
+                    <h2>Administrează utilizatorii</h2>
+                    <div class="search-user">
+                        <div class="search-user-input">
+                            <input type="text" id="search-user-admin" placeholder="Caută utilizatori">
+                            <i id="search-user-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i id="clear-user-search-icon" class="fa-solid fa-eraser search-icon"></i>
+                        </div>
+                    </div>
+                    <div class="users-table-container">
+                        <table id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="groups-modal" class="modal hidden">
+                <button id="close-group-modal" class="close-btn">×</button>
+                <div class="modal-content">
+                    <h2>Administrează grupurile</h2>
+                    <div class="search-group">
+                        <div class="search-group-input">
+                            <input type="text" id="search-group-admin" placeholder="Caută grupuri">
+                            <i id="search-group-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i id="clear-group-search-icon" class="fa-solid fa-eraser search-icon"></i>
+                        </div>
+                    </div>
+                    <div class="groups-table-container">
+                        <table id="groups-table">
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="groups-list">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="drinks-modal" class="modal hidden">
+                <button id="close-drink-modal" class="close-btn">×</button>
+                <div class="modal-content">
+                    <h2>Administrează băuturile</h2>
+                    <div class="search-drink">
+                        <div class="search-drink-input">
+                            <input type="text" id="search-drink-admin" placeholder="Caută băuturi">
+                            <i id="search-icon" class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <i id="clear-search-icon" class="fa-solid fa-eraser search-icon"></i>
+                        </div>
+                        <div id="admin-drink-list" class="lists-container">
+                        </div>
+                    </div>
+                    <div class="add-drink">
+                        <h3>Adaugă băutură</h3>
+                        <input type="text" id="drink-id" class="drink-input" placeholder="Id băutură">
+                        <input type="text" id="drink-name" class="drink-input" placeholder="Nume băutură">
+                        <input type="text" id="drink-type" class="drink-input" placeholder="Categorie băutură">
+                        <input type="text" id="drink-brand" class="drink-input" placeholder="Marcă băutură">
+                        <input type="text" id="drink-nutrition-grade" class="drink-input"
+                            placeholder="Grad nutrițional">
+                        <input type="number" id="drink-quantity" class="drink-input" placeholder="Cantitate (ml)">
+                        <input type="text" id="drink-packaging" class="drink-input" placeholder="Ambalaj">
+                        <input type="text" id="drink-tags" placeholder="Tags (separate prin virgulă)">
+                        <input type="file" id="drink-image" class="drink-input" accept="image/*">
+                        <div class="drink-actions">
+                            <button id="add-drink-button" class="action-button">Adaugă</button>
+                            <button id="clear-drink-button" class="action-button">Anulează</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="../public/js/main.js"></script>
+            <script src="profile.js"></script>
+            <script src="editProfile.js"></script>
+            <script src="userAdministrator.js"></script>
+            <script src="drinkAdministrator.js"></script>
+            <script src="groupAdministrator.js"></script>
+</body>
+
+</html>
