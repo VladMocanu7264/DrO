@@ -1,11 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="ro">
+
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra." />
+  <meta name="description"
+    content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra." />
   <title>Acasa</title>
 
   <link rel="stylesheet" href="home.css" />
@@ -21,6 +22,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <nav>
@@ -76,11 +78,15 @@
           <input type="range" id="quantity-slider-min" />
           <input type="range" id="quantity-slider-max" />
           <p id="quantity-range-text">Interval: 0 - 1000 ml</p>
-          <button id="apply-filters-btn" class="btn" type="button">Aplică filtrele</button>
+          <div class="filter-buttons">
+            <button id="apply-filters-btn" class="btn" type="button">Aplică</button>
+            <button id="clear-filters-btn" class="btn" type="button">Curăță</button>
+          </div>
         </div>
 
         <div class="trophy-section">
-          <img class="trophy-image" src="../public/poze/trophy.png" alt="Trophy Image" onclick="handleNavigateToRanking()" />
+          <img class="trophy-image" src="../public/poze/trophy.png" alt="Trophy Image"
+            onclick="handleNavigateToRanking()" />
         </div>
       </form>
     </aside>
@@ -102,4 +108,5 @@
   <script src="../public/js/main.js"></script>
   <script src="home.js"></script>
 </body>
+
 </html>

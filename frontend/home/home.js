@@ -13,6 +13,7 @@ let selectedNutritionGrades = [];
 let searchTerm = "";
 let selectedSort = "";
 let drinksData = [];
+let userLists = [];
 let minQuantity = 0;
 let maxQuantity = 1000;
 let maxQuantityAvailable = 1000;
@@ -54,6 +55,7 @@ function populateSortOptions(options) {
   });
   sortSelect.addEventListener("change", () => {
     selectedSort = sortSelect.value;
+    resetAndLoad();
   });
 }
 
@@ -132,7 +134,7 @@ function updateQuantityText() {
 
 searchInput.addEventListener("input", () => {
   searchTerm = searchInput.value.trim().toLowerCase();
-  resetAndLoad();
+  // resetAndLoad();
 });
 
 async function fetchDrinks(page = 1) {
@@ -163,9 +165,26 @@ async function fetchDrinks(page = 1) {
   }
 }
 
+async function fetchUserLists() {
+  try {
+
+    const res = await fetch(`${API_BASE_URL}/lists`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error("Eroare la încărcarea listelor");
+
+    const json = await res.json();
+    return json || [];
+  } catch (err) {
+    console.error("Eroare feed:", err.message);
+    return [];
+  }
+}
+
 function render() {
   cardsContainer.innerHTML = "";
   modalsContainer.innerHTML = "";
+
 
   drinksData.forEach(drink => {
     cardsContainer.appendChild(createDrinkCard(drink));
@@ -184,35 +203,60 @@ function createDrinkCard(drink) {
       <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
     </div>
     <h3>${drink.name}</h3>
-    <p><strong>Brand:</strong> ${drink.brand || "N/A"}</p>
-    <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
-    <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
-    <div class="btn">
-      <button class="read-more" data-index="${drink.id}">Detalii</button>
+    <div class="drink-info">
+      <p><strong>Brand:</strong> ${drink.brand || "N/A"}</p>
+      <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
+      <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
     </div>
+      <button class="read-more" data-index="${drink.id}">Detalii</button>
   `;
   return card;
 }
 
+
 function createDrinkModal(drink) {
-  const modal = document.createElement("div");
-  modal.classList.add("text-box", "hidden");
+  const modal = document.createElement('div');
+  modal.classList.add('text-box', 'hidden');
   modal.id = `text-box-${drink.id}`;
+  Object.assign(modal.style, {
+    position: 'fixed', top: '50%', left: '50%',
+    transform: 'translate(-50%,-50%)', zIndex: '10'
+  });
   modal.innerHTML = `
     <button class="close-modal" data-index="${drink.id}">&times;</button>
     <div class="drink-details">
       <p id="drink-title">${drink.name}</p>
       <div class="drink-content">
-        <div class="drink-text">
-          <p><strong>Brand:</strong> ${drink.brand}</p>
-          <p><strong>Cantitate:</strong> ${drink.quantity} ml</p>
-          <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
-          <p><strong>Ambalaj:</strong> ${drink.packaging}</p>
-        </div>
+          <div class="drink-text">
+            <p><strong>Brand:</strong> ${drink.brand}</p>
+            <p><strong>Cantitate:</strong> ${drink.quantity} ml</p>
+            <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
+            <p><strong>Ambalaj:</strong> ${drink.packaging}</p>
+          </div>
         <div id="icons-container">
           <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
+          <div id="menu-icons-container">
+              <a href="/rss">
+              <i class="fa-regular fa-heart icon-menu"></i>
+              </a>
+              <a>
+              <i class="fa-solid fa-plus icon-menu add-favorite"  data-drink-id="${drink.id}"></i>
+              </a>
+              <a href="/rss">
+              <i class="fa-solid fa-share  icon-menu"></i>
+              </a>
+          </div>
+        </div>   
         </div>
-      </div>
+           <div class="favorite-section">
+            <label for="favorite-list" class="favorite-label">Liste:</label>
+            <select id="favorite-list-${drink.id}" class="favorite-select">
+              <option value="" disabled selected>Selectează o listă</option>
+                            ${userLists.map(list => `
+                <option value="${list.id}">${list.name}</option>
+              `).join('')}
+            </select> 
+          </div>
     </div>
   `;
   return modal;
@@ -248,6 +292,7 @@ function closeAllModals() {
 
 async function resetAndLoad() {
   drinksData = await fetchDrinks(currentPage);
+  userLists = await fetchUserLists();
   render();
 }
 
@@ -277,7 +322,7 @@ function renderPagination() {
 
   if (currentPage > 1) {
     const prevBtn = document.createElement("button");
-    prevBtn.textContent = "‹";
+    prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left pagination-button"></i>`;
     prevBtn.classList.add("page-btn");
     prevBtn.addEventListener("click", () => {
       currentPage--;
@@ -288,7 +333,7 @@ function renderPagination() {
 
   if (currentPage < totalPages) {
     const nextBtn = document.createElement("button");
-    nextBtn.textContent = "›";
+    nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right pagination-button"></i>`;
     nextBtn.classList.add("page-btn");
     nextBtn.addEventListener("click", () => {
       currentPage++;
@@ -297,6 +342,23 @@ function renderPagination() {
     paginationContainer.appendChild(nextBtn);
   }
 }
+
+
+function clearFilters() {
+  selectedTags = [];
+  selectedNutritionGrades = [];
+  searchTerm = "";
+  minQuantity = 0;
+  maxQuantity = maxQuantityAvailable;
+
+  document.querySelectorAll(".filter-item input[type='checkbox']").forEach(cb => cb.checked = false);
+  searchInput.value = "";
+  quantityMinSlider.value = minQuantity;
+  quantityMaxSlider.value = maxQuantity;
+
+  resetAndLoad();
+}
+document.getElementById("clear-filters-btn").addEventListener("click", clearFilters);
 
 function handleNavigateToRanking() {
   window.location.href = "/ranking/";
