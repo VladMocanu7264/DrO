@@ -16,6 +16,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
+
 /* --- Layout --- */
 .catalog {
   display: flex;
@@ -138,10 +139,27 @@
 }
 
 .btn {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
+  background-color: var(--secondary);
+  color: white;
+  padding: 7px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  font-size: 13px;
+  margin-top: 5px;
+
+}
+
+.btn:hover {
+  background-color: var(--tertiary);
+}
+
+.filter-buttons {
   width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .read-more {
@@ -159,6 +177,18 @@
 .read-more:hover {
   background-color: var(--tertiary);
   box-shadow: 0 0 8px rgba(129, 104, 157, 0.6);
+}
+
+.rectangle h3 {
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.drink-info {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
 }
 
 /* --- Text Box --- */
@@ -187,7 +217,7 @@
   top: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 600px;
   max-width: 60rem;
   max-height: 90vh;
   overflow-y: auto;
@@ -249,17 +279,20 @@
   margin-bottom: 0.25rem;
 }
 
-.filter-list, .nutrition-list {
+.filter-list,
+.nutrition-list {
   max-height: 100px;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
 
-.filter-list::-webkit-scrollbar, .nutrition-list::-webkit-scrollbar {
+.filter-list::-webkit-scrollbar,
+.nutrition-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.filter-list::-webkit-scrollbar-thumb, .nutrition-list::-webkit-scrollbar-thumb {
+.filter-list::-webkit-scrollbar-thumb,
+.nutrition-list::-webkit-scrollbar-thumb {
   background: var(--secondary);
   border-radius: 3px;
 }
@@ -350,25 +383,14 @@ input[type="range"]:focus::-moz-range-thumb {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
 }
 
-
-/* Pagination container */
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 2rem 0;
-}
-
 /* Page buttons */
 .page-btn {
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--secondary);
-  background: #fff;
-  color: var(--primary);
-  font-size: 0.95rem;
-  border-radius: 4px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  padding: 5px 10px;
+  border-radius: 0.75rem;
 }
 
 .page-btn:hover {
@@ -388,11 +410,18 @@ input[type="range"]:focus::-moz-range-thumb {
   margin: 7px;
 }
 
+.page-btn:disabled {
+  background-color: var(--secondary);
+  cursor: not-allowed;
+}
+
 #drink-title {
   display: flex;
   justify-content: center;
   background-color: var(--dark);
-  max-width: 150px;
+  max-width: 250px;
+  font-size: 14px;
+  padding: 5px;
   color: white;
   border-radius: 0.25rem;
 }
@@ -400,6 +429,7 @@ input[type="range"]:focus::-moz-range-thumb {
 .drink-details {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin-top: 5px;
   display: flex;
   gap: 10px;
@@ -407,13 +437,15 @@ input[type="range"]:focus::-moz-range-thumb {
 
 .drink-content {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .drink-text {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  color: white;
 }
 
 #icons-container {
@@ -481,14 +513,6 @@ input[type="range"]:focus::-moz-range-thumb {
   margin: 2rem 0;
 }
 
-.page-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--secondary);
-  background-color: white;
-  color: var(--primary);
-  cursor: pointer;
-  border-radius: 4px;
-}
 
 .page-btn.active {
   background-color: var(--primary);
@@ -498,6 +522,10 @@ input[type="range"]:focus::-moz-range-thumb {
 
 /* --- Responsive: small screens --- */
 @media (max-width: 900px) {
+  .text-box {
+    width: 400px;
+  }
+
   .drink-details {
     flex-direction: column;
   }
@@ -552,6 +580,7 @@ input[type="range"]:focus::-moz-range-thumb {
   }
 
   .favorite-section {
+    flex-direction: column;
     gap: 6px;
     margin-top: 1rem;
   }
@@ -567,9 +596,23 @@ input[type="range"]:focus::-moz-range-thumb {
 }
 
 @media (max-width: 700px) {
+  .close-modal {
+    margin-top: -30px;
+  }
+
+  #drink-title {
+    font-size: 10px;
+    width: 100px;
+  }
+
   .cards-container .rectangle {
     flex: 1 0 calc(100% - 3rem);
     max-width: 250px;
   }
+}
 
+@media (max-width: 450px) {
+  .text-box {
+    width: 300px;
+  }
 }
