@@ -17,61 +17,61 @@
 <body>
   <header>
     <nav>
-      <div class="container">
+      <div class="nav-container">
         <h1>DrO</h1>
       </div>
     </nav>
   </header>
 
-  <div class="wrapper">
-    <div class="form-box login">
-      <h2>Login</h2>
-      <form>
-        <div class="input-box email-input">
-          <span class="icon"><ion-icon name="mail"></ion-icon></span>
-          <input type="email" required />
-          <label>Email</label>
+  <div class="auth__wrapper">
+    <div class="auth__form-box auth__form-box--login auth__form-box">
+      <h2 class="auth__title">Login</h2>
+      <form class="auth__form">
+        <div class="auth__input-group auth__input-group--email">
+          <span class="auth__icon"><ion-icon name="mail"></ion-icon></span>
+          <input class="auth__input" type="email" required />
+          <label class="auth__label">Email</label>
         </div>
-        <div class="input-box">
-          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-          <input type="password" required />
-          <label>Parolă</label>
+        <div class="auth__input-group">
+          <span class="auth__icon"><ion-icon name="lock-closed"></ion-icon></span>
+          <input class="auth__input" type="password" required />
+          <label class="auth__label">Parolă</label>
         </div>
-        <button type="submit" class="btn">Login</button>
-        <div class="login-register">
-          <p>Nu aveți cont? <a href="#" class="register-link">Register</a></p>
+        <button type="submit" class="auth__button">Login</button>
+        <div class="auth__switch">
+          <p>Nu aveți cont? <a href="#" class="auth__link auth__link--register">Register</a></p>
         </div>
       </form>
     </div>
 
-    <div class="form-box register">
-      <h2>Register</h2>
-      <form>
-        <div class="input-box">
-          <span class="icon"><ion-icon name="person"></ion-icon></span>
-          <input type="text" required />
-          <label>Nume de utilizator</label>
-          <p class="error-message"></p> <!-- nou -->
+    <div class="auth__form-box auth__form-box--register">
+      <h2 class="auth__title">Register</h2>
+      <form class="auth__form">
+        <div class="auth__input-group">
+          <span class="auth__icon"><ion-icon name="person"></ion-icon></span>
+          <input class="auth__input" type="text" required />
+          <label class="auth__label">Nume de utilizator</label>
+          <p class="auth__error-message"></p>
         </div>
-        <div class="input-box email-input">
-          <span class="icon"><ion-icon name="mail"></ion-icon></span>
-          <input type="email" required />
-          <label>Email</label>
-          <p class="error-message"></p> <!-- nou -->
+        <div class="auth__input-group auth__input-group--email">
+          <span class="auth__icon"><ion-icon name="mail"></ion-icon></span>
+          <input class="auth__input" type="email" required />
+          <label class="auth__label">Email</label>
+          <p class="auth__error-message"></p>
         </div>
-        <div class="input-box">
-          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-          <input type="password" required />
-          <label>Parolă</label>
+        <div class="auth__input-group">
+          <span class="auth__icon"><ion-icon name="lock-closed"></ion-icon></span>
+          <input class="auth__input" type="password" required />
+          <label class="auth__label">Parolă</label>
         </div>
-        <div class="input-box">
-          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-          <input type="password" required />
-          <label>Confirmați parola</label>
+        <div class="auth__input-group">
+          <span class="auth__icon"><ion-icon name="lock-closed"></ion-icon></span>
+          <input class="auth__input" type="password" required />
+          <label class="auth__label">Confirmați parola</label>
         </div>
-        <button type="submit" class="btn">Register</button>
-        <div class="login-register">
-          <p>Aveți deja cont? <a href="#" class="login-link">Login</a></p>
+        <button type="submit" class="auth__button">Register</button>
+        <div class="auth__switch">
+          <p>Aveți deja cont? <a href="#" class="auth__link auth__link--login">Login</a></p>
         </div>
       </form>
     </div>
@@ -83,3 +83,4 @@
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
+
