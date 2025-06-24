@@ -28,7 +28,7 @@ async function handleDeleteMe(req, res) {
 }
 
 function matchGetUser(req) {
-    const match = req.pathname.match(/^\/users\/([a-zA-Z0-9_]{3,20})$/);
+    const match = req.pathname.match(/^\/users\/([a-zA-Z0-9_]{2,20})$/);
     if (match && req.method === 'GET') {
         return { params: { username: match[1] } };
     }
@@ -37,8 +37,14 @@ function matchGetUser(req) {
 
 async function handleGetUser(req, res) {
     try {
+        userToFind = req.params.username;
+        if (userToFind === "me") {
+            userToFind = req.user.username
+        }
+        console.log(`User: ${userToFind}`);
+
         const user = await User.findOne({
-            where: { username: req.params.username },
+            where: { username: userToFind },
             include: {
                 model: List,
                 required: false,
@@ -66,11 +72,26 @@ async function handleGetUser(req, res) {
                 drinks: list.ListDrinks.map(ld => ld.Drink)
             }));
 
+        let imageDataUrl = null;
+        if (user.image_path) {
+            const filePath = path.join(__dirname, '../public', user.image_path);
+            const ext = path.extname(user.image_path).toLowerCase();
+
+            let mime = 'image/jpeg';
+            if (ext === '.png') mime = 'image/png';
+            else if (ext === '.webp') mime = 'image/webp';
+            else if (ext === '.gif') mime = 'image/gif';
+            else if (ext === '.svg') mime = 'image/svg+xml';
+
+            const base64Data = fs.readFileSync(filePath).toString('base64');
+            imageDataUrl = `data:${mime};base64,${base64Data}`;
+        }
+
         const result = {
             username: user.username,
             email: isSelf ? user.email : 'hidden',
             description: user.description,
-            image: user.image_path ? fs.readFileSync(path.join(__dirname, '../public', user.image_path)).toString('base64') : null,
+            image: imageDataUrl,
             lists
         };
 

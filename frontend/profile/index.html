@@ -74,7 +74,7 @@
     <div class="catalog">
         <div class="content">
             <div class="left-part">
-                <img id="user-image" src="../public/poze/7up.png" alt="Lists Image">
+                <img id="public-profile-image" src="../public/poze/7up.png" alt="Poza Profil">
                 <div class="buttons">
                     <button id="edit-profile-button" class="action-button">Editează Profil</button>
                     <button id="users-button" class="action-button">Utilizatori</button>
@@ -89,22 +89,17 @@
                     <h2>Profil</h2>
                     <p class="username">
                         <i class="fa-solid fa-user"></i>
-                        <span>Username: username</span>
+                        <span>Username: <span id="public-username">...</span></span>
                     </p>
                     <p class="email">
                         <i class="fa-solid fa-envelope"></i>
-                        <span>Email: email@yahoo.com</span>
+                        <span>Email: <span id="public-email">ascuns</span></span>
                     </p>
                     <p class="description">
                         <i class="fa-solid fa-info-circle"></i>
-                        <span>Descriere</span>
+                        <span id="public-description">Fără descriere</span>
                     </p>
-                    <p id="user-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, fugit
-                        amet.
-                        Perspiciatis quo dolores dolorem accusamus cum, asperiores iure, officia quia tenetur,
-                        cupiditate
-                        pariatur fuga molestiae adipisci illo rerum? Quaerat!
-                    </p>
+                    <div id="public-lists-container"></div>
                 </div>
             </div>
 
