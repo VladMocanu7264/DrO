@@ -1,7 +1,7 @@
 const { User, List, ListDrink, Drink } = require('../database');
 const { withAuth, isValidEmail, isValidUsername } = require('../helpers');
 const bcrypt = require('bcrypt');
-const Busboy = require('busboy');
+const busboy = require('busboy');
 const fs = require('fs');
 const path = require('path');
 
@@ -39,10 +39,8 @@ async function handleGetUser(req, res) {
     try {
         const user = await User.findOne({
             where: { username: req.params.username },
-            attributes: ['username', 'description', 'image_path'],
             include: {
                 model: List,
-                where: { public: true },
                 required: false,
                 include: {
                     model: ListDrink,
@@ -59,17 +57,20 @@ async function handleGetUser(req, res) {
             return res.end(JSON.stringify({ error: 'User not found' }));
         }
 
-        const lists = user.Lists.map(list => ({
-            id: list.id,
-            name: list.name,
-            drinks: list.ListDrinks.map(ld => ld.Drink)
-        }));
+        const isSelf = req.user?.id === user.id;
+        const lists = user.Lists
+            .filter(list => isSelf || list.public)
+            .map(list => ({
+                id: list.id,
+                name: list.name,
+                drinks: list.ListDrinks.map(ld => ld.Drink)
+            }));
 
         const result = {
             username: user.username,
-            email: 'hidden',
+            email: isSelf ? user.email : 'hidden',
             description: user.description,
-            image_path: user.image_path,
+            image: user.image_path ? fs.readFileSync(path.join(__dirname, '../public', user.image_path)).toString('base64') : null,
             lists
         };
 
@@ -87,24 +88,57 @@ function matchPatchMe(req) {
 }
 
 function handlePatchMe(req, res) {
-    const busboy = new Busboy({ headers: req.headers });
+    const bb = busboy({ headers: req.headers });
     const updates = {};
     let uploadPath = null;
+    let oldImagePath = null;
 
-    busboy.on('field', (fieldname, val) => {
+    User.findByPk(req.user.id).then(user => {
+        if (user && user.image_path) {
+            oldImagePath = path.join(__dirname, '../public', user.image_path);
+        }
+    });
+
+    bb.on('field', (fieldname, val) => {
         if (fieldname === 'username' && isValidUsername(val)) updates.username = val;
         if (fieldname === 'description') updates.description = val;
     });
 
-    busboy.on('file', (fieldname, file, filename) => {
-        const saveTo = path.join(__dirname, '../public/images/', path.basename(filename));
-        uploadPath = '/images/' + path.basename(filename);
-        file.pipe(fs.createWriteStream(saveTo));
+    bb.on('file', (fieldname, file, fileInfo) => {
+        const { filename, mimeType } = fileInfo;
+
+        if (!filename || typeof filename !== 'string') {
+            if (LOG_ENABLED) console.warn('Skipping file: missing or invalid filename');
+            file.resume();
+            return;
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(mimeType)) {
+            if (LOG_ENABLED) console.warn(`Rejected file: ${filename} — unsupported type (${mimeType})`);
+            file.resume();
+            return;
+        }
+
+        const ext = path.extname(filename);
+        const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(2)}${ext}`;
+        const safePath = path.join(__dirname, '../public/images/', uniqueName);
+        uploadPath = '/images/' + uniqueName;
+
+        if (LOG_ENABLED) console.log(`Accepting upload: ${filename} -> ${uploadPath}`);
+        file.pipe(fs.createWriteStream(safePath));
     });
 
-    busboy.on('finish', async () => {
+    bb.on('finish', async () => {
         try {
-            if (uploadPath) updates.image_path = uploadPath;
+            if (uploadPath) {
+                updates.image_path = uploadPath;
+                if (oldImagePath && fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                    if (LOG_ENABLED) console.log(`Deleted old image: ${oldImagePath}`);
+                }
+            }
+
             await User.update(updates, { where: { id: req.user.id } });
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Profile updated' }));
@@ -115,7 +149,7 @@ function handlePatchMe(req, res) {
         }
     });
 
-    req.pipe(busboy);
+    req.pipe(bb);
 }
 
 function matchPatchEmail(req) {
@@ -176,7 +210,7 @@ async function handlePatchPassword(req, res) {
 
 module.exports = [
     { match: matchDeleteMe, handle: withAuth(handleDeleteMe) },
-    { match: matchGetUser, handle: handleGetUser },
+    { match: matchGetUser, handle: withAuth(handleGetUser) },
     { match: matchPatchMe, handle: withAuth(handlePatchMe) },
     { match: matchPatchEmail, handle: withAuth(handlePatchEmail) },
     { match: matchPatchPassword, handle: withAuth(handlePatchPassword) }
