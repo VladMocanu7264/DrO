@@ -72,7 +72,7 @@
         <aside class="sidebar">
             <h2 class="filter-title">Liste</h2>
             <div class="favorites-panel">
-                <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon" />
+                <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon" onclick="handleFetchFavorites()"/>
                 <p>Favorite</p>
             </div>
             <form class="filter-form">
@@ -93,7 +93,15 @@
         </aside>
         <div class="cards-section">
             <div class="search-options">
-                <div class="sort-section">
+                <div class="empty-state">
+                    <h3 class="empty-text">
+                        Selectează o listă pentru a vedea conținutul acesteia.
+                    </h3>
+                    <h3 class="empty-text">
+                        Sau creează o listă nouă pentru a adăuga elemente.
+                    </h3>
+                </div>
+                <div class="sort-section hidden">
                     <label for="sort-select" class="sort-label">Sortare:</label>
                     <select id="sort-select" class="sort-select">
                         <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
@@ -116,7 +124,6 @@
             </div>
             <button id="public-btn" style="display: none;" onclick="handleMakePublic()">Schimbă în public</button>
             <div class="cards-container"></div>
-            <div class="pagination"></div>
         </div>
 
         <div id="text-box-container">

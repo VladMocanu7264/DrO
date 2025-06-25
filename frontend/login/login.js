@@ -1,4 +1,5 @@
 const API_BASE_URL = window.env.API_BASE_URL;
+console.log(API_BASE_URL);
 
 const loginBox = document.querySelector(".auth__form-box--login");
 const registerBox = document.querySelector(".auth__form-box--register");

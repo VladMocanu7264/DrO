@@ -1,583 +1,443 @@
-// let originalData = [];
-// let drinksData = [];
-// let currentPage = 1;
-// const itemsPerPage = 10;
-
-// const cardsContainer = document.querySelector(".cards-container");
-// const modalsContainer = document.querySelector("#text-box-container");
-// const overlay = document.querySelector(".overlay");
-// const body = document.body;
-// const sortSelect = document.getElementById("sort-select");
-// const paginationContainer = document.querySelector('.pagination');
-// const selectedList = document.getElementById('selected-list');
-// const deselectListBtn = document.getElementById('deselect-list');
-// const selectedListDiv = document.getElementById('selected-list');
-// const publicBtn = document.getElementById('public-btn');
-
-// let selectedGroupId = null;
-
-// const mockedDrinks = [
-//     { id: 1, name: "Coca-Cola", category: "soda", quantity: 500, image: "../public/poze/cocacola.png" },
-//     { id: 2, name: "Pepsi", category: "soda", quantity: 250, image: "../public/poze/pepsi.png" },
-//     { id: 3, name: "Fanta", category: "soda", quantity: 300, image: "../public/poze/fanta.png" },
-//     { id: 4, name: "Sprite", category: "soda", quantity: 400, image: "../public/poze/sprite.png" },
-//     { id: 5, name: "Mountain Dew", category: "soda", quantity: 100, image: "../public/poze/smoothie.png" },
-//     { id: 6, name: "Dr Pepper", category: "soda", quantity: 250, image: "../public/poze/drpepper.png" },
-//     { id: 7, name: "7UP", category: "soda", quantity: 300, image: "../public/poze/7up.png" },
-//     { id: 8, name: "Schweppes", category: "soda", quantity: 400, image: "../public/poze/smoothie.png" },
-//     { id: 9, name: "Red Bull", category: "energy", quantity: 100, image: "../public/poze/redbull.png" },
-//     { id: 10, name: "Monster", category: "energy", quantity: 100, image: "../public/poze/smoothie.png" },
-//     { id: 11, name: "Rockstar", category: "energy", quantity: 200, image: "../public/poze/rockstar.png" },
-//     { id: 12, name: "NOS", category: "energy", quantity: 500, image: "../public/poze/smoothie.png" }
-// ];
-
-// const mockedLists = [
-//     { id: 1, name: "Lista 1", drinks: [1, 2, 3, 4, 6, 7] },
-//     { id: 2, name: "Lista 2", drinks: [4, 5, 6, 7, 8, 9] },
-//     { id: 3, name: "Lista 3", drinks: [5, 6, 7, 8, 9, 10, 11, 12] },
-//     { id: 4, name: "Lista 4", drinks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
-
-// ]
-
-// const fetchDrinks = async () => {
-//     // const response = await fetch("http://localhost:3000/api/drinks", {
-//     //   method: "GET",
-//     //   headers: { "Content-Type": "application/json" }
-//     // });
-//     // if (!response.ok) throw new Error("Network error");
-//     // return await response.json();
-//     return mockedDrinks;
-// };
-
-// async function getGroups() {
-//     try {
-//         originalData = await fetchDrinks();
-//         setupSort();
-//         applyFiltersAndRender();
-//         initEventListeners();
-//     } catch (err) {
-//         console.error("Eroare încărcare băuturi:", err);
-//     }
-// }
-
-// /***----------- Sort -----------***/
-
-// function setupSort() {
-//     if (!sortSelect) return;
-//     sortSelect.addEventListener("change", () => {
-//         currentPage = 1;
-//         applyFiltersAndRender();
-//     });
-// }
-
-// function sortData(criterion) {
-//     switch (criterion) {
-//         case 'name-asc':
-//             drinksData.sort((a, b) => a.name.localeCompare(b.name));
-//             break;
-//         case 'name-desc':
-//             drinksData.sort((a, b) => b.name.localeCompare(a.name));
-//             break;
-//         case 'category-asc':
-//             drinksData.sort((a, b) => a.category.localeCompare(b.category));
-//             break;
-//         case 'category-desc':
-//             drinksData.sort((a, b) => b.category.localeCompare(a.category));
-//             break;
-//         case 'quantity-asc':
-//             drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
-//             break;
-//         case 'quantity-desc':
-//             drinksData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
-//             break;
-//     }
-// }
-
-// /***----------- Render -----------***/
-// function applyFiltersAndRender() {
-//     drinksData = [...originalData];
-
-//     if (selectedGroupId) {
-//         const selectedList = mockedLists
-//             .find(l => l.id === selectedGroupId);
-//         if (selectedList) {
-//             drinksData = drinksData.filter(drink => selectedList.drinks.includes(drink.id));
-//         }
-//     }
-
-//     sortData(sortSelect.value);
-
-//     render();
-//     initEventListeners();
-// }
-
-
-
-// function render() {
-//     cardsContainer.innerHTML = '';
-//     modalsContainer.innerHTML = '';
-
-//     const totalItems = drinksData.length;
-//     const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-//     const start = (currentPage - 1) * itemsPerPage;
-//     const end = start + itemsPerPage;
-//     const pageData = drinksData.slice(start, end);
-
-//     pageData.forEach(drink => {
-//         cardsContainer.appendChild(createDrinkCard(drink));
-//         modalsContainer.appendChild(createDrinkModal(drink));
-//     });
-
-//     renderPagination(totalPages);
-//     generateRadioFilter();
-// }
-
-// function renderPagination(totalPages) {
-//     if (!paginationContainer) return;
-//     paginationContainer.innerHTML = '';
-
-//     for (let p = 1; p <= totalPages; p++) {
-//         const btn = document.createElement('button');
-//         btn.textContent = p;
-//         btn.classList.add('page-btn');
-//         if (p === currentPage) btn.classList.add('active');
-//         btn.addEventListener('click', () => {
-//             currentPage = p;
-//             applyFiltersAndRender();
-//         });
-//         paginationContainer.appendChild(btn);
-//     }
-// }
-
-
-// /***----------- Drinks -----------***/
-
-// function createDrinkCard(drink) {
-//     const card = document.createElement('div');
-//     card.classList.add('rectangle');
-//     card.innerHTML = `
-//       <div class="content">
-//       <img class="drink-img" src="${drink.image}" alt="${drink.name}">
-//     </div>
-//     <h3>${drink.name}</h3>
-//       <p><strong>Categorie:</strong> ${drink.category}</p>
-//       <p><strong>Cantitate:</strong> ${drink.quantity} Litri</p>
-
-//     <div class="btn">
-//       <button class="read-more" data-index="${drink.id}">Detalii</button>
-//     </div>
-//   `;
-//     card.querySelector('.read-more').addEventListener('click', () => toggleModal(drink.id, true));
-//     return card;
-// }
-
-// function createDrinkModal(drink) {
-//     const modal = document.createElement('div');
-//     modal.classList.add('text-box', 'hidden');
-//     modal.id = `text-box-${drink.id}`;
-//     Object.assign(modal.style, {
-//         position: 'fixed', top: '50%', left: '50%',
-//         transform: 'translate(-50%,-50%)', zIndex: '10'
-//     });
-//     modal.innerHTML = `
-//     <button class="close-modal" data-index="${drink.id}">&times;</button>
-//     <div class="drink-details">
-//       <p id="drink-title">${drink.name}</p>
-//       <div class="drink-content">
-//         <div class="drink-text">
-//           <p id="drink-category"><strong>Categorie:&nbsp;</strong> ${drink.category}</p>
-//           <p id="drink-category"><strong>Cantitate:&nbsp;</strong> ${drink.quantity} Litri</p>
-//           <p id="drink-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-//         </div>
-//         <div id="icons-container">
-//           <img id="drink-image-box" src="${drink.image}" alt="${drink.name}">
-//           <div id="menu-icons-container">
-//               <a href="/rss">
-//               <i class="fa-regular fa-heart icon-menu"></i>
-//               </a>
-//               <a>
-//               <i class="fa-solid fa-plus icon-menu add-favorite"  data-drink-id="${drink.id}"></i>
-//               </a>
-//               <a href="/rss">
-//               <i class="fa-solid fa-share  icon-menu"></i>
-//               </a>
-//           </div>
-//         </div>   
-//         </div>
-//            <div class="favorite-section">
-//             <label for="favorite-list" class="favorite-label">Liste:</label>
-//             <select id="favorite-list-${drink.id}" class="favorite-select">
-//               <option value="" disabled selected>Selectează o listă</option>
-//               ${mockedLists
-//             .map(list => `
-//                 <option value="${list.id}">${list.name}</option>
-//               `).join('')}
-//             </select> 
-//           </div>
-//     </div>
-//   `;
-//     modal.querySelector('.close-modal').addEventListener('click', () => toggleModal(drink.id, false));
-//     modal.querySelector(".add-favorite").addEventListener("click", (e) => {
-//         const select = document.getElementById(`favorite-list-${drink.id}`);
-//         const selectedListId = parseInt(select?.value);
-
-//         if (!selectedListId) {
-//             alert("Selectează o listă mai întâi!");
-//             return;
-//         }
-
-//         const drinkData = originalData.find(d => d.id == drink.id);
-//         const listName = mockedLists
-//             .find(l => l.id == selectedListId)?.name;
-
-//         if (!mockedLists
-//             .find(l => l.id == selectedListId).drinks.includes(drink.id)) {
-//             mockedLists
-//                 .find(l => l.id == selectedListId).drinks.push(drink.id);
-//             alert(`Băutura a fost adăugată în lista ${listName}`);
-//         } else {
-//             alert("Băutura este deja în această listă!");
-//         }
-//     });
-//     return modal;
-// }
-
-
-// function generateRadioFilter(inputName = 'category') {
-//     const container = document.querySelector('.filter-list');
-//     if (!container) return;
-
-//     container.innerHTML = '';
-
-//     mockedLists
-//         .forEach((list) => {
-//             const item = document.createElement('div');
-//             item.classList.add('filter-item');
-
-//             const input = document.createElement('input');
-//             input.type = 'radio';
-//             input.id = `filter-${list.id}`;
-//             input.name = inputName;
-//             input.value = list.id;
-
-//             if (selectedGroupId === list.id) {
-//                 input.checked = true;
-//             }
-
-//             const label = document.createElement('label');
-//             label.setAttribute('for', input.id);
-//             label.textContent = list.name;
-
-//             input.addEventListener('change', () => {
-//                 selectedGroupId = parseInt(input.value);
-//                 currentPage = 1;
-
-//                 if (selectedGroupId) {
-//                     selectedListDiv.style.display = 'block';
-//                     selectedListDiv.innerText = `${list.name}`;
-//                     publicBtn.style.display = 'block';
-//                 } else {
-//                     selectedListDiv.style.display = 'none';
-//                 }
-
-//                 applyFiltersAndRender();
-//             });
-
-//             item.appendChild(input);
-//             item.appendChild(label);
-//             container.appendChild(item);
-//         });
-// }
-
-
-
-
-// const handleAddDrinkToList = (drinkId, listId) => {
-//     drinkId = parseInt(drinkId);
-//     listId = parseInt(listId);
-
-//     const list = mockedLists
-//         .find(l => l.id === listId);
-//     if (!list) {
-//         alert("Lista selectată nu există!");
-//         return;
-//     }
-
-//     if (list.drinks.includes(drinkId)) {
-//         alert("Băutura este deja în această listă!");
-//         return;
-//     }
-
-//     list.drinks.push(drinkId);
-//     console.log(`Băutura ${drinkId} a fost adăugată în lista ${list.name}`);
-//     alert(`Băutura a fost adăugată în lista ${list.name}`);
-// }
-
-
-// function toggleModal(idx, show) {
-//     const m = document.getElementById(`text-box-${idx}`);
-//     if (!m) return;
-//     m.classList.toggle('hidden', !show);
-//     overlay.classList.toggle('hidden', !show);
-//     body.classList.toggle('no-scroll', show);
-// }
-
-// function closeAllModals() {
-//     document.querySelectorAll('.text-box:not(.hidden)')
-//         .forEach(m => m.classList.add('hidden'));
-//     overlay.classList.add('hidden');
-//     body.classList.remove('no-scroll');
-// }
-
-
-// function handleAddList() {
-//     const input = document.getElementById('new-list-name');
-//     const exists = mockedLists
-//         .find(l => l.name === input.value.trim());
-
-//     if (exists) {
-//         alert("O listă cu acest nume există deja!");
-//         input.value = '';
-//         return;
-//     }
-
-//     mockedLists
-//         .push({
-//             id: mockedLists
-//                 .length > 0 ? mockedLists
-//                 [mockedLists
-//                     .length - 1].id + 1 : 1,
-//             name: input.value.trim(),
-//             drinks: []
-//         });
-
-//     input.value = '';
-//     render();
-//     initEventListeners();
-// }
-
-// function handleDeselectList() {
-//     selectedGroupId = '';
-//     selectedListDiv.style.display = 'none';
-//     publicBtn.style.display = 'none';
-//     applyFiltersAndRender();
-// }
-
-// function handleMakePublic() {
-//     if (!selectedGroupId) {
-//         alert("Selectează o listă mai întâi!");
-//         return;
-//     }
-//     alert(`Am facut lista cu id ${selectedGroupId} publică`);
-// }
-
-
-// function initEventListeners() {
-//     overlay.addEventListener('click', closeAllModals);
-//     document.addEventListener('keydown', e => {
-//         if (e.key === 'Escape') closeAllModals();
-//     });
-// }
-
-// document.addEventListener('DOMContentLoaded', getGroups);
-
-// ✅ INTEGRATED WITH API & JWT while preserving mock logic as fallback
-
-const API_BASE_URL = window.env.API_BASE_URL;
-let token = localStorage.getItem("token");
-
-if (!token) {
-  alert("Trebuie să fii autentificat pentru a accesa această pagină.");
-  window.location.href = "/login/";
+const API_BASE_URL = "http://localhost:3000";
+
+async function getDrinkDetails(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/drinks/${drinkId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la obținerea detaliilor băuturii");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function getListWithDrink(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/with-drink/${drinkId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la obținerea listei cu băutura");
+    }
+    const data = await response.json();
+    return data.list;
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function getFavoritesDrinks() {
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/favorites`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la obținerea băuturilor favorite");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function addDrinkToList(drinkId, listId) {
+  if (!drinkId || !listId) {
+    alert("ID-ul băuturii sau al listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId })
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la adăugarea băuturii în listă");
+    }
+    const data = await response.json();
+    alert(`Băutura a fost adăugată în listă.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function deleteDrinkFromList(drinkId, listId) {
+  if (!drinkId || !listId) {
+    alert("ID-ul băuturii sau al listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/remove`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId })
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la ștergerea băuturii din listă");
+    }
+    const data = await response.json();
+    return true;
+    alert(`Băutura a fost ștearsă din listă.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+    return false;
+  }
+}
+
+async function getListById(listId) {
+  if (!listId) {
+    alert("ID-ul listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Eroare la obținerea detaliilor listei");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function createList(name) {
+  if (!name) {
+    alert("Numele listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ name, public: false })
+    });
+    if (response.status === 400) {
+      throw new Error("Numele listei nu poate fi gol sau prea lung.");
+    }
+    if (!response.ok) {
+      throw new Error("Eroare la crearea listei");
+    }
+
+  }
+  catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function updateList(listId, name, isPublic) {
+  if (!listId) {
+    alert("ID-ul listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ name, public: isPublic })
+    });
+    if (!response.ok) {
+      throw new Error("Eroare la actualizarea listei");
+    }
+    const data = await response.json();
+    return true;
+  } catch (error) {
+    alert("Eroare:" + error);
+    return false;
+  }
+}
+
+async function deleteList(listId) {
+  if (!listId) {
+    alert("ID-ul listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Eroare la ștergerea listei");
+    }
+    const data = await response.json();
+
+    alert(`Lista a fost ștearsă cu succes.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function addDrinkToList(drinkId, listId) {
+  if (!drinkId || !listId) {
+    alert("ID-ul băuturii sau al listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId })
+    });
+    if (!response.ok) {
+      console.error("Response status:", response);
+      throw new Error("Eroare la adăugarea băuturii în listă");
+    }
+    const data = await response.json();
+
+    alert(`Băutura a fost adăugată în listă.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
+async function getAllLists() {
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error("Eroare la obținerea listelor");
+    }
+    const data = await response.json();
+    return data || [];
+  } catch (error) {
+    alert("Eroare:" + error);
+    return [];
+  }
+}
+
+async function addDrinkToFavorites(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return;
+  }
+  console.log("Adding drink to favorites:", drinkId);
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId }),
+    });
+    if (response.status === 400) {
+      throw new Error("ID-ul băuturii lipsește sau este invalid.");
+    }
+    if (response.status === 404) {
+      throw new Error("Băutura nu a fost găsită.");
+    }
+    if (response.status === 200) {
+      alert("Băutura a fost adăugată la favorite!");
+      return;
+    }
+    const data = await response.json();
+    return true;
+  } catch (error) {
+    alert("Operațiune eșuată: " + error.message);
+    return false;
+  }
+}
+
+async function deleteDrinkFromFavorites(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/favorites/${drinkId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error("Eroare la eliminarea băuturii din favorite");
+    }
+    return true;
+  } catch (error) {
+    alert("Operațiune eșuată: " + error.message);
+    return false;
+  }
 }
 
 let originalData = [];
-let drinksData = [];
-let currentPage = 1;
-const itemsPerPage = 10;
+let displayData = [];
+let userLists = [];
+let selectedListId = null;
+let selectedListName = null;
+let favoritesSelected = false;
+
 
 const cardsContainer = document.querySelector(".cards-container");
 const modalsContainer = document.querySelector("#text-box-container");
 const overlay = document.querySelector(".overlay");
 const body = document.body;
 const sortSelect = document.getElementById("sort-select");
-const paginationContainer = document.querySelector('.pagination');
+const selectedList = document.getElementById('selected-list');
 const selectedListDiv = document.getElementById('selected-list');
 const publicBtn = document.getElementById('public-btn');
-const createListBtn = document.getElementById('create-list-btn');
+const emptyListMessage = document.querySelector('.empty-state');
 
-let selectedGroupId = null;
-
-const fallbackDrinks = [...mockedDrinks];
-const fallbackLists = [...mockedLists];
-
-async function fetchDrinksFromAPI() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/drinks/feed?limit=100`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Eșec API");
-    return await res.json();
-  } catch (err) {
-    console.warn("Folosim fallback mock drinks", err);
-    return fallbackDrinks;
-  }
-}
-
-async function fetchListsFromAPI() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/lists`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Eșec API Lists");
-    return await res.json();
-  } catch (err) {
-    console.warn("Folosim fallback mock lists", err);
-    return fallbackLists;
-  }
-}
-
-async function updateListPublicStatus(id, value) {
-  await fetch(`${API_BASE_URL}/lists/${id}`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ public: value }),
-  });
-}
-
-async function createNewList(name) {
-  const res = await fetch(`${API_BASE_URL}/lists`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name, public: false }),
-  });
-  return await res.json();
-}
-
-async function getGroups() {
-  try {
-    const [drinks, lists] = await Promise.all([
-      fetchDrinksFromAPI(),
-      fetchListsFromAPI()
-    ]);
-
-    originalData = drinks;
-    mockedLists.length = 0;
-    mockedLists.push(...lists);
-
-    setupSort();
-    applyFiltersAndRender();
-    initEventListeners();
-  } catch (err) {
-    console.error("Eroare încărcare date:", err);
-  }
-}
 
 function setupSort() {
   if (!sortSelect) return;
   sortSelect.addEventListener("change", () => {
-    currentPage = 1;
-    applyFiltersAndRender();
+    sortData(sortSelect.value);
+    if (!favoritesSelected) {
+      renderDrinks();
+    }
+    else {
+      renderFavoriteDrinks();
+    }
   });
 }
 
 function sortData(criterion) {
+  if (!originalData || originalData.length === 0) return;
   switch (criterion) {
     case 'name-asc':
-      drinksData.sort((a, b) => a.name.localeCompare(b.name));
+      displayData.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case 'name-desc':
-      drinksData.sort((a, b) => b.name.localeCompare(a.name));
+      displayData.sort((a, b) => b.name.localeCompare(a.name));
       break;
     case 'category-asc':
-      drinksData.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
+      displayData.sort((a, b) => a.category.localeCompare(b.category));
       break;
     case 'category-desc':
-      drinksData.sort((a, b) => (b.category || '').localeCompare(a.category || ''));
+      displayData.sort((a, b) => b.category.localeCompare(a.category));
       break;
     case 'quantity-asc':
-      drinksData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
+      displayData.sort((a, b) => (a.quantity || 0) - (b.quantity || 0));
       break;
     case 'quantity-desc':
-      drinksData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
+      displayData.sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
       break;
   }
 }
 
-function applyFiltersAndRender() {
-  drinksData = [...originalData];
-
-  if (selectedGroupId) {
-    const selectedList = mockedLists.find(l => l.id == selectedGroupId);
-    if (selectedList && selectedList.drinks) {
-      drinksData = drinksData.filter(drink => selectedList.drinks.some(d => d.id === drink.id));
-    }
-  }
-
-  sortData(sortSelect?.value);
-  render();
-  initEventListeners();
+async function applyFiltersAndRender() {
+  originalData = await getListById(selectedListId).then(data => data.drinks || []);
+  originalData.sort((a, b) => a.name.localeCompare(b.name));
+  displayData = [...originalData];
+  await renderDrinks();
 }
 
-function render() {
-  cardsContainer.innerHTML = '';
-  modalsContainer.innerHTML = '';
-
-  const totalItems = drinksData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  const pageData = drinksData.slice(start, end);
-
-  pageData.forEach(drink => {
-    cardsContainer.appendChild(createDrinkCard(drink));
-    modalsContainer.appendChild(createDrinkModal(drink));
-  });
-
-  renderPagination(totalPages);
-  generateRadioFilter();
-}
-
-function renderPagination(totalPages) {
-  paginationContainer.innerHTML = '';
-  for (let p = 1; p <= totalPages; p++) {
-    const btn = document.createElement('button');
-    btn.textContent = p;
-    btn.classList.add('page-btn');
-    if (p === currentPage) btn.classList.add('active');
-    btn.addEventListener('click', () => {
-      currentPage = p;
-      applyFiltersAndRender();
-    });
-    paginationContainer.appendChild(btn);
-  }
-}
 
 function createDrinkCard(drink) {
   const card = document.createElement('div');
   card.classList.add('rectangle');
   card.innerHTML = `
-    <div class="content">
-      <img class="drink-img" src="${drink.image_url || drink.image}" alt="${drink.name}">
+      <div class="content">
+      <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
     </div>
     <h3>${drink.name}</h3>
-    <p><strong>Categorie:</strong> ${drink.category || drink.brand || '-'}</p>
-    <p><strong>Cantitate:</strong> ${drink.quantity || 0} ml</p>
     <div class="btn">
       <button class="read-more" data-index="${drink.id}">Detalii</button>
     </div>
   `;
-  card.querySelector('.read-more').addEventListener('click', () => toggleModal(drink.id, true));
+  card.querySelector('.read-more').addEventListener('click', () => {
+    toggleModal(drink.id, true)
+  });
   return card;
 }
 
-function createDrinkModal(drink) {
+function createFavoriteDrinkCard(drink) {
+  const card = document.createElement('div');
+  card.classList.add('rectangle');
+  card.innerHTML = `
+      <div class="content">
+      <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
+    </div>
+    <h3>${drink.name}</h3>
+      <p><strong>Brand:</strong> ${drink.brand}</p>
+    <div class="btn">
+      <button class="read-more" data-index="${drink.id}">Detalii</button>
+    </div>
+  `;
+  card.querySelector('.read-more').addEventListener('click', () => {
+    toggleModal(drink.id, true)
+  });
+  return card;
+}
+
+async function createDrinkModal(drink) {
   const modal = document.createElement('div');
   modal.classList.add('text-box', 'hidden');
   modal.id = `text-box-${drink.id}`;
@@ -585,68 +445,171 @@ function createDrinkModal(drink) {
     position: 'fixed', top: '50%', left: '50%',
     transform: 'translate(-50%,-50%)', zIndex: '10'
   });
+
+  const deleteButtonHtml = favoritesSelected
+    ? `<i class="fa-solid fa-trash icon-menu delete-favorite" data-drink-id="${drink.id}" title="Remove from favorites"></i>`
+    : `<i class="fa-solid fa-trash icon-menu delete-from-list" data-drink-id="${drink.id}" title="Remove from list"></i>`;
+
   modal.innerHTML = `
     <button class="close-modal" data-index="${drink.id}">&times;</button>
     <div class="drink-details">
       <p id="drink-title">${drink.name}</p>
       <div class="drink-content">
         <div class="drink-text">
-          <p id="drink-category"><strong>Categorie:</strong> ${drink.category || drink.brand || '-'}</p>
-          <p id="drink-category"><strong>Cantitate:</strong> ${drink.quantity || 0} ml</p>
-          <p id="drink-description">Aceasta este o băutură răcoritoare de test. Nu conține informații adiționale din API.</p>
+          <p><strong>Brand:</strong> ${drink.brand}</p>
+          <p><strong>Cantitate:</strong> ${drink.quantity} ml</p>
+          <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
+          <p><strong>Ambalaj:</strong> ${drink.packaging}</p>
         </div>
         <div id="icons-container">
-          <img id="drink-image-box" src="${drink.image_url || drink.image}" alt="${drink.name}">
+          <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
           <div id="menu-icons-container">
-              <i class="fa-regular fa-heart icon-menu"></i>
-              <i class="fa-solid fa-plus icon-menu"></i>
-              <i class="fa-solid fa-share icon-menu"></i>
+            <i class="fa-regular fa-heart icon-menu add-favorite" data-drink-id="${drink.id}" title="Add to favorites"></i>
+            <i class="fa-solid fa-plus icon-menu add-to-list" title="Add to list"></i>
+            <i class="fa-solid fa-share icon-menu" title="Share"></i>
+            ${deleteButtonHtml}
           </div>
-        </div>
+        </div>   
+      </div>
+      <div class="favorite-section">
+        <label for="favorite-list" class="favorite-label">Liste:</label>
+        <select id="list-${drink.id}" class="favorite-select">
+          <option value="" disabled selected>Selectează o listă</option>
+          ${userLists.map(list => `
+            <option value="${list.id}">${list.name}</option>
+          `).join('')}
+        </select> 
       </div>
     </div>
   `;
-  modal.querySelector(".close-modal").addEventListener("click", () => toggleModal(drink.id, false));
+
+  modal.querySelector('.close-modal')
+    .addEventListener('click', () => toggleModal(drink.id, false));
+
+  modal.querySelector('.add-favorite')
+    .addEventListener('click', async e => {
+      e.stopPropagation();
+      await addDrinkToFavorites(e.target.dataset.drinkId);
+    });
+  modal.querySelector('.add-to-list')
+    .addEventListener('click', async () => {
+      const select = modal.querySelector(`#list-${drink.id}`);
+      const listToAddTo = parseInt(select.value);
+      if (!listToAddTo) {
+        alert("Selectează o listă mai întâi!");
+        return;
+      }
+      await addDrinkToList(drink.id, listToAddTo);
+    });
+
+  const delFavBtn = modal.querySelector('.delete-favorite');
+  if (delFavBtn) {
+    delFavBtn.addEventListener('click', async () => {
+      let favoriteDrinkDeleted = await deleteDrinkFromFavorites(drink.id)
+      if (favoriteDrinkDeleted) {
+        closeAllModals();
+        originalData = originalData.filter(d => d.id !== drink.id);
+        displayData = displayData.filter(d => d.id !== drink.id);
+        renderFavoriteDrinks();
+      }
+    });
+
+  }
+  const delListBtn = modal.querySelector('.delete-from-list');
+  if (delListBtn) {
+    delListBtn.addEventListener('click', async () => {
+      let drinkDeleted = await deleteDrinkFromList(drink.id, selectedListId);
+      if (drinkDeleted) {
+        closeAllModals();
+        originalData = originalData.filter(d => d.id !== drink.id);
+        displayData = displayData.filter(d => d.id !== drink.id);
+        renderDrinks();
+      }
+    });
+  }
+
   return modal;
 }
 
-function generateRadioFilter() {
-  const container = document.querySelector('.filter-list');
-  if (!container) return;
-  container.innerHTML = '';
 
-  mockedLists.forEach(list => {
+async function handleAddDrinkToFavorites(drinkId) {
+  const addedToFavorites = await addDrinkToFavorites(drinkId);
+  if (addedToFavorites) {
+    alert("Băutura a fost adăugată la favorite!");
+  }
+};
+
+async function generateRadioFilter(inputName = 'user-list') {
+  const lists = await getAllLists();
+  lists.sort((a, b) => a.createdAt < b.createdAt ? -1 : +1);
+  const container = document.querySelector('.filter-list');
+  container.innerHTML = '';
+  lists.forEach(list => {
     const item = document.createElement('div');
     item.classList.add('filter-item');
-
-    const input = document.createElement('input');
-    input.type = 'radio';
-    input.name = 'category';
-    input.id = `filter-${list.id}`;
-    input.value = list.id;
-    if (selectedGroupId == list.id) input.checked = true;
-
-    input.addEventListener('change', () => {
-      selectedGroupId = input.value;
-      currentPage = 1;
-      selectedListDiv.textContent = list.name;
-      selectedListDiv.style.display = 'block';
-      publicBtn.style.display = 'block';
+    item.innerHTML = `
+      <input
+        type="radio"
+        name="${inputName}"
+        id="filter-${list.id}"
+        value="${list.id}"
+      >
+      <label for="filter-${list.id}">${list.name}</label>
+    `;
+    const radio = item.querySelector('input');
+    radio.addEventListener('change', () => {
+      favoritesSelected = false;
+      emptyListMessage.style.display = 'none';
+      publicBtn.style.display = 'none';
+      document.querySelector('.sort-section').style.display = 'block';
+      selectedListId = parseInt(radio.value);
+      selectedListName = list.name;
+      if (!list.public) {
+        publicBtn.style.display = 'block';
+        publicBtn.dataset.listId = list.id;
+      }
       applyFiltersAndRender();
     });
-
-    const label = document.createElement('label');
-    label.setAttribute('for', input.id);
-    label.textContent = list.name;
-
-    item.appendChild(input);
-    item.appendChild(label);
     container.appendChild(item);
   });
+  userLists = lists;
 }
 
-function toggleModal(id, show) {
-  const m = document.getElementById(`text-box-${id}`);
+async function renderDrinks() {
+  cardsContainer.innerHTML = '';
+  modalsContainer.innerHTML = '';
+
+  displayData.forEach((drink, idx) => {
+    cardsContainer.appendChild(createDrinkCard(drink, idx));
+  });
+
+  const modalPromises = originalData.map(async (d) => {
+    const drinkDetails = await getDrinkDetails(d.id);
+    return createDrinkModal(drinkDetails);
+  });
+
+  const modals = await Promise.all(modalPromises);
+  modals.forEach(m => modalsContainer.appendChild(m));
+
+  initEventListeners();
+}
+
+async function renderFavoriteDrinks() {
+  cardsContainer.innerHTML = '';
+  modalsContainer.innerHTML = '';
+
+  displayData.forEach((drink, idx) => {
+    cardsContainer.appendChild(createFavoriteDrinkCard(drink, idx));
+  });
+
+  const modalPromises = originalData.map(d => createDrinkModal(d));
+  const modals = await Promise.all(modalPromises);
+  modals.forEach(m => modalsContainer.appendChild(m));
+  initEventListeners();
+}
+
+function toggleModal(idx, show) {
+  const m = document.getElementById(`text-box-${idx}`);
   if (!m) return;
   m.classList.toggle('hidden', !show);
   overlay.classList.toggle('hidden', !show);
@@ -654,9 +617,89 @@ function toggleModal(id, show) {
 }
 
 function closeAllModals() {
-  document.querySelectorAll('.text-box:not(.hidden)').forEach(m => m.classList.add('hidden'));
+  document.querySelectorAll('.text-box:not(.hidden)')
+    .forEach(m => m.classList.add('hidden'));
   overlay.classList.add('hidden');
   body.classList.remove('no-scroll');
 }
 
-document.addEventListener("DOMContentLoaded", getGroups);
+
+async function handleAddList() {
+  const input = document.getElementById('new-list-name');
+  const createdList = await createList(input.value);
+  input.value = '';
+  await generateRadioFilter();
+}
+
+function handleDeselectList() {
+  selectedListId = '';
+  selectedListDiv.style.display = 'none';
+  publicBtn.style.display = 'none';
+  document.querySelector('.sort-section').style.display = 'none';
+  document
+    .querySelectorAll('input[name="user-list"]')
+    .forEach(radio => radio.checked = false);
+
+  clearCards();
+}
+
+async function handleMakePublic() {
+  if (!selectedListId) {
+    alert("Selectează o listă mai întâi!");
+    return;
+  }
+  const listUpdated = await updateList(selectedListId, selectedListName, true);
+  if (listUpdated) {
+    alert(`Am facut lista cu id ${selectedListId} publică`);
+    selectedListDiv.style.display = 'none';
+    publicBtn.style.display = 'none';
+  }
+}
+
+async function handleFetchFavorites() {
+  handleDeselectList();
+  const favorites = await getFavoritesDrinks();
+  if (!favorites || favorites.length === 0) {
+    alert("Nu ai băuturi favorite.");
+    return;
+  }
+  originalData = favorites;
+  displayData = [...originalData];
+  selectedListId = null;
+  emptyListMessage.style.display = 'none';
+  publicBtn.style.display = 'none';
+  document.querySelector('.sort-section').style.display = 'block';
+  favoritesSelected = true;
+  await renderFavoriteDrinks();
+}
+
+
+function initEventListeners() {
+  overlay.addEventListener('click', closeAllModals);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAllModals();
+  });
+}
+
+function clearCards() {
+  cardsContainer.innerHTML = '';
+  modalsContainer.innerHTML = '';
+  originalData = [];
+  displayData = [];
+  selectedListId = null;
+  emptyListMessage.style.display = 'block';
+}
+
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login/index.html";
+    return false;
+  }
+  return token;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await generateRadioFilter();
+  setupSort();
+});

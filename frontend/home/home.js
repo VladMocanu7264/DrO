@@ -181,6 +181,66 @@ async function fetchUserLists() {
   }
 }
 
+async function addDrinkToFavorites(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return;
+  }
+  console.log("Adding drink to favorites:", drinkId);
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId }),
+    });
+    if (response.status === 400) {
+      throw new Error("ID-ul băuturii lipsește sau este invalid.");
+    }
+    if (response.status === 404) {
+      throw new Error("Băutura nu a fost găsită.");
+    }
+    if (response.status === 200) {
+      alert("Băutura a fost adăugată la favorite!");
+      return;
+    }
+    const data = await response.json();
+    return true;
+  } catch (error) {
+    alert("Operațiune eșuată: " + error.message);
+    return false;
+  }
+}
+
+async function addDrinkToList(drinkId, listId) {
+  if (!drinkId || !listId) {
+    alert("ID-ul băuturii sau al listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId })
+    });
+
+    if (!response.ok) {
+      throw new Error("Eroare la adăugarea băuturii în listă");
+    }
+    const data = await response.json();
+    alert(`Băutura a fost adăugată în listă.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
 function render() {
   cardsContainer.innerHTML = "";
   modalsContainer.innerHTML = "";
@@ -236,29 +296,38 @@ function createDrinkModal(drink) {
         <div id="icons-container">
           <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
           <div id="menu-icons-container">
-              <a href="/rss">
-              <i class="fa-regular fa-heart icon-menu"></i>
-              </a>
-              <a>
-              <i class="fa-solid fa-plus icon-menu add-favorite"  data-drink-id="${drink.id}"></i>
-              </a>
-              <a href="/rss">
-              <i class="fa-solid fa-share  icon-menu"></i>
-              </a>
+            <i class="fa-regular fa-heart icon-menu add-favorite" data-drink-id="${drink.id}" title="Add to favorites"></i>
+            <i class="fa-solid fa-plus icon-menu add-to-list" title="Add to list"></i>
+            <i class="fa-solid fa-share icon-menu" title="Share"></i>
           </div>
         </div>   
         </div>
-           <div class="favorite-section">
-            <label for="favorite-list" class="favorite-label">Liste:</label>
-            <select id="favorite-list-${drink.id}" class="favorite-select">
-              <option value="" disabled selected>Selectează o listă</option>
-                            ${userLists.map(list => `
-                <option value="${list.id}">${list.name}</option>
-              `).join('')}
-            </select> 
-          </div>
+      <div class="favorite-section">
+        <label for="favorite-list" class="favorite-label">Liste:</label>
+        <select id="list-${drink.id}" class="favorite-select">
+          <option value="" disabled selected>Selectează o listă</option>
+          ${userLists.map(list => `
+            <option value="${list.id}">${list.name}</option>
+          `).join('')}
+        </select> 
+      </div>
     </div>
   `;
+  modal.querySelector('.add-favorite')
+    .addEventListener('click', async e => {
+      e.stopPropagation();
+      await addDrinkToFavorites(e.target.dataset.drinkId);
+    });
+  modal.querySelector('.add-to-list')
+    .addEventListener('click', async () => {
+      const select = modal.querySelector(`#list-${drink.id}`);
+      const listToAddTo = parseInt(select.value);
+      if (!listToAddTo) {
+        alert("Selectează o listă mai întâi!");
+        return;
+      }
+      await addDrinkToList(drink.id, listToAddTo);
+    });
   return modal;
 }
 
@@ -293,6 +362,7 @@ function closeAllModals() {
 async function resetAndLoad() {
   drinksData = await fetchDrinks(currentPage);
   userLists = await fetchUserLists();
+  userLists.sort((a, b) => a.name.localeCompare(b.name));
   render();
 }
 
@@ -359,6 +429,15 @@ function clearFilters() {
   resetAndLoad();
 }
 document.getElementById("clear-filters-btn").addEventListener("click", clearFilters);
+
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login/index.html";
+    return false;
+  }
+  return token;
+}
 
 function handleNavigateToRanking() {
   window.location.href = "/ranking/";
