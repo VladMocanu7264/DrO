@@ -77,7 +77,7 @@ async function handleGetAdminDrinks(req, res) {
                     { brand: { [Op.iLike]: `%${term}%` } }
                 ]
             },
-            attributes: ['id', 'name', 'brand']
+            attributes: ['id', 'name', 'brand','image_url']
         });
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(drinks));

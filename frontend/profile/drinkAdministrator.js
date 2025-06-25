@@ -38,7 +38,7 @@ async function getDrinkByQuery(query) {
 }
 
 async function postDrink(drinkData) {
-    if (!drinkData || !drinkData.name || !drinkData.category) {
+    if (!drinkData || !drinkData.name) {
         alert("Datele băuturii sunt incomplete.");
         return;
     }
@@ -146,9 +146,8 @@ function renderDrinks(arrayOfDrinks) {
           title="Șterge băutura"
         ></i>
       </div>
-      <p>${capitalizeFirstLetter(drink.brand)}</p>
       <!-- fix the quotes and alt text -->
-      <img src="../public/poze/cocacola.png" alt="${drink.name} Image">
+      <img src="${drink.image_url}" alt="${drink.name} Image">
     `;
 
         const deleteDrinkBtn = card.querySelector('.delete-drink-button');
@@ -177,8 +176,9 @@ function clearDrinkSearch() {
 
 
 const addDrink = async () => {
+    const id = document.getElementById("drink-id").value.trim();
     const name = document.getElementById("drink-name").value.trim();
-    const category = document.getElementById("drink-type").value.trim();
+    //const category = document.getElementById("drink-type").value.trim();
     const brand = document.getElementById("drink-brand").value.trim();
     const nutrition_grade = document.getElementById("drink-nutrition-grade")
         .value.trim();
@@ -200,8 +200,9 @@ const addDrink = async () => {
     const image_url = URL.createObjectURL(file);
 
     const drinkData = {
+        id,
         name,
-        category,
+        //category,
         brand,
         nutrition_grade,
         quantity,
@@ -217,8 +218,9 @@ const addDrink = async () => {
 };
 
 const clearDrinkForm = () => {
+    document.getElementById("drink-id").value = "";
     document.getElementById("drink-name").value = "";
-    document.getElementById("drink-type").value = "";
+    //document.getElementById("drink-type").value = "";
     document.getElementById("drink-brand").value = "";
     document.getElementById("drink-nutrition-grade").value = "";
     document.getElementById("drink-quantity").value = "";

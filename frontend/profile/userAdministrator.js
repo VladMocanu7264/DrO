@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
+const API_BASE_URL = "http://localhost:3000";
 
 async function deleteUser(userId) {
     if (!userId) {
@@ -56,6 +56,7 @@ async function getUserByName(name) {
         if (users.length === 0) {
             alert("Nu s-au găsit utilizatori cu acest nume.");
         }
+        console.log(users);
         return users;
     } catch (error) {
         alert(`Eroare de rețea: ${error}`);
@@ -97,7 +98,7 @@ function loadUsers(arrayOfUsers) {
     arrayOfUsers.forEach((user) => {
         const userRow = document.createElement('tr');
         userRow.innerHTML = `
-      <td>${user.name}</td>
+      <td>${user.username}</td>
       <td>${user.email}</td>
       <td>
         <button 

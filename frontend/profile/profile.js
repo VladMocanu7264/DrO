@@ -118,8 +118,10 @@ const adminDrinksBtn = document.getElementById('drinks-button');
 const adminGroupsBtn = document.getElementById('groups-button');
 
 function checkAdminAccess() {
-    const userRole = localStorage.getItem('userRole');
-    if (userRole !== 'admin') {
+
+    const userRole = JSON.parse(localStorage.getItem('user'));
+
+    if (!userRole.is_admin) {
         adminUsersBtn.style.display = 'none';
         adminDrinksBtn.style.display = 'none';
         adminGroupsBtn.style.display = 'none';
