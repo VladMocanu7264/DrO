@@ -209,34 +209,6 @@
     overflow: hidden;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 2rem 0;
-}
-
-/* Page buttons */
-.page-btn {
-    padding: 0.4rem 0.8rem;
-    border: 1px solid var(--secondary);
-    background: #fff;
-    color: var(--primary);
-    font-size: 0.95rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.page-btn:hover {
-    background: var(--secondary);
-    color: #fff;
-}
-
-.page-btn.active {
-    background: var(--primary);
-    color: #fff;
-}
 
 .drink-img {
     border-radius: 0.25rem;
