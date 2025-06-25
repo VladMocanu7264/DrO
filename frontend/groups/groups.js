@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
+const API_BASE_URL = "http://localhost:3000";
 
 const searchInput = document.getElementById("search-group");
 const sortSelect = document.getElementById("sort-select");
@@ -245,6 +245,15 @@ function handleJoinGroup() {
     window.location.href = `../join-group/index.html`;
 }
 
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login/index.html";
+    return false;
+  }
+  return token;
+}
+
 function updatePaginationControls() {
     const pagination = document.querySelector('.pagination');
     console.log("Updating pagination controls:", currentPage, totalPages);
@@ -271,3 +280,4 @@ document.getElementById('next-page').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', generateRadioFilter);
+
