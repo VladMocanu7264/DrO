@@ -72,7 +72,8 @@
         <aside class="sidebar">
             <h2 class="filter-title">Liste</h2>
             <div class="favorites-panel">
-                <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon" onclick="handleFetchFavorites()"/>
+                <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon"
+                    onclick="handleFetchFavorites()" />
                 <p>Favorite</p>
             </div>
             <form class="filter-form">
@@ -87,6 +88,12 @@
                     <legend>Adaugă o listă</legend>
                     <input type="text" id="new-list-name" placeholder="Nume lista" />
                     <button type="button" class="add-list-button" onclick="handleAddList()">Adaugă</button>
+                </div>
+
+                <div id="edit-list-name-container" class="filter-group hidden">
+                    <legend>Editează numele</legend>
+                    <input type="text" id="edit-list-name" placeholder="Nume lista" />
+                    <button type="button" class="add-list-button" onclick="handleEditListName()">Editează</button>
                 </div>
 
             </form>
@@ -122,7 +129,11 @@
                 </div>
                 <div id="selected-list" style="display: none;"></div>
             </div>
-            <button id="public-btn" style="display: none;" onclick="handleMakePublic()">Schimbă în public</button>
+            <div class="list-actions-btns">
+                <button id="private-btn" style="display: none;" onclick="handleMakePrivate()">Schimbă în privat</button>
+                <button id="public-btn" style="display: none;" onclick="handleMakePublic()">Schimbă în public</button>
+                <button id="delete-list-btn" style="display: none;" onclick="handleDeleteList()">Șterge</button>
+            </div>
             <div class="cards-container"></div>
         </div>
 

@@ -221,10 +221,11 @@ async function deleteList(listId) {
       throw new Error("Eroare la ștergerea listei");
     }
     const data = await response.json();
-
     alert(`Lista a fost ștearsă cu succes.`);
+    return true;
   } catch (error) {
     alert("Eroare:" + error);
+    return false;
   }
 }
 
@@ -352,7 +353,10 @@ const sortSelect = document.getElementById("sort-select");
 const selectedList = document.getElementById('selected-list');
 const selectedListDiv = document.getElementById('selected-list');
 const publicBtn = document.getElementById('public-btn');
+const privateBtn = document.getElementById('private-btn');
+const deleteListBtn = document.getElementById('delete-list-btn');
 const emptyListMessage = document.querySelector('.empty-state');
+const editListNameContainer = document.getElementById('edit-list-name-container');
 
 
 function setupSort() {
@@ -541,6 +545,7 @@ async function handleAddDrinkToFavorites(drinkId) {
 
 async function generateRadioFilter(inputName = 'user-list') {
   const lists = await getAllLists();
+  console.log("Generated radio filter with lists:", lists);
   lists.sort((a, b) => a.createdAt < b.createdAt ? -1 : +1);
   const container = document.querySelector('.filter-list');
   container.innerHTML = '';
@@ -557,16 +562,25 @@ async function generateRadioFilter(inputName = 'user-list') {
       <label for="filter-${list.id}">${list.name}</label>
     `;
     const radio = item.querySelector('input');
+    if (selectedListId === list.id) {
+      radio.checked = true;
+    }
     radio.addEventListener('change', () => {
+      editListNameContainer.style.display = 'block';
       favoritesSelected = false;
       emptyListMessage.style.display = 'none';
       publicBtn.style.display = 'none';
+      privateBtn.style.display = 'none';
+      deleteListBtn.style.display = 'block';
       document.querySelector('.sort-section').style.display = 'block';
       selectedListId = parseInt(radio.value);
       selectedListName = list.name;
       if (!list.public) {
         publicBtn.style.display = 'block';
         publicBtn.dataset.listId = list.id;
+      } else {
+        privateBtn.style.display = 'block';
+        privateBtn.dataset.listId = list.id;
       }
       applyFiltersAndRender();
     });
@@ -631,10 +645,35 @@ async function handleAddList() {
   await generateRadioFilter();
 }
 
+async function handleEditListName() {
+  const input = document.getElementById('edit-list-name');
+  if (!selectedListId) {
+    alert("Selectează o listă mai întâi!");
+    return;
+  }
+  if (!input.value) {
+    alert("Numele listei nu poate fi gol!");
+    return;
+  }
+  let publicValue = true;
+  if (publicBtn.style.display === 'block') {
+    publicValue = false;
+  }
+  const listUpdated = await updateList(selectedListId, input.value, publicValue);
+  if (listUpdated) {
+    input.value = '';
+  }
+  await generateRadioFilter();
+}
+
+
 function handleDeselectList() {
-  selectedListId = '';
+  selectedListId = null;
   selectedListDiv.style.display = 'none';
   publicBtn.style.display = 'none';
+  privateBtn.style.display = 'none';
+  deleteListBtn.style.display = 'none';
+  editListNameContainer.style.display = 'none';
   document.querySelector('.sort-section').style.display = 'none';
   document
     .querySelectorAll('input[name="user-list"]')
@@ -653,6 +692,32 @@ async function handleMakePublic() {
     alert(`Am facut lista cu id ${selectedListId} publică`);
     selectedListDiv.style.display = 'none';
     publicBtn.style.display = 'none';
+    privateBtn.style.display = 'block';
+  }
+}
+
+async function handleMakePrivate() {
+  if (!selectedListId) {
+    alert("Selectează o listă mai întâi!");
+    return;
+  }
+  const listUpdated = await updateList(selectedListId, selectedListName, false);
+  if (listUpdated) {
+    alert(`Am facut lista cu id ${selectedListId} privată`);
+    selectedListDiv.style.display = 'none';
+    privateBtn.style.display = 'none';
+    publicBtn.style.display = 'block';
+  }
+}
+
+async function handleDeleteList() {
+  const confirmDelete = confirm("Sigur vrei să ștergi această listă?");
+  if (!confirmDelete) return;
+  const listDeleted = await deleteList(selectedListId);
+  if (listDeleted) {
+    handleDeselectList();
+    deleteListBtn.style.display = 'none';
+    await generateRadioFilter();
   }
 }
 
