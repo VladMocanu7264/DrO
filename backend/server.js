@@ -19,7 +19,8 @@ console.log("top of server.js reached");
         const userRoutes = require('./routes/user');
         const listsRoutes = require('./routes/lists');
         const adminRoutes = require('./routes/admin');
-        const routes = [...drinkRoutes, ...authRoutes, ...userRoutes, ...listsRoutes, ...adminRoutes];
+        const groupRoutes = require('./routes/groups');
+        const routes = [...drinkRoutes, ...authRoutes, ...userRoutes, ...listsRoutes, ...adminRoutes, ...groupRoutes];
 
         const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
