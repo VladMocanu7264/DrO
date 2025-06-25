@@ -63,12 +63,21 @@ async function handleGetGroupPosts(req, res) {
             ]
         });
 
+        const member = await Member.findOne({
+            where: {
+                GroupId: groupId,
+                UserId: req.user.id
+            }
+        });
+
+        const memberId = member?.id;
+
         const result = posts.map(post => ({
             id: post.id,
             text: post.text,
             time: post.time,
             likes: post.Likes.length,
-            likedByUser: post.Likes.some(like => like.MemberId === req.user.memberId),
+            likedByUser: post.Likes.some(like => like.MemberId === memberId),
             member: {
                 username: post.Member.User.username,
                 image_path: post.Member.User.image_path
@@ -79,29 +88,36 @@ async function handleGetGroupPosts(req, res) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ posts: result, max_pages: Math.ceil(count / limit) }));
     } catch (err) {
+        console.log("Error: " + err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
     }
 }
 
 function matchPostLikePost(req) {
-    const match = req.pathname.match(/^\/posts\/([^/]+)\/like$/);
-    if (match && req.method === 'POST') return { params: { postId: match[1] } };
+    const match = req.pathname.match(/^\/groups\/([^/]+)\/posts\/([^/]+)\/like$/);
+    if (match && req.method === 'POST') return { params: { groupId: match[1], postId: match[2] } };
     return false;
 }
 
 async function handleLikePost(req, res) {
     try {
-        const { postId } = req.params;
+        const { groupId, postId } = req.params;
 
-        const post = await Post.findByPk(postId);
-        if (!post) {
+        const member = await Member.findOne({ where: { GroupId: groupId, UserId: req.user.id } });
+        if (!member) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'You are not a member of this group' }));
+        }
+
+        const post = await Post.findByPk(postId, { include: Member });
+        if (!post || post.Member.GroupId !== Number(groupId)) {
             res.writeHead(404, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ error: 'Post not found' }));
+            return res.end(JSON.stringify({ error: 'Post not found in group' }));
         }
 
         const existing = await Like.findOne({
-            where: { MemberId: req.user.memberId, PostId: postId }
+            where: { MemberId: member.id, PostId: postId }
         });
 
         if (existing) {
@@ -109,10 +125,11 @@ async function handleLikePost(req, res) {
             return res.end(JSON.stringify({ error: 'Already liked' }));
         }
 
-        await Like.create({ MemberId: req.user.memberId, PostId: postId });
+        await Like.create({ MemberId: member.id, PostId: postId });
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Post liked' }));
     } catch (err) {
+        console.log("Error: " + err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
     }
