@@ -256,6 +256,9 @@ function render() {
 }
 
 function createDrinkCard(drink) {
+  const selectedDrinks = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+  const isChecked = selectedDrinks.hasOwnProperty(drink.id);
+
   const card = document.createElement("div");
   card.classList.add("rectangle");
   card.innerHTML = `
@@ -268,11 +271,28 @@ function createDrinkCard(drink) {
       <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
       <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
     </div>
-      <button class="read-more" data-index="${drink.id}">Detalii</button>
+    <label>
+      <input type="checkbox" class="drink-checkbox" data-drink-id="${drink.id}" ${isChecked ? "checked" : ""}>
+      Statistici
+    </label>
+    <button class="read-more" data-index="${drink.id}">Detalii</button>
   `;
+
+  const checkbox = card.querySelector(".drink-checkbox");
+  checkbox.addEventListener("change", (e) => {
+    const selected = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+
+    if (e.target.checked) {
+      selected[drink.id] = drink;
+    } else {
+      delete selected[drink.id];
+    }
+
+    localStorage.setItem("selectedDrinks", JSON.stringify(selected));
+  });
+
   return card;
 }
-
 
 function createDrinkModal(drink) {
   const modal = document.createElement('div');

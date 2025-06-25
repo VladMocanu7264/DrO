@@ -92,22 +92,28 @@ async function handleGetFeed(req, res) {
             if (maxQty !== null) where.quantity[Op.lte] = maxQty;
         }
 
-        const include = [];
-        if (tags) {
-            include.push({
+        const include = [
+            {
                 model: DrinkTag,
-                required: true,
-                include: [{
-                    model: Tag,
-                    required: true,
-                    where: {
-                        [Op.or]: [
-                            { name: { [Op.in]: tags } },
-                            { id: { [Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
-                        ]
+                required: false,
+                include: [
+                    {
+                        model: Tag,
+                        required: false
                     }
-                }]
-            });
+                ]
+            }
+        ];
+
+        if (tags) {
+            include[0].required = true;
+            include[0].include[0].required = true;
+            include[0].include[0].where = {
+                [Op.or]: [
+                    { name: { [Op.in]: tags } },
+                    { id: { [Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
+                ]
+            };
         }
 
         const allMatching = await Drink.findAll({
@@ -126,7 +132,8 @@ async function handleGetFeed(req, res) {
             image_url: drink.image_url,
             nutrition_grade: drink.nutrition_grade,
             quantity: drink.quantity,
-            packaging: drink.packaging
+            packaging: drink.packaging,
+            tags: (drink.DrinkTags || []).map(dt => dt.Tag?.id).filter(id => id !== undefined)
         }));
 
         console.log(Math.ceil(total / limit), total, limit);

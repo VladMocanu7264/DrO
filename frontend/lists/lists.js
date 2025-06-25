@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = window.env.API_BASE_URL;
 
 async function getDrinkDetails(drinkId) {
   if (!drinkId) {
