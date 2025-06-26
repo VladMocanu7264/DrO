@@ -1,4 +1,4 @@
-const API_BASE_URL = window.env.API_BASE_URL;
+const API_BASE_URL = "http://localhost:3000";
 
 async function getDrinkDetails(drinkId) {
   if (!drinkId) {
@@ -451,8 +451,8 @@ async function createDrinkModal(drink) {
   });
 
   const deleteButtonHtml = favoritesSelected
-    ? `<i class="fa-solid fa-trash icon-menu delete-favorite" data-drink-id="${drink.id}" title="Remove from favorites"></i>`
-    : `<i class="fa-solid fa-trash icon-menu delete-from-list" data-drink-id="${drink.id}" title="Remove from list"></i>`;
+    ? `<i class="fa-solid fa-trash icon-menu delete-favorite" data-drink-id="${drink.id}" title="Șterge de la favorite"></i>`
+    : `<i class="fa-solid fa-trash icon-menu delete-from-list" data-drink-id="${drink.id}" title="Șterge din listă"></i>`;
 
   modal.innerHTML = `
     <button class="close-modal" data-index="${drink.id}">&times;</button>
@@ -468,9 +468,9 @@ async function createDrinkModal(drink) {
         <div id="icons-container">
           <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
           <div id="menu-icons-container">
-            <i class="fa-regular fa-heart icon-menu add-favorite" data-drink-id="${drink.id}" title="Add to favorites"></i>
-            <i class="fa-solid fa-plus icon-menu add-to-list" title="Add to list"></i>
-            <i class="fa-solid fa-share icon-menu" title="Share"></i>
+            <i class="fa-regular fa-heart icon-menu add-favorite" data-drink-id="${drink.id}" title="Adaugă la favorite"></i>
+            <i class="fa-solid fa-plus icon-menu add-to-list" title="Adaugă în listă"></i>
+            <i class="fa-solid fa-share icon-menu share" title="Share"></i>
             ${deleteButtonHtml}
           </div>
         </div>   
@@ -517,7 +517,6 @@ async function createDrinkModal(drink) {
         renderFavoriteDrinks();
       }
     });
-
   }
   const delListBtn = modal.querySelector('.delete-from-list');
   if (delListBtn) {
@@ -531,6 +530,11 @@ async function createDrinkModal(drink) {
       }
     });
   }
+  modal.querySelector('.share')
+    .addEventListener('click', () => {
+      console.log("Sharing drink:", drink.name);
+      window.location.href = `../create-post/index.html?drinkId=${drink.id}`;
+    });
 
   return modal;
 }
@@ -545,7 +549,6 @@ async function handleAddDrinkToFavorites(drinkId) {
 
 async function generateRadioFilter(inputName = 'user-list') {
   const lists = await getAllLists();
-  console.log("Generated radio filter with lists:", lists);
   lists.sort((a, b) => a.createdAt < b.createdAt ? -1 : +1);
   const container = document.querySelector('.filter-list');
   container.innerHTML = '';
