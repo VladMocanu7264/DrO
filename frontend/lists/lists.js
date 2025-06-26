@@ -355,7 +355,7 @@ const selectedListDiv = document.getElementById('selected-list');
 const publicBtn = document.getElementById('public-btn');
 const privateBtn = document.getElementById('private-btn');
 const deleteListBtn = document.getElementById('delete-list-btn');
-const emptyListMessage = document.querySelector('.empty-state');
+const emptyListMessage = document.querySelector('.empty-post');
 const editListNameContainer = document.getElementById('edit-list-name-container');
 
 
@@ -405,6 +405,8 @@ async function applyFiltersAndRender() {
 
 
 function createDrinkCard(drink) {
+  const selectedDrinks = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+  const isChecked = selectedDrinks.hasOwnProperty(drink.id);
   const card = document.createElement('div');
   card.classList.add('rectangle');
   card.innerHTML = `
@@ -412,10 +414,31 @@ function createDrinkCard(drink) {
       <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
     </div>
     <h3>${drink.name}</h3>
+    <div class="drink-info">
+      <p><strong>Brand:</strong> ${drink.brand || "N/A"}</p>
+      <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
+      <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
+    </div>
+    <label>
+      <input type="checkbox" class="drink-checkbox" data-drink-id="${drink.id}" ${isChecked ? "checked" : ""}>
+      Statistici
+    </label>
     <div class="btn">
       <button class="read-more" data-index="${drink.id}">Detalii</button>
     </div>
   `;
+  const checkbox = card.querySelector(".drink-checkbox");
+  checkbox.addEventListener("change", (e) => {
+    const selected = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+
+    if (e.target.checked) {
+      selected[drink.id] = drink;
+    } else {
+      delete selected[drink.id];
+    }
+
+    localStorage.setItem("selectedDrinks", JSON.stringify(selected));
+  });
   card.querySelector('.read-more').addEventListener('click', () => {
     toggleModal(drink.id, true)
   });
@@ -423,6 +446,8 @@ function createDrinkCard(drink) {
 }
 
 function createFavoriteDrinkCard(drink) {
+  const selectedDrinks = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+  const isChecked = selectedDrinks.hasOwnProperty(drink.id);
   const card = document.createElement('div');
   card.classList.add('rectangle');
   card.innerHTML = `
@@ -431,10 +456,26 @@ function createFavoriteDrinkCard(drink) {
     </div>
     <h3>${drink.name}</h3>
       <p><strong>Brand:</strong> ${drink.brand}</p>
+          <label>
+      <input type="checkbox" class="drink-checkbox" data-drink-id="${drink.id}" ${isChecked ? "checked" : ""}>
+      Statistici
+    </label>
     <div class="btn">
       <button class="read-more" data-index="${drink.id}">Detalii</button>
     </div>
   `;
+  const checkbox = card.querySelector(".drink-checkbox");
+  checkbox.addEventListener("change", (e) => {
+    const selected = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+
+    if (e.target.checked) {
+      selected[drink.id] = drink;
+    } else {
+      delete selected[drink.id];
+    }
+
+    localStorage.setItem("selectedDrinks", JSON.stringify(selected));
+  });
   card.querySelector('.read-more').addEventListener('click', () => {
     toggleModal(drink.id, true)
   });
@@ -442,6 +483,7 @@ function createFavoriteDrinkCard(drink) {
 }
 
 async function createDrinkModal(drink) {
+  console.log(drink);
   const modal = document.createElement('div');
   modal.classList.add('text-box', 'hidden');
   modal.id = `text-box-${drink.id}`;
@@ -575,7 +617,7 @@ async function generateRadioFilter(inputName = 'user-list') {
       publicBtn.style.display = 'none';
       privateBtn.style.display = 'none';
       deleteListBtn.style.display = 'block';
-      document.querySelector('.sort-section').style.display = 'block';
+      document.querySelector('.sort-section').style.display = 'flex';
       selectedListId = parseInt(radio.value);
       selectedListName = list.name;
       if (!list.public) {
@@ -736,9 +778,29 @@ async function handleFetchFavorites() {
   selectedListId = null;
   emptyListMessage.style.display = 'none';
   publicBtn.style.display = 'none';
-  document.querySelector('.sort-section').style.display = 'block';
+  document.querySelector('.sort-section').style.display = 'flex';
   favoritesSelected = true;
   await renderFavoriteDrinks();
+}
+
+function selectAll() {
+  const allSelected = {};
+  displayData.forEach(drink => {
+    allSelected[drink.id] = drink;
+  })
+
+  localStorage.setItem("selectedDrinks", JSON.stringify(allSelected));
+
+  document.querySelectorAll(".drink-checkbox").forEach(cb => {
+    cb.checked = true;
+  });
+}
+
+function deselectAll() {
+  localStorage.removeItem("selectedDrinks");
+  document.querySelectorAll(".drink-checkbox").forEach(cb => {
+    cb.checked = false;
+  });
 }
 
 
@@ -755,7 +817,7 @@ function clearCards() {
   originalData = [];
   displayData = [];
   selectedListId = null;
-  emptyListMessage.style.display = 'block';
+  emptyListMessage.style.display = 'flex';
 }
 
 function checkAuth() {

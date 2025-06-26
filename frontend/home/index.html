@@ -93,8 +93,12 @@
 
     <div class="cards-section">
       <div class="sort-section">
-        <label class="sort-label" for="sort-select">Sortare:</label>
-        <select class="sort-select" id="sort-select"></select>
+        <div class="sort-buttons">
+          <label class="sort-label" for="sort-select">Sortare:</label>
+          <select class="sort-select" id="sort-select"></select>
+        </div>
+        <button id="select-all-drink" class="btn" onclick="selectAll()">Selectează tot</button>
+        <button id="deselect-all-drink" class="btn" onclick="deselectAll()">Deselectează tot</button>
       </div>
       <div class="cards-container"></div>
       <div class="pagination"></div>

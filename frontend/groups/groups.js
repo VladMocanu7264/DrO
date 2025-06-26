@@ -47,7 +47,7 @@ async function getPostsByGroup(groupId, page = 1, limit = 10) {
         }
         const data = await response.json();
         currentPage = page;
-        totalPages = data.totalPages || 0;
+        totalPages = data.max_pages || 10;
         updatePaginationControls();
         return data.posts || [];
     } catch (error) {
@@ -63,7 +63,7 @@ async function likePost(postId) {
     }
     const token = checkAuth();
     try {
-        const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`, {
+        const response = await fetch(`${API_BASE_URL}/groups/${selectedGroupId}/posts/${postId}/like`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -86,37 +86,29 @@ async function likePost(postId) {
     }
 }
 
-async function createPost(groupId, drinkId, text) {
-    if (!groupId || !drinkId || !text) {
-        alert("ID-ul grupului, ID-ul băuturii și textul postării sunt necesare.");
+async function postGroup(name, description) {
+    if (!name || !description) {
+        alert("Numele și descrierea grupului sunt necesare.");
         return;
     }
     const token = checkAuth();
     try {
-        const response = await fetch(`${API_BASE_URL}/posts`, {
+        const response = await fetch(`${API_BASE_URL}/groups`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ groupId, drinkId, text })
+            body: JSON.stringify({ name, description })
         });
-        if (response.status === 400) {
-            throw new Error("Postarea nu a putut fi creată. Verifică datele introduse.");
-        }
-        if (response.status === 403) {
-            throw new Error("Nu ai permisiunea de a crea postări în acest grup.");
-        }
-        if (response.status === 404) {
-            throw new Error("Grupul sau băutura nu a fost găsită.");
-        }
 
-        if (response.status !== 201) {
-            throw new Error("Eroare la crearea postării");
+        if (!response.statusCode === 201) {
+            throw new Error("Eroare la crearea grupului");
         }
-        alert("Postarea a fost creată cu succes!");
+        return true;
     } catch (error) {
         alert("Eroare:" + error);
+        return false;
     }
 }
 
@@ -147,8 +139,13 @@ async function generateRadioFilter(inputName = 'category') {
         label.setAttribute('for', input.id);
         label.textContent = group.name;
 
+        if (selectedGroupId === group.id) {
+            label.classList.add('active');
+        }
+
         input.addEventListener('change', async () => {
             const fetchedPosts = await getPostsByGroup(group.id);
+            fetchedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             selectedGroupId = group.id;
             if (!fetchedPosts || fetchedPosts.length === 0) {
                 totalPages = 0;
@@ -163,7 +160,6 @@ async function generateRadioFilter(inputName = 'category') {
         item.appendChild(label);
         container.appendChild(item);
     });
-    console.log("Generated radio filter with groups:", selectedGroupId);
 }
 
 function generateEmptyGroup() {
@@ -209,6 +205,7 @@ function generatePosts(posts) {
         const likesCount = postDiv.querySelector('.likes-count');
 
         likeIcon.addEventListener('click', async () => {
+            console.log("Like icon clicked for post ID:", post.id);
             let postLiked = await likePost(post.id);
             if (postLiked) {
                 likesCount.textContent = parseInt(likesCount.textContent) + 1;
@@ -221,24 +218,21 @@ function generatePosts(posts) {
 }
 
 
-function handleAddGroup() {
+async function handleAddGroup() {
     const input = document.getElementById('new-group-name');
-    const exists = mockedGroups.find(g => g.name === input.value.trim());
+    const description = document.getElementById('new-group-description');
 
-    if (exists) {
-        alert("Un grup cu acest nume există deja!");
-        input.value = '';
-        return;
-    }
-
-    mockedGroups.push({
-        id: mockedGroups.length > 0 ? mockedGroups[mockedGroups.length - 1].id + 1 : 1,
-        name: input.value.trim(),
-        drinks: []
-    });
-
+    await postGroup(input.value.trim(), description.value.trim());
     input.value = '';
-    render();
+    description.value = '';
+    generateRadioFilter();
+}
+
+function handleClearGroupAdd() {
+    const input = document.getElementById('new-group-name');
+    const description = document.getElementById('new-group-description');
+    input.value = '';
+    description.value = '';
 }
 
 function handleJoinGroup() {
@@ -246,12 +240,12 @@ function handleJoinGroup() {
 }
 
 function checkAuth() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    window.location.href = "../login/index.html";
-    return false;
-  }
-  return token;
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "../login/index.html";
+        return false;
+    }
+    return token;
 }
 
 function updatePaginationControls() {

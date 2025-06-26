@@ -2,15 +2,14 @@
 <html lang="ro">
 
 <head>
-    <link rel="stylesheet" href="groups.css">
+    <link rel="stylesheet" href="create-post.css">
     <link rel="stylesheet" href="../public/css/nav.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Aceasta pagina contine toate tipurile de bauturi disponibile in aplicatia noastra.">
-    <title>Acasa</title>
+    <meta name="description" content="Aceasta este pagina in care utilizatorul/adminul isi gestioneaza contul.">
+    <title>Liste</title>
     <style>
         body {
             background-image: url("../public/poze/main.png");
@@ -30,7 +29,7 @@
                 <div class="menu">
                     <a href="../home/index.html">Acasa</a>
                     <a href="../lists/index.html">Liste</a>
-                    <a href="#" class="is-active">Grupuri</a>
+                    <a href="../groups/index.html">Grupuri</a>
                     <a href="../stats/index.html">Statistici</a>
                     <a href="/rss">
                         <i class="fa-solid fa-rss"></i>
@@ -41,7 +40,7 @@
                     <a href="../help/index.html">
                         <i class="fa-solid fa-circle-question"></i>
                     </a>
-                    <a href="../login/index.html" id="login-link">Login</a>
+                    <a href="#" id="login-link">Login</a>
                 </div>
                 <button class=" hamburger">
                     <span></span>
@@ -51,10 +50,10 @@
             </div>
         </nav>
         <div class="mobile-menu">
-            <a href="../home/index.html">Acasa</a>
-            <a href="../lists/index.html">Liste</a>
-            <a href="#">Grupuri</a>
-            <a href="../stats/index.html">Statistici</a>
+            <a href="/home">Acasa</a>
+            <a href="/liste">Liste</a>
+            <a href="/grupuri">Grupuri</a>
+            <a href="/stats">Statistici</a>
             <div class="mobile-action-icons">
                 <a href="/rss">
                     <i class="fa-solid fa-rss"></i>
@@ -70,40 +69,23 @@
         </div>
     </header>
     <div class="catalog">
-        <aside class="sidebar">
-            <h2 id="filter-title">Grupuri</h2>
-            <form class="filter-form">
-                <div class="groups-list">
+        <div class="content">
+            <h1>Creare postare</h1>
+            <div class="form-group">
+                <p id="drink-id"></p>
+                <label for="text">Text:</label>
+                <textarea id="text" name="text" required></textarea>
+                <p>Selectează grupul în care vrei să postezi:</p>
+                <div class="custom-select" id="group-selector">
+                    <button type="button" class="cs-trigger">Alege grup</button>
+                    <ul class="cs-options"></ul>
                 </div>
-            </form>
-            <button id="create-group-button" class="create-group-button" onclick="handleJoinGroup()">Intră într-un
-                grup</button>
-            <div class="filter-group">
-                <legend>Crează un grup</legend>
-                <input type="text" id="new-group-name" placeholder="Nume grup" />
-                <textarea id="new-group-description" placeholder="Descriere grup"></textarea>
-                <div class="group-edit-buttons">
-                    <button type="button" class="add-group-button" onclick="handleAddGroup()">Crează</button>
-                    <button type="button" class="cancel-group-button add-group-button"
-                        onclick="handleClearGroupAdd()">Anulează</button>
-                </div>
+
             </div>
-        </aside>
-        <div class="cards-section">
-            <div class="posts-container">
-                <div class="empty-post">
-                    <h2>Selectează un grup pentru a vedea detalii</h2>
-                    <p>Grupurile tale vor apărea aici.</p>
-                </div>
-            </div>
-            <div class="pagination hidden">
-                <button id="prev-page" disabled><i class="fa-solid fa-chevron-left pagination-button"></i></button>
-                <span id="current-page">1</span> / <span id="total-pages">1</span>
-                <button id="next-page" disabled><i class="fa-solid fa-chevron-right pagination-button"></i></button>
-            </div>
+            <button id="create-post-button" onclick="handleCreatePost()">Creeaza postare</button>
         </div>
         <script src="../public/js/main.js"></script>
-        <script src="groups.js"></script>
+        <script src="create-post.js"></script>
     </div>
 </body>
 

@@ -98,13 +98,20 @@
 
 /* --- Filters --- */
 
+.group-edit-buttons{
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  justify-content: center;
+}
+
 .filter-form {
   margin-bottom: 10px;
   border-bottom: 2px solid var(--tertiary);
 }
 
 .groups-list {
-  max-height: 250px;
+  max-height: 150px;
   overflow-y: auto;
   padding: 3px;
 }
@@ -291,6 +298,36 @@
   color: white;
   border-radius: 4px;
 }
+
+#new-group-description {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--dark);
+  background-color: var(--dark);
+  color: white;
+  border-radius: 4px;
+  height: 150px;
+  overflow-y: auto;
+  resize: none;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) transparent;
+}
+
+#new-group-description::-webkit-scrollbar {
+  width: 6px;
+}
+
+#new-group-description::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#new-group-description::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 3px;
+}
+
 
 .add-group-button {
   background-color: var(--secondary);

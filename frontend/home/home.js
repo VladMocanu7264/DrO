@@ -295,6 +295,7 @@ function createDrinkCard(drink) {
 }
 
 function createDrinkModal(drink) {
+  console.log(drink);
   const modal = document.createElement('div');
   modal.classList.add('text-box', 'hidden');
   modal.id = `text-box-${drink.id}`;
@@ -431,6 +432,26 @@ function renderPagination() {
     });
     paginationContainer.appendChild(nextBtn);
   }
+}
+
+function selectAll() {
+  const allSelected = {};
+  drinksData.forEach(drink => {
+    allSelected[drink.id] = drink;
+  })
+
+  localStorage.setItem("selectedDrinks", JSON.stringify(allSelected));
+
+  document.querySelectorAll(".drink-checkbox").forEach(cb => {
+    cb.checked = true;
+  });
+}
+
+function deselectAll() {
+  localStorage.removeItem("selectedDrinks");
+  document.querySelectorAll(".drink-checkbox").forEach(cb => {
+    cb.checked = false;
+  });
 }
 
 

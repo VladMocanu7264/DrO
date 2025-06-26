@@ -29,7 +29,7 @@
           <a href="../home/index.html">Acasa</a>
           <a href="../lists/index.html">Liste</a>
           <a href="../groups/index.html">Grupuri</a>
-          <a href="#" class="is-active">Statistici</a>
+          <a href="#" class="is-active">Stats</a>
           <a href="/rss"><i class="fa-solid fa-rss"></i></a>
           <a href="../about/index.html"><i class="fa-solid fa-circle-info"></i></a>
           <a href="../help/index.html"><i class="fa-solid fa-circle-question"></i></a>
@@ -40,25 +40,6 @@
         </button>
       </div>
     </nav>
-
-    <div class="mobile-menu">
-      <a href="../home/index.html">Acasa</a>
-      <a href="../lists/index.html">Liste</a>
-      <a href="../groups/index.html">Grupuri</a>
-      <a href="../stats/index.html">Statistici</a>
-      <div class="mobile-action-icons">
-        <a href="/rss">
-          <i class="fa-solid fa-rss"></i>
-        </a>
-        <a href="../about/index.html">
-          <i class="fa-solid fa-circle-info"></i>
-        </a>
-        <a href="../help/index.html">
-          <i class="fa-solid fa-circle-question"></i>
-        </a>
-      </div>
-      <a href="../login/index.html" id="login-link">Login</a>
-    </div>
   </header>
 
   <div class="catalog">
@@ -72,25 +53,25 @@
     <div class="charts-section">
       <!-- Pie chart buttons -->
       <div class="stat-actions">
-        <button class="stat-btn" onclick="downloadJSON()">Download as JSON</button>
-        <button class="stat-btn" onclick="downloadCSV()">Download as CSV</button>
+        <button class="stat-btn" onclick="downloadJSON()">Descarcă JSON</button>
+        <button class="stat-btn" onclick="downloadCSV()">Descarcă CSV</button>
       </div>
 
       <!-- Pie charts -->
       <div class="chart-container">
         <div class="svg-wrapper">
-          <h3>Quantity</h3>
+          <h3>Cantitate</h3>
           <div id="quantity-chart"></div>
-          <div class="download-container">
+          <div class="download-container download-pie-chart">
             <div class="download-wrapper" onclick="downloadSVG('quantity-chart', 'quantity-chart.svg')">
-              <i class="fa-solid fa-download download-svg"></i>
+              <i class="fa-solid fa-download"></i>
             </div>
           </div>
         </div>
         <div class="svg-wrapper">
-          <h3>Nutrition Grade</h3>
+          <h3>Grad Nutrițional</h3>
           <div id="nutrition-chart"></div>
-          <div class="download-container">
+          <div class="download-container download-pie-chart">
             <div class="download-wrapper" onclick="downloadSVG('nutrition-chart', 'nutrition-chart.svg')">
               <i class="fa-solid fa-download download-svg"></i>
             </div>
@@ -100,7 +81,7 @@
 
       <!-- Tag chart -->
       <section>
-        <h2 style="color: white; margin-bottom: 1rem;">Tag Statistics</h2>
+        <h2 style="color: white; margin-bottom: 1rem;">Statistici pe taguri</h2>
         <div class="tag-section">
           <div class="tag-filter">
             <form id="tag-form"></form>
@@ -108,7 +89,7 @@
           <div class="tag-graph">
             <div class="bar-chart-wrapper">
               <div id="tag-bar-chart"></div>
-              <div class="download-wrapper download-below" onclick="downloadSVG('tag-bar-chart', 'tags-bar-chart.svg')">
+              <div class="download-wrapper download-below  download-bar-chart" onclick="downloadSVG('tag-bar-chart', 'tags-bar-chart.svg')">
                 <i class="fa-solid fa-download download-svg"></i>
               </div>
             </div>

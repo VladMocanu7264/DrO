@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
+const API_BASE_URL = "http://localhost:3000";
 
 
 const drinkListSelect = document.getElementById('drink-list-select');
@@ -60,7 +60,7 @@ async function loadUserData() {
     const email = document.getElementById('email-text');
     const description = document.getElementById('user-description');
     const profileImage = document.getElementById('user-image');
-    const profileImageUrl = userData.profileImage || "../public/poze/7up.png";
+    const profileImageUrl = userData.image;
     usernameElement.textContent = userData.username;
     email.textContent = userData.email;
     description.textContent = userData.description || "No description provided";
@@ -68,7 +68,6 @@ async function loadUserData() {
 
     const lists = userData.lists || [];
     loadDrinkList(lists);
-
 }
 
 function loadLists(lists, listId) {
@@ -81,8 +80,7 @@ function loadLists(lists, listId) {
     }
 
     listContainer.innerHTML = '';
-
-    const selectedListData = lists.find(l => l.id === listId);
+    const selectedListData = lists.find(l => l.id === parseInt(listId, 10));
     if (!selectedListData) {
         listContainer.innerHTML = `<div class="drink-card">
       <p>Lista nu a fost găsită.</p>
@@ -95,7 +93,7 @@ function loadLists(lists, listId) {
         card.classList.add('drink-card');
         card.innerHTML = `
       <h3 id='drink-name'>${drink.name}</h3>
-      <img src="${drink.image || '../public/poze/7up.png'}" alt="${drink.name}">
+      <img src="${drink.image_url}" alt="${drink.name}">
     `;
         listContainer.appendChild(card);
     });
@@ -139,6 +137,15 @@ function loadDrinkList(lists) {
         option.textContent = list.name;
         drinkListSelect.appendChild(option);
     });
+}
+
+function checkAuth() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "../login/index.html";
+        return false;
+    }
+    return token;
 }
 
 document.addEventListener('DOMContentLoaded', () => loadUserData());

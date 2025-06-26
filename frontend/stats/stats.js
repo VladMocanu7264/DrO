@@ -77,13 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderCharts() {
         const drinks = Object.values(selectedDrinks);
         if (drinks.length <= 2) {
-            quantityChart.innerHTML = `<p style="color:white">Select at least 3 drinks to view statistics.</p>`;
-            nutritionChart.innerHTML = `<p style="color:white">Select at least 3 drinks to view statistics.</p>`;
+            quantityChart.innerHTML = `<p style="color:white">Selectează cel putin 3 băuturi.</p>`;
+            nutritionChart.innerHTML = `<p style="color:white">Selectează cel putin 3 băuturi.</p>`;
+            document.querySelectorAll('.download-pie-chart').forEach(el => {
+                console.log(el)
+                el.style.display = "none";
+            });
             return;
         }
 
-        renderPieChart(quantityChart, groupBy(drinks, d => d.quantity), "Quantity");
-        renderPieChart(nutritionChart, groupBy(drinks, d => d.nutrition_grade), "Nutrition Grade");
+        renderPieChart(quantityChart, groupBy(drinks, d => d.quantity), "Cantitate");
+        renderPieChart(nutritionChart, groupBy(drinks, d => d.nutrition_grade), "Grad Nutrițional");
     }
 
     function groupBy(array, keyFn) {
@@ -110,13 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
         let startAngle = 0;
 
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute("width", viewBoxSize);
-        svg.setAttribute("height", viewBoxSize);
         svg.setAttribute("viewBox", `0 0 ${viewBoxSize} ${viewBoxSize}`);
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
         data.forEach(([key, count], i) => {
             let sliceAngle = 0;
-            if(count != total) {
+            if (count != total) {
                 sliceAngle = (count / total) * 2 * Math.PI;
             } else {
                 sliceAngle = 2 * Math.PI - 0.0001;
@@ -216,7 +219,8 @@ function renderTagChart() {
 
     const container = document.getElementById("tag-bar-chart");
     if (drinks.length <= 2) {
-        container.innerHTML = `<p style="color:black; background:white; padding:1rem;">Select at least 3 drinks to view tag statistics.</p>`;
+        container.innerHTML = `<p style="color:black; background:white; padding:1rem;">Selectează cel puțin 3 băuturi pentru a vizualiza statisticile</p>`;
+        document.querySelector('.download-bar-chart').style.display = "none";
         return;
     }
 
@@ -233,7 +237,7 @@ function renderBarChart(container, tagCounts, tagLabels) {
     container.innerHTML = "";
 
     if (Object.keys(tagCounts).length === 0) {
-        container.innerHTML = "<p style='color: white;'>No tags selected.</p>";
+        container.innerHTML = "<p style='color: white;'>Selectează un tag.</p>";
         return;
     }
 
@@ -250,8 +254,8 @@ function renderBarChart(container, tagCounts, tagLabels) {
     const svgHeight = height + margin * 2;
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", svgWidth);
-    svg.setAttribute("height", svgHeight);
+    svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     bg.setAttribute("x", 0);
     bg.setAttribute("y", 0);

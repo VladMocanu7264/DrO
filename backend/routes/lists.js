@@ -57,11 +57,10 @@ async function handleGetList(req, res) {
                 model: ListDrink,
                 include: {
                     model: Drink,
-                    attributes: ['id', 'name', 'image_url']
+                    attributes: ['id', 'name', 'image_url','nutrition_grade','quantity','brand']
                 }
             }
         });
-
         if (!list) {
             res.writeHead(404, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ error: 'List not found' }));
@@ -71,6 +70,9 @@ async function handleGetList(req, res) {
             id: ld.Drink.id,
             name: ld.Drink.name,
             image_url: ld.Drink.image_url,
+            nutrition_grade: ld.Drink.nutrition_grade,
+            quantity: ld.Drink.quantity,
+            brand: ld.Drink.brand
         }));
 
         const result = {

@@ -100,24 +100,24 @@
         </aside>
         <div class="cards-section">
             <div class="search-options">
-                <div class="empty-state">
-                    <h3 class="empty-text">
-                        Selectează o listă pentru a vedea conținutul acesteia.
-                    </h3>
-                    <h3 class="empty-text">
-                        Sau creează o listă nouă pentru a adăuga elemente.
-                    </h3>
+                <div class="empty-post">
+                    <h2>Selectează o listă pentru a vedea detalii</h2>
+                    <p>Listele tale vor apărea aici.</p>
                 </div>
                 <div class="sort-section hidden">
-                    <label for="sort-select" class="sort-label">Sortare:</label>
-                    <select id="sort-select" class="sort-select">
-                        <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
-                        <option value="name-desc">Nume (Z → A)</option>
-                        <option value="category-asc">Categorie (A → Z)</option>
-                        <option value="category-desc">Categorie (Z → A)</option>
-                        <option value="quantity-asc">Cantitate (Mic → Mare)</option>
-                        <option value="quantity-desc">Cantitate (Mare → Mic)</option>
-                    </select>
+                    <div class="sort-buttons">
+                        <label for="sort-select" class="sort-label">Sortare:</label>
+                        <select id="sort-select" class="sort-select">
+                            <option value="name-asc" onselect="sortByNameAscending()">Nume (A → Z)</option>
+                            <option value="name-desc">Nume (Z → A)</option>
+                            <option value="category-asc">Categorie (A → Z)</option>
+                            <option value="category-desc">Categorie (Z → A)</option>
+                            <option value="quantity-asc">Cantitate (Mic → Mare)</option>
+                            <option value="quantity-desc">Cantitate (Mare → Mic)</option>
+                        </select>
+                    </div>
+                    <button id="select-all-drink" class="btn" onclick="selectAll()">Selectează tot</button>
+                    <button id="deselect-all-drink" class="btn" onclick="deselectAll()">Deselectează tot</button>
                 </div>
                 <div class="lists-dropdown">
                     <!-- <button>Selectează o listă</button>

@@ -18,12 +18,41 @@
 
 .chart-container {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
   gap: 4rem;
   margin-bottom: 2rem;
   flex-wrap: wrap;
   max-width: 100%;
   overflow: hidden;
+  background-color: var(--primary);
+  border-radius: 0.5rem;
 }
+
+#tag-form {
+  background-color: var(--tertiary);
+  padding: 10px;
+  max-height: 310px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  border-radius: 0.5rem;
+}
+
+#tag-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+#tag-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#tag-form::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 3px;
+}
+
 
 .svg-wrapper {
   display: flex;
@@ -119,6 +148,9 @@
 }
 
 .tag-graph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: 1;
   max-width: 100%;
 }
@@ -136,8 +168,10 @@
 .tag-section {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
-  align-items: flex-start;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+  background-color: var(--primary);
 }
 
 .bar-chart-wrapper {
@@ -150,7 +184,8 @@
 .sidebar {
   max-height: 80vh;
   overflow-y: auto;
-  padding-right: 8px; /* ensures space for scrollbar */
+  padding-right: 8px;
+  /* ensures space for scrollbar */
 }
 
 .sidebar::-webkit-scrollbar {
@@ -164,4 +199,61 @@
 
 .download-below {
   margin-top: 1rem;
+}
+
+#quantity-chart svg,
+#nutrition-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#tag-bar-chart {
+  width: 100%;
+  height: 400px;
+  overflow-x: auto;
+}
+
+#tag-bar-chart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .tag-section {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .svg-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+
+  .download-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .download-wrapper i.download-svg {
+    font-size: 1rem;
+  }
 }

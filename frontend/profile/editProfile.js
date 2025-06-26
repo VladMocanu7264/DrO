@@ -68,21 +68,7 @@ async function fetchOwnProfile() {
             document.getElementById("public-profile-image").src = data.image;
         }
 
-        const listsContainer = document.getElementById("public-lists-container");
-        listsContainer.innerHTML = "";
-        data.lists.forEach(list => {
-            const listEl = document.createElement("div");
-            listEl.classList.add("profile-list");
-            listEl.innerHTML = `
-              <h4>${list.name}</h4>
-              <div class="list-drinks">
-                ${list.drinks.map(drink => `
-                  <img src="${drink.image}" alt="${drink.name}" class="list-drink-img" title="${drink.name}">
-                `).join("")}
-              </div>
-            `;
-            listsContainer.appendChild(listEl);
-        });
+
 
     } catch (err) {
         alert(err.message);
