@@ -5,14 +5,12 @@
   --quaternary: #FFD0EC;
   font-size: 16px;
 }
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
 body {
   display: flex;
   justify-content: center;
@@ -20,7 +18,7 @@ body {
   min-height: 100vh;
 }
 
-.auth__wrapper {
+.wrapper {
   margin-top: 100px;
   position: relative;
   width: 400px;
@@ -36,47 +34,48 @@ body {
   overflow: hidden;
   transition: height 0.2s ease;
 }
-.auth__wrapper.active {
+
+.wrapper.active {
   height: 520px;
 }
-.auth__form-box {
+
+.wrapper .form-box {
   position: absolute;
   width: 100%;
   padding: 40px;
 }
-.auth__form-box--login {
+
+.wrapper .form-box.login {
   transition: transform 0.18s ease;
   transform: translateX(0);
 }
-.auth__form-box--register {
+.wrapper.active .form-box.login {
+  transition: none;
+  transform: translateX(-400px);
+}
+.wrapper .form-box.register {
   position: absolute;
   transition: none;
   transform: translateX(400px);
 }
-.auth__form-box--login.auth__form-box--hidden {
-  transition: none;
-  transform: translateX(-400px);
-}
-.auth__form-box--register.auth__form-box--visible {
+.wrapper.active .form-box.register {
   transition: transform 0.18s ease;
   transform: translateX(0);
 }
-.auth__title {
+
+.form-box h2 {
   font-size: 2em;
   color: black;
   text-align: center;
 }
-.auth__input-group {
+.input-box {
   position: relative;
   width: 100%;
   height: 50px;
   border-bottom: 2px solid black;
   margin: 30px 0;
 }
-.auth__input-group--invalid .auth__label {
-  top: -5px;
-}
-.auth__input-group .auth__label {
+.input-box label {
   position: absolute;
   top: 50%;
   left: 5px;
@@ -87,11 +86,15 @@ body {
   pointer-events: none;
   transition: 0.5s;
 }
-.auth__input-group .auth__input:focus ~ .auth__label,
-.auth__input-group .auth__input:valid ~ .auth__label {
+
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
   top: -5px;
 }
-.auth__input-group .auth__input {
+.input-box.invalid label {
+  top: -5px;
+}
+.input-box input {
   width: 100%;
   height: 100%;
   background: transparent;
@@ -102,23 +105,14 @@ body {
   font-weight: 600;
   padding: 0 35px 0 5px;
 }
-.auth__input-group .auth__icon {
+.input-box .icon {
   position: absolute;
   right: 8px;
   font-size: 1.2em;
   color: black;
   line-height: 57px;
 }
-.auth__input-group .auth__error-message {
-  font-size: 0.8em;
-  color: red;
-  margin: 4px 0 0 4px;
-  display: none;
-}
-.auth__input-group--invalid .auth__error-message {
-  display: block;
-}
-.auth__forgot {
+.forgot {
   font-size: 0.9em;
   color: black;
   font-weight: 500;
@@ -126,14 +120,15 @@ body {
   display: flex;
   justify-content: space-between;
 }
-.auth__forgot a {
+.forgot a {
   color: black;
   text-decoration: none;
 }
-.auth__forgot a:hover {
+.forgot a:hover {
   text-decoration: underline;
 }
-.auth__button {
+
+.btn {
   width: 100%;
   height: 45px;
   background: var(--primary);
@@ -145,23 +140,32 @@ body {
   color: white;
   font-weight: 500;
 }
-.auth__button:hover {
+.btn:hover {
   background: var(--tertiary);
 }
-.auth__switch {
+.login-register {
   font-size: 0.9em;
   color: black;
   text-align: center;
   font-weight: 500;
   margin: 25px 0 10px;
 }
-.auth__switch p a {
+.login-register p a {
   color: black;
   text-decoration: none;
   font-weight: 600;
 }
-.auth__switch p a:hover {
+.login-register p a:hover {
   text-decoration: underline;
 }
 
-/*# sourceMappingURL=login.css.map */
+.input-box .error-message {
+  font-size: 0.8em;
+  color: red;
+  margin: 4px 0 0 4px;
+  display: none;
+}
+
+.input-box.invalid .error-message {
+  display: block;
+}

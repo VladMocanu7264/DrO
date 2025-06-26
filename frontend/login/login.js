@@ -1,25 +1,14 @@
 const API_BASE_URL = window.env.API_BASE_URL;
-console.log(API_BASE_URL);
 
-const loginBox = document.querySelector(".auth__form-box--login");
-const registerBox = document.querySelector(".auth__form-box--register");
+const wrapper = document.querySelector(".wrapper");
+const loginLink = document.querySelector(".login-link");
+const registerLink = document.querySelector(".register-link");
+const loginForm = document.querySelector(".form-box.login form");
+const registerForm = document.querySelector(".form-box.register form");
 
-const loginLink = document.querySelector(".auth__link--login");
-const registerLink = document.querySelector(".auth__link--register");
-
-const loginForm = loginBox.querySelector("form");
-const registerForm = registerBox.querySelector("form");
-
-// Comutare între formulare
-registerLink.addEventListener("click", () => {
-  loginBox.classList.add("auth__form-box--hidden");
-  registerBox.classList.add("auth__form-box--visible");
-});
-
-loginLink.addEventListener("click", () => {
-  loginBox.classList.remove("auth__form-box--hidden");
-  registerBox.classList.remove("auth__form-box--visible");
-});
+// Trecerea între formulare
+registerLink.addEventListener("click", () => wrapper.classList.add("active"));
+loginLink.addEventListener("click", () => wrapper.classList.remove("active"));
 
 // Funcții regex locale
 function isValidEmail(email) {
@@ -36,17 +25,17 @@ function debounce(fn, delay = 500) {
   debounceTimeout = setTimeout(fn, delay);
 }
 
-// Validare email în timp real
+// Validare email dinamică (stil)
 document.addEventListener("DOMContentLoaded", () => {
-  const emailInputs = document.querySelectorAll(".auth__input-group--email input");
+  const emailInputs = document.querySelectorAll(".email-input input");
   emailInputs.forEach((input) => {
     input.addEventListener("input", () => {
-      input.parentElement.classList.toggle("auth__input-group--invalid", !input.validity.valid);
+      input.parentElement.classList.toggle("invalid", !input.validity.valid);
     });
   });
 });
 
-// Submit Login
+// Submit login
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -66,13 +55,13 @@ loginForm.addEventListener("submit", async (e) => {
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
-    window.location.href = "../home/";
+    window.location.href = "/home/";
   } catch (error) {
     alert("Login eșuat: " + error.message);
   }
 });
 
-// Submit Register
+// Submit register
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -109,8 +98,7 @@ registerForm.addEventListener("submit", async (e) => {
     if (!response.ok) throw new Error(data.error || data.message || "Eroare necunoscută");
 
     alert("Cont creat cu succes! Puteți face login.");
-    loginBox.classList.remove("auth__form-box--hidden");
-    registerBox.classList.remove("auth__form-box--visible");
+    wrapper.classList.remove("active");
   } catch (error) {
     alert("Înregistrare eșuată: " + error.message);
   }
@@ -118,21 +106,21 @@ registerForm.addEventListener("submit", async (e) => {
 
 // Validare email disponibil
 const registerEmailInput = registerForm.querySelector("input[type='email']");
-const emailBox = registerEmailInput.closest(".auth__input-group");
-const emailError = emailBox.querySelector(".auth__error-message");
+const emailBox = registerEmailInput.closest(".input-box");
+const emailError = emailBox.querySelector(".error-message");
 
 registerEmailInput.addEventListener("input", () => {
   debounce(async () => {
     const email = registerEmailInput.value;
 
     if (!email) {
-      emailBox.classList.remove("auth__input-group--invalid");
+      emailBox.classList.remove("invalid");
       emailError.textContent = "";
       return;
     }
 
     if (!isValidEmail(email)) {
-      emailBox.classList.add("auth__input-group--invalid");
+      emailBox.classList.add("invalid");
       emailError.textContent = "Email invalid!";
       return;
     }
@@ -142,16 +130,16 @@ registerEmailInput.addEventListener("input", () => {
       const data = await res.json();
 
       if (data.error) {
-        emailBox.classList.add("auth__input-group--invalid");
+        emailBox.classList.add("invalid");
         emailError.textContent = "Email invalid!";
         return;
       }
 
       if (!data.available) {
-        emailBox.classList.add("auth__input-group--invalid");
+        emailBox.classList.add("invalid");
         emailError.textContent = "Emailul este deja folosit!";
       } else {
-        emailBox.classList.remove("auth__input-group--invalid");
+        emailBox.classList.remove("invalid");
         emailError.textContent = "";
       }
     } catch (err) {
@@ -162,21 +150,21 @@ registerEmailInput.addEventListener("input", () => {
 
 // Validare username disponibil
 const usernameInput = registerForm.querySelector("input[type='text']");
-const usernameBox = usernameInput.closest(".auth__input-group");
-const usernameError = usernameBox.querySelector(".auth__error-message");
+const usernameBox = usernameInput.closest(".input-box");
+const usernameError = usernameBox.querySelector(".error-message");
 
 usernameInput.addEventListener("input", () => {
   debounce(async () => {
     const username = usernameInput.value;
 
     if (!username) {
-      usernameBox.classList.remove("auth__input-group--invalid");
+      usernameBox.classList.remove("invalid");
       usernameError.textContent = "";
       return;
     }
 
     if (!isValidUsername(username)) {
-      usernameBox.classList.add("auth__input-group--invalid");
+      usernameBox.classList.add("invalid");
       usernameError.textContent = "Nume invalid (3-20 caractere, doar litere, cifre și _)";
       return;
     }
@@ -186,16 +174,16 @@ usernameInput.addEventListener("input", () => {
       const data = await res.json();
 
       if (data.error) {
-        usernameBox.classList.add("auth__input-group--invalid");
+        usernameBox.classList.add("invalid");
         usernameError.textContent = "Nume invalid!";
         return;
       }
 
       if (!data.available) {
-        usernameBox.classList.add("auth__input-group--invalid");
+        usernameBox.classList.add("invalid");
         usernameError.textContent = "Numele de utilizator este deja luat!";
       } else {
-        usernameBox.classList.remove("auth__input-group--invalid");
+        usernameBox.classList.remove("invalid");
         usernameError.textContent = "";
       }
     } catch (err) {
