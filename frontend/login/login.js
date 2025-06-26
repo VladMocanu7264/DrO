@@ -55,7 +55,7 @@ loginForm.addEventListener("submit", async (e) => {
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
-    window.location.href = "/home/";
+    window.location.href = "../home/index.html";
   } catch (error) {
     alert("Login eșuat: " + error.message);
   }
