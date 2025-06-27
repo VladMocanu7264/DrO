@@ -30,7 +30,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-right: 2rem;
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - 2rem);
   display: flex;
   flex-direction: column;
   margin-left: 1rem;

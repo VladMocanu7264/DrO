@@ -26,7 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const emailInputs = document.querySelectorAll(".email-input input");
   emailInputs.forEach((input) => {
     input.addEventListener("input", () => {
-      input.parentElement.classList.toggle("invalid", !input.validity.valid);
+      const box = input.parentElement;
+      if (input.value === "") {
+        box.classList.remove("invalid");
+      } else {
+        box.classList.toggle("invalid", !input.validity.valid);
+      }
     });
   });
 });
