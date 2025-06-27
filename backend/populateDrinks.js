@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { parse } = require('json2csv');
 const { sequelize, Drink, Tag, DrinkTag } = require('./database');
+const { isRelevantTag } = require('./helpers');
 
 const LOG_DIR = './logs';
 if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR);
@@ -51,7 +52,6 @@ async function wait(ms) {
 
 async function fetchAndPopulateDrinks() {
     await sequelize.authenticate();
-    await sequelize.sync();
     await DrinkTag.destroy({ where: {} });
     await Tag.destroy({ where: {} });
     await Drink.destroy({ where: {} });
@@ -183,6 +183,78 @@ async function fetchAndPopulateDrinks() {
     console.log(`CSV log saved to ${LOG_FILE}`);
 }
 
-console.log("Finished populateDrinks()");
+async function assignPrices() {
+    const tagPrices = {
+        sodas: 5.0,
+        waters: 3.0,
+        lemonade: 7.0,
+        syrups: 21.0,
+        grenadine: 37.0,
+        teas: 6.0,
+        smoothies: 15.5,
+        dairies: 16.0,
+        milks: 5.0,
+        coffees: 15.0,
+        yogurts: 10.0,
+        other: 10.0
+    };
+
+    const drinks = await Drink.findAll({
+        include: {
+            model: DrinkTag,
+            include: Tag
+        }
+    });
+
+    for (const drink of drinks) {
+        const relevantTags = (drink.DrinkTags || [])
+            .map(dt => dt.Tag?.name)
+            .filter(name => !!name && isRelevantTag(name));
+
+        const matchedTag = relevantTags.find(t => tagPrices.hasOwnProperty(t.toLowerCase()));
+
+        const basePrice = matchedTag
+            ? tagPrices[matchedTag.toLowerCase()]
+            : tagPrices["other"];
+
+        let quantity = drink.quantity;
+        let pricePerLiter = basePrice / 0.5
+        let literQty = quantity / 1000
+        let adjustedPerLiter;
+
+        if (quantity < 500) {
+            adjustedPerLiter = pricePerLiter * (1 + (500 - quantity) / 1000);
+        } else {
+            adjustedPerLiter = pricePerLiter * (1 - (quantity - 500) / 5000);
+        }
+
+        const exactPrice = adjustedPerLiter * literQty;
+        const finalPrice = Math.max(applyRandomness(exactPrice, 0.1), 1);
+
+        drink.price = parseFloat(finalPrice.toFixed(2));
+        await drink.save();
+
+        console.log(
+            `Set price for ${drink.name} (${quantity}ml) to ${drink.price.toFixed(2)} lei` +
+            `(base: ${basePrice} lei, adjusted: ${finalPrice.toFixed(2)} lei)`
+        );
+    }
+}
+
+function applyRandomness(value, percentage = 0.1) {
+    const variation = 1 + (Math.random() * 2 - 1) * percentage;
+    return value * variation;
+}
+
+async function main() {
+    await sequelize.sync({ alter: true });
+    //await fetchAndPopulateDrinks();
+    await assignPrices();
+    console.log("Finished full population and price assignment.");
+}
+
+if (require.main === module) {
+    main();
+}
 
 module.exports = fetchAndPopulateDrinks;

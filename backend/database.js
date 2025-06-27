@@ -49,7 +49,8 @@ const Drink = sequelize.define('Drink', {
     image_url: { type: DataTypes.STRING(250) },
     nutrition_grade: { type: DataTypes.STRING(10) },
     quantity: { type: DataTypes.INTEGER },
-    packaging: { type: DataTypes.STRING(250) }
+    packaging: { type: DataTypes.STRING(250) },
+    price: { type: DataTypes.DECIMAL(10, 2) }
 }, { timestamps: false });
 
 const Favorite = sequelize.define('Favorite', {});

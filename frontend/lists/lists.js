@@ -78,7 +78,9 @@ async function addDrinkToList(drinkId, listId) {
   }
   const token = checkAuth();
   try {
-    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
+    const feedURL = `${API_BASE_URL}/lists/${listId}/add`;
+      console.log("[FETCH] Fetching drinks from:", feedURL);
+      const response = await fetch(feedURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -226,33 +228,6 @@ async function deleteList(listId) {
   } catch (error) {
     alert("Eroare:" + error);
     return false;
-  }
-}
-
-async function addDrinkToList(drinkId, listId) {
-  if (!drinkId || !listId) {
-    alert("ID-ul băuturii sau al listei lipsește.");
-    return;
-  }
-  const token = checkAuth();
-  try {
-    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ drinkId })
-    });
-    if (!response.ok) {
-      console.error("Response status:", response);
-      throw new Error("Eroare la adăugarea băuturii în listă");
-    }
-    const data = await response.json();
-
-    alert(`Băutura a fost adăugată în listă.`);
-  } catch (error) {
-    alert("Eroare:" + error);
   }
 }
 

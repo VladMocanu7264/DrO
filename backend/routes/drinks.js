@@ -14,6 +14,8 @@ function matchGetDrinkById(req) {
 
 async function handleGetDrinkById(req, res) {
     const { id } = req.params;
+    const userId = req.user?.id; // assumes auth middleware sets this
+
     try {
         const drink = await Drink.findByPk(id, {
             include: {
@@ -33,6 +35,16 @@ async function handleGetDrinkById(req, res) {
         const allTags = drink.DrinkTags.map(dt => dt.Tag.name).filter(isRelevantTag);
         const category = allTags[0] || null;
 
+        let isFavorite = false;
+        if (userId) {
+            const fav = await Favorite.findOne({
+                where: { UserId: userId, DrinkId: id }
+            });
+            if (fav !== null && fav !== undefined) {
+                isFavorite = true;
+            }
+        }
+
         const output = {
             id: drink.id,
             name: drink.name,
@@ -42,7 +54,9 @@ async function handleGetDrinkById(req, res) {
             nutrition_grade: drink.nutrition_grade,
             quantity: drink.quantity,
             packaging: drink.packaging,
-            tags: allTags
+            price: drink.price,
+            tags: allTags,
+            favorited: isFavorite
         };
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -70,8 +84,22 @@ async function handleGetFeed(req, res) {
         const minQty = req.query.min_quantity ? parseInt(req.query.min_quantity) : null;
         const maxQty = req.query.max_quantity ? parseInt(req.query.max_quantity) : null;
 
-        const allowedSorts = ['name', 'brand', 'nutrition_grade'];
-        const order = allowedSorts.includes(sort) ? [[sort, 'ASC']] : [['name', 'ASC']];
+        const allowedSorts = ['name', '-name', 'brand', '-brand', 'nutrition_grade', '-nutrition_grade', 'price', '-price'];
+
+        let sortKey = 'name';
+        let sortDirection = 'ASC';
+
+        if (allowedSorts.includes(sort)) {
+            if (sort.startsWith('-')) {
+                sortKey = sort.substring(1);
+                sortDirection = 'DESC';
+            } else {
+                sortKey = sort;
+                sortDirection = 'ASC';
+            }
+        }
+
+        const order = [[sortKey, sortDirection]];
 
         const where = {};
 
@@ -133,6 +161,7 @@ async function handleGetFeed(req, res) {
             nutrition_grade: drink.nutrition_grade,
             quantity: drink.quantity,
             packaging: drink.packaging,
+            price: drink.price,
             tags: (drink.DrinkTags || []).map(dt => dt.Tag?.id).filter(id => id !== undefined)
         }));
 
@@ -169,9 +198,14 @@ async function handleGetFilters(req, res) {
 
         const response = {
             sortOptions: [
-                { key: 'name', label: 'Name' },
-                { key: 'brand', label: 'Brand' },
-                { key: 'nutrition_grade', label: 'Nutrition Grade' }
+                { key: 'name', label: 'Name (A–Z)' },
+                { key: '-name', label: 'Name (Z–A)' },
+                { key: 'brand', label: 'Brand (A–Z)' },
+                { key: '-brand', label: 'Brand (Z–A)' },
+                { key: 'nutrition_grade', label: 'Nutrition Grade (A–Z)' },
+                { key: '-nutrition_grade', label: 'Nutrition Grade (Z–A)' },
+                { key: 'price', label: 'Price (Low to High)' },
+                { key: '-price', label: 'Price (High to Low)' }
             ],
             tags: tags
                 .filter(tag => isRelevantTag(tag.name))
@@ -276,7 +310,7 @@ async function handleDeleteFavorite(req, res) {
 }
 
 module.exports = [
-    { match: matchGetDrinkById, handle: handleGetDrinkById },
+    { match: matchGetDrinkById, handle: withAuth(handleGetDrinkById) },
     { match: matchGetFilters, handle: handleGetFilters },
     { match: matchGetFeed, handle: withAuth(handleGetFeed) },
     { match: matchGetFavorites, handle: withAuth(handleGetFavorites) },

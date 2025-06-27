@@ -13,33 +13,7 @@ async function getDrinksByRanking(limit = 10) {
         if (!response.ok) {
             throw new Error("Eroare la obținerea băuturilor");
         }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        alert("Eroare:", error);
-    }
-}
-
-async function getDrinkDetails(drinkId) {
-    if (!drinkId) {
-        alert("ID-ul băuturii lipsește.");
-        return;
-    }
-    const token = checkAuth();
-    try {
-        const response = await fetch(`${API_BASE_URL}/drinks/${drinkId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("Eroare la obținerea detaliilor băuturii");
-        }
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         alert("Eroare:" + error);
     }
