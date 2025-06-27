@@ -309,6 +309,51 @@ async function handleDeleteFavorite(req, res) {
     }
 }
 
+function matchGetDrinkRanking(req) {
+    return req.pathname === "/drinks/ranking" && req.method === 'GET';
+
+}
+
+async function handleGetDrinkRanking(req, res) {
+    const limit = parseInt(req.query.limit) || 10;
+
+    try {
+        const drinks = await Drink.findAll({
+            attributes: [
+                'id',
+                'name',
+                'brand',
+                'image_url',
+                'nutrition_grade',
+                [Sequelize.fn('COUNT', Sequelize.col('Favorites.id')), 'favoritesCount']
+            ],
+            include: [{
+                model: Favorite,
+                attributes: []
+            }],
+            group: ['Drink.id'],
+            order: [[Sequelize.literal('favoritesCount'), 'DESC']],
+            limit
+        });
+
+        const result = drinks.map(drink => ({
+            id: drink.id,
+            name: drink.name,
+            brand: drink.brand,
+            image_url: drink.image_url,
+            nutrition_grade: drink.nutrition_grade,
+            favoritesCount: parseInt(drink.getDataValue('favoritesCount'))
+        }));
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+    } catch (error) {
+        if (LOG_ENABLED) console.error("Error in /drinks/ranking:", error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: "Internal server error" }));
+    }
+}
+
 module.exports = [
     { match: matchGetDrinkById, handle: withAuth(handleGetDrinkById) },
     { match: matchGetFilters, handle: handleGetFilters },
