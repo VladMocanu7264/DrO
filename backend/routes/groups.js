@@ -49,7 +49,7 @@ async function handleGetGroupPosts(req, res) {
                     where: { GroupId: groupId },
                     include: {
                         model: User,
-                        attributes: ['username', 'image_path']
+                        attributes: ['username', 'image_path', 'id']
                     }
                 },
                 {
@@ -80,7 +80,8 @@ async function handleGetGroupPosts(req, res) {
             likedByUser: post.Likes.some(like => like.MemberId === memberId),
             member: {
                 username: post.Member.User.username,
-                image_path: post.Member.User.image_path
+                image_path: post.Member.User.image_path,
+                id: post.Member.User.id,
             },
             drink: post.Drink
         }));
@@ -220,7 +221,7 @@ async function handleCreateGroup(req, res) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ error: 'Missing fields' }));
             }
-            const group = await Group.create({ name, description });
+            const group = await Group.create({ name, description, owner_id: req.user.id });
             await Member.create({ UserId: req.user.id, GroupId: group.id });
             res.writeHead(201, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Group created', id: group.id }));
@@ -349,6 +350,32 @@ async function handleDeletePost(req, res) {
     }
 }
 
+function matchIsGroupAdmin(req) {
+    const match = req.pathname.match(/^\/groups\/([^/]+)\/is-admin$/);
+    if (match && req.method === 'GET') return { params: { groupId: match[1] } };
+    return false;
+}
+
+async function handleIsGroupAdmin(req, res) {
+    try {
+        const { groupId } = req.params;
+        const group = await Group.findByPk(groupId);
+        if (!group) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'Group not found' }));
+        }
+        if (group.owner_id !== req.user.id) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ isAdmin: false }));
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ isAdmin: true }));
+    } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
 module.exports = [
     { match: matchPostToGroup, handle: withAuth(handlePostToGroup) },
     { match: matchLeaveGroup, handle: withAuth(handleLeaveGroup) },
@@ -359,5 +386,6 @@ module.exports = [
     { match: matchPostLikePost, handle: withAuth(handleLikePost) },
     { match: matchGetAvailableGroups, handle: withAuth(handleGetAvailableGroups) },
     { match: matchJoinGroup, handle: withAuth(handleJoinGroup) },
-    { match: matchCreateGroup, handle: withAuth(handleCreateGroup) }
+    { match: matchCreateGroup, handle: withAuth(handleCreateGroup) },
+    { match: matchIsGroupAdmin, handle: withAuth(handleIsGroupAdmin) }
 ];

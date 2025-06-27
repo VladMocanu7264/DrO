@@ -98,7 +98,7 @@
 
 /* --- Filters --- */
 
-.group-edit-buttons{
+.group-edit-buttons {
   display: flex;
   gap: 5px;
   width: 100%;
@@ -111,7 +111,7 @@
 }
 
 .groups-list {
-  max-height: 150px;
+  max-height: 110px;
   overflow-y: auto;
   padding: 3px;
 }
@@ -271,6 +271,7 @@
 
 .drink-info {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 14px;
   font-size: 0.9rem;
@@ -283,10 +284,40 @@
   margin-right: 5px;
 }
 
+.delete-post-btn {
+  background-color: var(--secondary);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.delete-post-btn:hover {
+  background-color: var(--tertiary);
+}
+
 .drink-image {
   width: 140px;
   height: 140px;
   border-radius: 8px;
+}
+
+#leave-group-btn {
+  background-color: var(--secondary);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  font-size: 13px;
+  cursor: pointer;
+  width: 200px;
+}
+#leave-group-btn:hover {
+  background-color: var(--tertiary);
 }
 
 #new-group-name {
@@ -422,10 +453,6 @@
   .sort-section {
     justify-content: center;
     width: 100%;
-  }
-
-  .groups-list {
-    max-height: 150px;
   }
 
   .post-text {

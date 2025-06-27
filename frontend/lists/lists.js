@@ -78,9 +78,7 @@ async function addDrinkToList(drinkId, listId) {
   }
   const token = checkAuth();
   try {
-    const feedURL = `${API_BASE_URL}/lists/${listId}/add`;
-      console.log("[FETCH] Fetching drinks from:", feedURL);
-      const response = await fetch(feedURL, {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -231,6 +229,33 @@ async function deleteList(listId) {
   }
 }
 
+async function addDrinkToList(drinkId, listId) {
+  if (!drinkId || !listId) {
+    alert("ID-ul băuturii sau al listei lipsește.");
+    return;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/lists/${listId}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ drinkId })
+    });
+    if (!response.ok) {
+      console.error("Response status:", response);
+      throw new Error("Eroare la adăugarea băuturii în listă");
+    }
+    const data = await response.json();
+
+    alert(`Băutura a fost adăugată în listă.`);
+  } catch (error) {
+    alert("Eroare:" + error);
+  }
+}
+
 async function getAllLists() {
   const token = checkAuth();
   try {
@@ -318,6 +343,7 @@ let userLists = [];
 let selectedListId = null;
 let selectedListName = null;
 let favoritesSelected = false;
+let price = 0;
 
 
 const cardsContainer = document.querySelector(".cards-container");
@@ -376,6 +402,23 @@ async function applyFiltersAndRender() {
   originalData.sort((a, b) => a.name.localeCompare(b.name));
   displayData = [...originalData];
   await renderDrinks();
+  renderPriceTag();
+}
+
+function renderPriceTag() {
+  price = displayData.reduce((acc, curr) => acc + parseFloat(curr.price), 0)
+  clearPriceTag();
+  const actionButtons = document.querySelector('.list-actions-btns');
+  const priceButton = document.createElement('p');
+  priceButton.classList.add('price-tag');
+  priceButton.textContent = `${price} Lei`;
+  actionButtons.appendChild(priceButton)
+}
+
+function clearPriceTag() {
+  const actionButtons = document.querySelector('.list-actions-btns');
+  actionButtons.querySelectorAll('.price-tag')
+    .forEach(el => el.remove());
 }
 
 
@@ -430,8 +473,12 @@ function createFavoriteDrinkCard(drink) {
       <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
     </div>
     <h3>${drink.name}</h3>
-      <p><strong>Brand:</strong> ${drink.brand}</p>
-          <label>
+    <div class="drink-info">
+      <p><strong>Brand:</strong> ${drink.brand || "N/A"}</p>
+      <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
+      <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
+    </div>
+    <label>
       <input type="checkbox" class="drink-checkbox" data-drink-id="${drink.id}" ${isChecked ? "checked" : ""}>
       Statistici
     </label>
@@ -458,7 +505,6 @@ function createFavoriteDrinkCard(drink) {
 }
 
 async function createDrinkModal(drink) {
-  console.log(drink);
   const modal = document.createElement('div');
   modal.classList.add('text-box', 'hidden');
   modal.id = `text-box-${drink.id}`;
@@ -481,6 +527,7 @@ async function createDrinkModal(drink) {
           <p><strong>Cantitate:</strong> ${drink.quantity} ml</p>
           <p><strong>Nutriție:</strong> ${drink.nutrition_grade}</p>
           <p><strong>Ambalaj:</strong> ${drink.packaging}</p>
+          <p><strong>Preț:</strong> ${drink.price || "-"} ${drink.price ? "Lei" : ""}</p>
         </div>
         <div id="icons-container">
           <img id="drink-image-box" src="${drink.image_url}" alt="${drink.name}">
@@ -549,7 +596,6 @@ async function createDrinkModal(drink) {
   }
   modal.querySelector('.share')
     .addEventListener('click', () => {
-      console.log("Sharing drink:", drink.name);
       window.location.href = `../create-post/index.html?drinkId=${drink.id}`;
     });
 
@@ -624,7 +670,7 @@ async function renderDrinks() {
 
   const modals = await Promise.all(modalPromises);
   modals.forEach(m => modalsContainer.appendChild(m));
-
+  renderPriceTag();
   initEventListeners();
 }
 
@@ -639,6 +685,7 @@ async function renderFavoriteDrinks() {
   const modalPromises = originalData.map(d => createDrinkModal(d));
   const modals = await Promise.all(modalPromises);
   modals.forEach(m => modalsContainer.appendChild(m));
+  renderPriceTag();
   initEventListeners();
 }
 
@@ -743,11 +790,13 @@ async function handleDeleteList() {
 
 async function handleFetchFavorites() {
   handleDeselectList();
+  clearPriceTag();
   const favorites = await getFavoritesDrinks();
   if (!favorites || favorites.length === 0) {
     alert("Nu ai băuturi favorite.");
     return;
   }
+
   originalData = favorites;
   displayData = [...originalData];
   selectedListId = null;

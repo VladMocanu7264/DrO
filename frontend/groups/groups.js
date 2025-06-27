@@ -205,12 +205,12 @@ function generatePosts(posts) {
         const likesCount = postDiv.querySelector('.likes-count');
 
         likeIcon.addEventListener('click', async () => {
-            console.log("Like icon clicked for post ID:", post.id);
-            let postLiked = await likePost(post.id);
-            if (postLiked) {
-                likesCount.textContent = parseInt(likesCount.textContent) + 1;
+                console.log("Like icon clicked for post ID:", post.id);
+                let postLiked = await likePost(post.id);
+                if (postLiked) {
+                    likesCount.textContent = parseInt(likesCount.textContent) + 1;
+                }
             }
-        }
         );
 
         postsContainer.appendChild(postDiv);

@@ -174,7 +174,7 @@ footer {
   height: 15px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
   nav h1 {
     font-size: 2rem;
   }
