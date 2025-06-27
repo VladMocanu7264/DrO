@@ -262,6 +262,54 @@ async function handleDeleteListRemove(req, res) {
     });
 }
 
+function matchCopyList(req) {
+    const match = req.pathname.match(/^\/lists\/(\d+)\/copy$/);
+    if (match && req.method === 'POST') {
+        return { params: { listId: match[1] } };
+    }
+    return false;
+}
+
+async function handleCopyList(req, res) {
+    try {
+        const original = await List.findOne({
+            where: { id: req.params.listId, public: true },
+            include: {
+                model: ListDrink,
+                include: {
+                    model: Drink,
+                    attributes: ['id']
+                }
+            }
+        });
+
+        if (!original) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'Public list not found' }));
+        }
+
+        const newList = await List.create({
+            name: `${original.name} (copy)`,
+            public: false,
+            UserId: req.user.id
+        });
+
+        const drinkLinks = original.ListDrinks.map(ld => ({
+            ListId: newList.id,
+            DrinkId: ld.Drink.id
+        }));
+
+        await ListDrink.bulkCreate(drinkLinks);
+
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'List copied successfully', id: newList.id }));
+    } catch (err) {
+        if (LOG_ENABLED) console.error('Copy list error:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
 module.exports = [
     { match: matchGetUserLists, handle: withAuth(handleGetUserLists) },
     { match: matchGetList, handle: withAuth(handleGetList) },
@@ -270,5 +318,6 @@ module.exports = [
     { match: matchDeleteList, handle: withAuth(handleDeleteList) },
     { match: matchGetListsWithDrink, handle: withAuth(handleGetListsWithDrink) },
     { match: matchPostListAdd, handle: withAuth(handlePostListAdd) },
-    { match: matchDeleteListRemove, handle: withAuth(handleDeleteListRemove) }
+    { match: matchDeleteListRemove, handle: withAuth(handleDeleteListRemove) },
+    { match: matchCopyList, handle: withAuth(handleCopyList) }
 ];
