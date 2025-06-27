@@ -1,4 +1,4 @@
-const { sequelize, Drink, Tag, DrinkTag, Favorite } = require('../database');
+const { Drink, Tag, DrinkTag, Favorite } = require('../database');
 const { isRelevantTag, withAuth } = require('../helpers');
 const { Op, fn, col, literal } = require('sequelize');
 
@@ -14,7 +14,7 @@ function matchGetDrinkById(req) {
 
 async function handleGetDrinkById(req, res) {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const userId = req.user?.id; // assumes auth middleware sets this
 
     try {
         const drink = await Drink.findByPk(id, {
@@ -311,62 +311,44 @@ async function handleDeleteFavorite(req, res) {
 
 function matchGetDrinkRanking(req) {
     return req.pathname === "/drinks/ranking" && req.method === 'GET';
+
 }
 
 async function handleGetDrinkRanking(req, res) {
     const limit = parseInt(req.query.limit) || 10;
 
     try {
-        const results = await sequelize.query(`
-            SELECT
-                d.id,
-                d.name,
-                d.brand,
-                d.image_url,
-                d.quantity,
-                d.nutrition_grade,
-                d.price,
-                COUNT(f."id") AS "favoritesCount"
-            FROM "Drinks" d
-            LEFT JOIN "Favorites" f ON d.id = f."DrinkId"
-            GROUP BY d.id
-            ORDER BY "favoritesCount" DESC
-            LIMIT :limit
-        `, {
-            replacements: { limit },
-            type: sequelize.QueryTypes.SELECT
+        const drinks = await Drink.findAll({
+            attributes: [
+                'id',
+                'name',
+                'brand',
+                'image_url',
+                'nutrition_grade',
+                [Sequelize.fn('COUNT', Sequelize.col('Favorites.id')), 'favoritesCount']
+            ],
+            include: [{
+                model: Favorite,
+                attributes: []
+            }],
+            group: ['Drink.id'],
+            order: [[Sequelize.literal('favoritesCount'), 'DESC']],
+            limit
         });
 
-        const drinksWithTags = await Promise.all(results.map(async (drink) => {
-            const tags = await DrinkTag.findAll({
-                where: { DrinkId: drink.id },
-                include: {
-                    model: Tag,
-                    attributes: ['id']
-                }
-            });
-
-            const tagIds = tags.map(dt => dt.Tag.id);
-
-            return {
-                id: drink.id,
-                name: drink.name,
-                brand: drink.brand,
-                image_url: drink.image_url,
-                nutrition_grade: drink.nutrition_grade,
-                quantity: drink.quantity,
-                price: parseFloat(drink.price),
-                favoritesCount: parseInt(drink.favoritesCount),
-                tags: tagIds
-            };
+        const result = drinks.map(drink => ({
+            id: drink.id,
+            name: drink.name,
+            brand: drink.brand,
+            image_url: drink.image_url,
+            nutrition_grade: drink.nutrition_grade,
+            favoritesCount: parseInt(drink.getDataValue('favoritesCount'))
         }));
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(drinksWithTags));
+        res.end(JSON.stringify(result));
     } catch (error) {
-        if (process.env.LOG_ENABLED === 'true') {
-            console.error("Error in /drinks/ranking:", error);
-        }
+        if (LOG_ENABLED) console.error("Error in /drinks/ranking:", error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: "Internal server error" }));
     }
@@ -378,6 +360,5 @@ module.exports = [
     { match: matchGetFeed, handle: withAuth(handleGetFeed) },
     { match: matchGetFavorites, handle: withAuth(handleGetFavorites) },
     { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
-    { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) },
-    { match: matchGetDrinkRanking, handle: withAuth(handleGetDrinkRanking) }
+    { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) }
 ];

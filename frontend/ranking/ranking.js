@@ -1,86 +1,77 @@
-// ranking.js
-import DrinkUI from '../public/DrinkUI.js';
+const API_BASE_URL = "http://localhost:3000";
 
-const API_BASE_URL = (window.env && window.env.API_BASE_URL) || '';
-const token = localStorage.getItem("token");
-if (!token) {
-    alert("Trebuie să fii autentificat pentru a accesa această pagină.");
-    window.location.href = "/login/";
-}
-
-const container = document.querySelector(".cards-container");
-const overlay = document.querySelector(".overlay");
-const modalsContainer = document.getElementById("text-box-container");
-let userLists = [];
-let drinksData = [];
-
-async function fetchUserLists() {
+async function getDrinksByRanking() {
+    const token = checkAuth();
     try {
-        const res = await fetch(`${API_BASE_URL}/lists`, {
-            headers: { Authorization: `Bearer ${token}` }
+        const response = await fetch(`${API_BASE_URL}/drinks/ranking`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
         });
-        if (!res.ok) throw new Error("Eroare la încărcarea listelor");
-        const data = await res.json();
-        return data || [];
-    } catch (err) {
-        console.error("Eroare la list API:", err);
-        return [];
+        if (!response.ok) {
+            throw new Error("Eroare la obținerea băuturilor");
+        }
+        return await response.json();
+    } catch (error) {
+        alert("Eroare:" + error);
     }
 }
 
-async function fetchDrinkRanking(limit = 50) {
+const cardsContainer = document.querySelector(".cards-container");
+
+async function getRanking() {
     try {
-        const res = await fetch(`${API_BASE_URL}/drinks/ranking?limit=${limit}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Eroare la încărcarea clasamentului");
-        const data = await res.json();
-        return data || [];
+        render();
     } catch (err) {
-        console.error("Eroare la ranking API:", err);
-        return [];
+        console.error("Eroare încărcare băuturi:", err);
     }
 }
 
-function renderRanking(drinks) {
-    container.innerHTML = "";
-    drinks.forEach(drink => {
-        const card = DrinkUI.createDrinkCard(drink, userLists);
-        container.appendChild(card);
+
+async function render() {
+    const drinksData = await getDrinksByRanking();
+    drinksData.sort((a, b) => b.favoritesCount - a.favoritesCount);
+    cardsContainer.innerHTML = '';
+    drinksData.forEach((drink, idx) => {
+        const card = createDrinkCard(drink, idx);
+        cardsContainer.appendChild(card);
     });
 }
 
-function closeAllModals() {
-    document.querySelectorAll(".text-box").forEach(m => m.classList.add("hidden"));
-    overlay.classList.add("hidden");
-    document.body.classList.remove("no-scroll");
+
+function createDrinkCard(drink, index) {
+    console.log(drink);
+    const card = document.createElement('div');
+    card.classList.add('rectangle');
+
+    card.innerHTML = `
+    <div class="drink-header">
+        <div class="drink-list-count">
+            <p><strong># Favorit:</strong> ${drink.favoritesCount}</p>
+        </div>
+        <div class="drink-index">
+            <p>${index + 1}</p>
+        </div>
+    </div>
+    <div class="content">
+        <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
+    </div>
+    <h3>${drink.name}</h3>
+    <p><strong>Grad nutrițional: </strong> ${drink.nutrition_grade}</p>
+    <p><strong>Brand: </strong> ${drink.brand}</p>
+  `;
+    return card;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    userLists = await fetchUserLists();
-    drinksData = await fetchDrinkRanking(50);
-    renderRanking(drinksData);
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login/index.html";
+    return false;
+  }
+  return token;
+}
 
-    overlay.addEventListener("click", closeAllModals);
-    document.addEventListener("keydown", e => {
-        if (e.key === "Escape") closeAllModals();
-    });
-});
-
-document.getElementById("select-all-btn").addEventListener("click", () => {
-    const selected = {};
-    document.querySelectorAll(".drink-checkbox").forEach(cb => {
-        cb.checked = true;
-        const drinkId = cb.dataset.drinkId;
-        const drink = drinksData.find(d => d.id == drinkId);
-        if (drink) selected[drinkId] = drink;
-    });
-    localStorage.setItem("selectedDrinks", JSON.stringify(selected));
-});
-
-document.getElementById("deselect-all-btn").addEventListener("click", () => {
-    document.querySelectorAll(".drink-checkbox").forEach(cb => {
-        cb.checked = false;
-    });
-    localStorage.removeItem("selectedDrinks");
-});
+document.addEventListener('DOMContentLoaded', getRanking);
