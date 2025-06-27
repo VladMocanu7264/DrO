@@ -1,6 +1,11 @@
-const API_BASE_URL = window.env.API_BASE_URL;
-const token = localStorage.getItem("token");
+import DrinkUI from '../public/DrinkUI.js';
 
+console.log("[DEBUG] API_BASE_URL:", window.env?.API_BASE_URL);
+const API_BASE_URL = (window.env && window.env.API_BASE_URL) || '';
+console.log("[DEBUG] Using API_BASE_URL:", API_BASE_URL);
+
+const token = localStorage.getItem("token");
+console.log("[DEBUG] Token exists:", !!token);
 if (!token) {
   alert("Trebuie să fii autentificat pentru a accesa această pagină.");
   window.location.href = "/login/";
@@ -19,9 +24,6 @@ let maxQuantity = 1000;
 let maxQuantityAvailable = 1000;
 
 const cardsContainer = document.querySelector(".cards-container");
-const modalsContainer = document.getElementById("text-box-container");
-const overlay = document.querySelector(".overlay");
-const body = document.body;
 const categoryList = document.querySelector(".filter-list");
 const sortSelect = document.getElementById("sort-select");
 const searchInput = document.getElementById("search-drink");
@@ -29,6 +31,7 @@ const nutritionList = document.getElementById("nutrition-list");
 const quantityMinSlider = document.getElementById("quantity-slider-min");
 const quantityMaxSlider = document.getElementById("quantity-slider-max");
 const quantityRangeText = document.getElementById("quantity-range-text");
+const paginationContainer = document.querySelector(".pagination");
 
 async function fetchFilters() {
   try {
@@ -119,13 +122,21 @@ function setupQuantitySliders(range) {
     updateQuantityText();
   });
 
-  quantityMaxSlider.addEventListener("input", () => {
-    if (parseInt(quantityMaxSlider.value) < parseInt(quantityMinSlider.value)) {
-      quantityMaxSlider.value = quantityMinSlider.value;
-    }
-    maxQuantity = parseInt(quantityMaxSlider.value);
-    updateQuantityText();
-  });
+    quantityMinSlider.addEventListener("input", () => {
+        if (+quantityMinSlider.value > +quantityMaxSlider.value) {
+            quantityMinSlider.value = quantityMaxSlider.value;
+        }
+        minQuantity = +quantityMinSlider.value;
+        updateQuantityText();
+    });
+
+    quantityMaxSlider.addEventListener("input", () => {
+        if (+quantityMaxSlider.value < +quantityMinSlider.value) {
+            quantityMaxSlider.value = quantityMinSlider.value;
+        }
+        maxQuantity = +quantityMaxSlider.value;
+        updateQuantityText();
+    });
 }
 
 function updateQuantityText() {
