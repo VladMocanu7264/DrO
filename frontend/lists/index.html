@@ -65,7 +65,7 @@
                     <i class="fa-solid fa-circle-question"></i>
                 </a>
             </div>
-            <a href="../login/index.html" id="login-link">Login</a>
+            <a href="../login/index.html" id="login-link-mobile">Login</a>
         </div>
     </header>
     <div class="catalog">
@@ -73,7 +73,7 @@
             <h2 class="filter-title">Liste</h2>
             <div class="favorites-panel">
                 <img src="../public//poze/red-heart.png" alt="Red Heart" class="heart-icon"
-                    onclick="handleFetchFavorites()" />
+                    onclick="handleFetchFavorites()">
                 <p>Favorite</p>
             </div>
             <form class="filter-form">
@@ -85,14 +85,14 @@
                 </div>
 
                 <div class="filter-group">
-                    <legend>Adaugă o listă</legend>
-                    <input type="text" id="new-list-name" placeholder="Nume lista" />
+                    <p>Adaugă o listă</p>
+                    <input type="text" id="new-list-name" placeholder="Nume lista">
                     <button type="button" class="add-list-button" onclick="handleAddList()">Adaugă</button>
                 </div>
 
                 <div id="edit-list-name-container" class="filter-group hidden">
-                    <legend>Editează numele</legend>
-                    <input type="text" id="edit-list-name" placeholder="Nume lista" />
+                    <p>Editează numele</p>
+                    <input type="text" id="edit-list-name" placeholder="Nume lista">
                     <button type="button" class="add-list-button" onclick="handleEditListName()">Editează</button>
                 </div>
 
@@ -122,12 +122,6 @@
                     </div>
                 </div>
                 <div class="lists-dropdown">
-                    <!-- <button>Selectează o listă</button>
-                    <div class="lists-content">
-                        <a href="#" class="list-item">Lista 1</a>
-                        <a href="#" class="list-item">Lista 2</a>
-                        <a href="#" class="list-item">Lista 3</a>
-                    </div> -->
                 </div>
                 <div id="selected-list" style="display: none;"></div>
             </div>
@@ -143,9 +137,9 @@
         </div>
 
         <div class="overlay hidden"></div>
-
-        <script src="../public/js/main.js"></script>
-        <script src="lists.js"></script>
+    </div>
+    <script src="../public/js/main.js"></script>
+    <script src="lists.js"></script>
 </body>
 
 </html>

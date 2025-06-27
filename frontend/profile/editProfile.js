@@ -21,8 +21,6 @@ async function fetchPublicProfile(username) {
             throw new Error("Nu s-a putut încărca profilul utilizatorului");
         }
         const data = await res.json();
-
-        // Afișare date profil
         document.getElementById("public-username").textContent = data.username;
         document.getElementById("public-description").textContent = data.description || "Fără descriere";
         if (data.image) {
@@ -132,9 +130,9 @@ async function editMainInfo() {
             },
             body: formData
         });
-
+        const data = await response.json();
         if (!response.ok) {
-            throw new Error(`Eroare la actualizarea profilului: ${response}`);
+            throw new Error(`Eroare la actualizarea profilului: ${data.error}`);
         }
         alert('Profil actualizat cu succes!');
         clearMainInfoForm();

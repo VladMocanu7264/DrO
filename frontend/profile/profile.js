@@ -73,7 +73,7 @@ async function changeEmail(newEmail) {
     console.log(API_BASE_URL);
     const token = checkAuth();
     try {
-        
+
         const response = await fetch(`${API_BASE_URL}/users/me/email`, {
             method: "PATCH",
             headers: {
@@ -128,15 +128,18 @@ function checkAdminAccess() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    checkAdminAccess();
-});
 
 function checkAuth() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    window.location.href = "../login/index.html";
-    return false;
-  }
-  return token;
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "../login/index.html";
+        return false;
+    }
+    return token;
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    checkAdminAccess();
+});

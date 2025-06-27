@@ -138,7 +138,6 @@ async function createDrinkModal(drink) {
     const modal = document.createElement('div');
     modal.classList.add('text-box', 'hidden');
     modal.id = `text-box-${drink.id}`;
-    console.log(modal.id)
     Object.assign(modal.style, {
         position: 'fixed', top: '50%', left: '50%',
         transform: 'translate(-50%,-50%)', zIndex: '10'

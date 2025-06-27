@@ -25,7 +25,7 @@ async function getAllGroupsForUser() {
         const groups = await response.json();
         return groups;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
     }
 }
 
@@ -52,7 +52,7 @@ async function getPostsByGroup(groupId, page = 1, limit = 2) {
         updatePaginationControls();
         return data.posts || [];
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
         return [];
     }
 }
@@ -73,7 +73,7 @@ async function checkIfUserIsGroupAdmin(groupId) {
         const data = await response.json();
         return data.isAdmin;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
     }
 }
 
@@ -102,7 +102,7 @@ async function likePost(postId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
         return false;
     }
 }
@@ -132,7 +132,7 @@ async function deletePostById(postId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
         return false;
     }
 }
@@ -162,7 +162,7 @@ async function kickUserFromGroup(selectedGroupId, userId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
         return false;
     }
 }
@@ -188,7 +188,7 @@ async function postGroup(name, description) {
         }
         return true;
     } catch (error) {
-        alert("Eroare: " + error.message);
+        alert("Operațiune eșuată: " + error.message);
         return false;
     }
 }
@@ -209,7 +209,7 @@ async function leaveGroup() {
         alert('Ai părăsit grupul cu succes.');
         window.location.href = '../groups/index.html';
     } catch (error) {
-        alert('Eroare: ' + error.message);
+        alert('Operațiune eșuată: ' + error.message);
     }
 }
 
@@ -470,4 +470,3 @@ document.getElementById('next-page').addEventListener('click', async () => {
 });
 
 document.addEventListener('DOMContentLoaded', generateRadioFilter);
-

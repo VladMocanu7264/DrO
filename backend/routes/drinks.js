@@ -272,9 +272,14 @@ async function handlePostFavorite(req, res) {
                 return res.end(JSON.stringify({ error: 'Drink not found' }));
             }
 
-            await Favorite.findOrCreate({
+            const [fav, created] = await Favorite.findOrCreate({
                 where: { UserId: req.user.id, DrinkId: drinkId }
             });
+
+            if (!created) {
+                res.writeHead(409, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ message: 'The drink is already in favorites' }));
+            }
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Added to favorites' }));
@@ -372,6 +377,38 @@ async function handleGetDrinkRanking(req, res) {
     }
 }
 
+function matchGetIsFavorite(req) {
+    const match = req.pathname.match(/^\/drinks\/([0-9]+)\/favorite$/);
+    if (match && req.method === 'GET') {
+        return { params: { drinkId: match[1] } };
+    }
+    return false;
+}
+
+async function handleGetIsFavorite(req, res) {
+    const drinkId = req.params.drinkId;
+    const userId = req.user?.id;
+
+    if (!userId) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ favorited: false }));
+    }
+
+    try {
+        const fav = await Favorite.findOne({
+            where: { UserId: userId, DrinkId: drinkId }
+        });
+        const isFavorite = Boolean(fav);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ favorited: isFavorite }));
+    } catch (err) {
+        if (LOG_ENABLED) console.error('Error in handleGetIsFavorite:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+}
+
 module.exports = [
     { match: matchGetDrinkById, handle: withAuth(handleGetDrinkById) },
     { match: matchGetFilters, handle: handleGetFilters },
@@ -379,5 +416,7 @@ module.exports = [
     { match: matchGetFavorites, handle: withAuth(handleGetFavorites) },
     { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
     { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) },
-    { match: matchGetDrinkRanking, handle: withAuth(handleGetDrinkRanking) }
+    { match: matchGetDrinkRanking, handle: withAuth(handleGetDrinkRanking) },
+    { match: matchGetIsFavorite, handle: withAuth(handleGetIsFavorite) }
+
 ];

@@ -6,11 +6,9 @@ const registerLink = document.querySelector(".register-link");
 const loginForm = document.querySelector(".form-box.login form");
 const registerForm = document.querySelector(".form-box.register form");
 
-// Trecerea între formulare
 registerLink.addEventListener("click", () => wrapper.classList.add("active"));
 loginLink.addEventListener("click", () => wrapper.classList.remove("active"));
 
-// Funcții regex locale
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -18,14 +16,12 @@ function isValidUsername(username) {
   return /^[a-zA-Z0-9_]{3,20}$/.test(username);
 }
 
-// Debounce helper
 let debounceTimeout = null;
 function debounce(fn, delay = 500) {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(fn, delay);
 }
 
-// Validare email dinamică (stil)
 document.addEventListener("DOMContentLoaded", () => {
   const emailInputs = document.querySelectorAll(".email-input input");
   emailInputs.forEach((input) => {
@@ -35,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Submit login
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -55,13 +50,12 @@ loginForm.addEventListener("submit", async (e) => {
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
-    window.location.href = "/home/";
+    window.location.href = "../home/index.html";
   } catch (error) {
     alert("Login eșuat: " + error.message);
   }
 });
 
-// Submit register
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -104,7 +98,6 @@ registerForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Validare email disponibil
 const registerEmailInput = registerForm.querySelector("input[type='email']");
 const emailBox = registerEmailInput.closest(".input-box");
 const emailError = emailBox.querySelector(".error-message");
@@ -148,7 +141,6 @@ registerEmailInput.addEventListener("input", () => {
   });
 });
 
-// Validare username disponibil
 const usernameInput = registerForm.querySelector("input[type='text']");
 const usernameBox = usernameInput.closest(".input-box");
 const usernameError = usernameBox.querySelector(".error-message");

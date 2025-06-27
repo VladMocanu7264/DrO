@@ -45,6 +45,33 @@ async function fetchFilters() {
   }
 }
 
+async function isDrinkFavorited(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return false;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/drinks/${drinkId}/favorite`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const { favorited } = await response.json();
+    return Boolean(favorited);
+
+  } catch (err) {
+    return false;
+  }
+}
+
+
 function populateSortOptions(options) {
   sortSelect.innerHTML = "";
   options.forEach(opt => {
@@ -337,10 +364,24 @@ function createDrinkModal(drink) {
       </div>
     </div>
   `;
+
+  isDrinkFavorited(drink.id).then(isFavorite => {
+    if (isFavorite) {
+      const addFavoriteIcon = modal.querySelector('.add-favorite');
+      addFavoriteIcon.classList.remove('fa-regular');
+      addFavoriteIcon.classList.add('fa-solid');
+      addFavoriteIcon.style.color = 'red';
+    }
+  });
+
   modal.querySelector('.add-favorite')
     .addEventListener('click', async e => {
       e.stopPropagation();
       await addDrinkToFavorites(e.target.dataset.drinkId);
+      const addFavoriteIcon = modal.querySelector('.add-favorite');
+      addFavoriteIcon.classList.remove('fa-regular');
+      addFavoriteIcon.classList.add('fa-solid');
+      addFavoriteIcon.style.color = 'red';
     });
   modal.querySelector('.add-to-list')
     .addEventListener('click', async () => {
@@ -389,9 +430,9 @@ function closeAllModals() {
 
 async function resetAndLoad() {
   drinksData = await fetchDrinks(currentPage);
-  console.log(drinksData)
   userLists = await fetchUserLists();
   userLists.sort((a, b) => a.name.localeCompare(b.name));
+  updateQuantityText();
   render();
 }
 

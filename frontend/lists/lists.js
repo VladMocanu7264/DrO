@@ -282,7 +282,6 @@ async function addDrinkToFavorites(drinkId) {
     alert("ID-ul băuturii lipsește.");
     return;
   }
-  console.log("Adding drink to favorites:", drinkId);
   const token = checkAuth();
   try {
     const response = await fetch(`${API_BASE_URL}/favorites`, {
@@ -310,6 +309,32 @@ async function addDrinkToFavorites(drinkId) {
     return true;
   } catch (error) {
     alert("Operațiune eșuată: " + error.message);
+    return false;
+  }
+}
+
+async function isDrinkFavorited(drinkId) {
+  if (!drinkId) {
+    alert("ID-ul băuturii lipsește.");
+    return false;
+  }
+  const token = checkAuth();
+  try {
+    const response = await fetch(`${API_BASE_URL}/drinks/${drinkId}/favorite`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const { favorited } = await response.json();
+    return Boolean(favorited);
+
+  } catch (err) {
     return false;
   }
 }
@@ -409,14 +434,22 @@ async function applyFiltersAndRender() {
 }
 
 function renderPriceTag() {
-  price = displayData.reduce((acc, curr) => acc + parseFloat(curr.price), 0)
+  const price = displayData.reduce((acc, curr) => {
+    const p = parseFloat(curr.price);
+    return acc + (isNaN(p) ? 0 : p);
+  }, 0);
+
+  console.log("Total price:", price);
+
   clearPriceTag();
+
   const actionButtons = document.querySelector('.list-actions-btns');
   const priceButton = document.createElement('p');
   priceButton.classList.add('price-tag');
   priceButton.textContent = `${price.toFixed(2)} Lei`;
-  actionButtons.appendChild(priceButton)
+  actionButtons.appendChild(priceButton);
 }
+
 
 function clearPriceTag() {
   const actionButtons = document.querySelector('.list-actions-btns');
@@ -554,6 +587,13 @@ async function createDrinkModal(drink) {
     </div>
   `;
 
+  const isFavorite = await isDrinkFavorited(drink.id);
+  if (isFavorite) {
+    const addFavoriteIcon = modal.querySelector('.add-favorite');
+    addFavoriteIcon.classList.remove('fa-regular');
+    addFavoriteIcon.classList.add('fa-solid');
+    addFavoriteIcon.style.color = 'red';
+  }
   modal.querySelector('.close-modal')
     .addEventListener('click', () => toggleModal(drink.id, false));
 
@@ -561,6 +601,10 @@ async function createDrinkModal(drink) {
     .addEventListener('click', async e => {
       e.stopPropagation();
       await addDrinkToFavorites(e.target.dataset.drinkId);
+      const addFavoriteIcon = modal.querySelector('.add-favorite');
+      addFavoriteIcon.classList.remove('fa-regular');
+      addFavoriteIcon.classList.add('fa-solid');
+      addFavoriteIcon.style.color = 'red';
     });
   modal.querySelector('.add-to-list')
     .addEventListener('click', async () => {

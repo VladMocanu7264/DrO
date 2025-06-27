@@ -145,7 +145,7 @@
   overflow: hidden;
 }
 
-.filter-group>legend {
+.filter-group>p {
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
