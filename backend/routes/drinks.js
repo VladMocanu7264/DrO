@@ -272,9 +272,14 @@ async function handlePostFavorite(req, res) {
                 return res.end(JSON.stringify({ error: 'Drink not found' }));
             }
 
-            await Favorite.findOrCreate({
+            const [fav, created] = await Favorite.findOrCreate({
                 where: { UserId: req.user.id, DrinkId: drinkId }
             });
+
+            if (!created) {
+                res.writeHead(409, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ message: 'The drink is already in favorites' }));
+            }
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Added to favorites' }));

@@ -299,6 +299,9 @@ async function addDrinkToFavorites(drinkId) {
     if (response.status === 404) {
       throw new Error("Băutura nu a fost găsită.");
     }
+    if (response.status === 409) {
+      throw new Error("Băutura este deja la favorite!");
+    }
     if (response.status === 200) {
       alert("Băutura a fost adăugată la favorite!");
       return;
@@ -411,7 +414,7 @@ function renderPriceTag() {
   const actionButtons = document.querySelector('.list-actions-btns');
   const priceButton = document.createElement('p');
   priceButton.classList.add('price-tag');
-  priceButton.textContent = `${price} Lei`;
+  priceButton.textContent = `${price.toFixed(2)} Lei`;
   actionButtons.appendChild(priceButton)
 }
 

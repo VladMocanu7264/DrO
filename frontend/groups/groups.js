@@ -25,7 +25,7 @@ async function getAllGroupsForUser() {
         const groups = await response.json();
         return groups;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
     }
 }
 
@@ -52,7 +52,7 @@ async function getPostsByGroup(groupId, page = 1, limit = 2) {
         updatePaginationControls();
         return data.posts || [];
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
         return [];
     }
 }
@@ -70,13 +70,10 @@ async function checkIfUserIsGroupAdmin(groupId) {
         if (!response.ok) {
             throw new Error("Eroare la verificarea drepturilor de administrator");
         }
-        isGroupAdmin = await response.json();
-        // if (isGroupAdmin) {
-        //     document.querySelector('.add-group-button').classList.remove('hidden');
-        // }
-        return isGroupAdmin.isAdmin;
+        const data = await response.json();
+        return data.isAdmin;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
     }
 }
 
@@ -105,7 +102,7 @@ async function likePost(postId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
         return false;
     }
 }
@@ -135,7 +132,7 @@ async function deletePostById(postId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
         return false;
     }
 }
@@ -165,7 +162,7 @@ async function kickUserFromGroup(selectedGroupId, userId) {
         }
         return true;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
         return false;
     }
 }
@@ -191,7 +188,7 @@ async function postGroup(name, description) {
         }
         return true;
     } catch (error) {
-        alert("Eroare:" + error);
+        alert("Eroare: " + error.message);
         return false;
     }
 }
@@ -212,7 +209,7 @@ async function leaveGroup() {
         alert('Ai părăsit grupul cu succes.');
         window.location.href = '../groups/index.html';
     } catch (error) {
-        alert('Eroare:' + error);
+        alert('Eroare: ' + error.message);
     }
 }
 
@@ -334,18 +331,17 @@ async function generatePosts(posts) {
         const likesCount = postDiv.querySelector('.likes-count');
 
         likeIcon.addEventListener('click', async () => {
-                console.log("Like icon clicked for post ID:", post.id);
-                let postLiked = await likePost(post.id);
-                if (postLiked) {
-                    likesCount.textContent = parseInt(likesCount.textContent) + 1;
-                }
+            console.log("Like icon clicked for post ID:", post.id);
+            let postLiked = await likePost(post.id);
+            if (postLiked) {
+                likesCount.textContent = parseInt(likesCount.textContent) + 1;
             }
+        }
         );
 
         if (isGroupAdmin) {
             createDeletePostButton(post, postDiv, postsContainer);
             createKickUserButton(post.member, postDiv, postsContainer);
-
         }
 
         postsContainer.appendChild(postDiv);
@@ -384,8 +380,6 @@ function createDeletePostButton(post, postDiv, postsContainer) {
 }
 
 function createKickUserButton(member, postDiv, postsContainer) {
-    console.log(member);
-    console.log(JSON.parse(localStorage.getItem('user')).id);
     if (member.id === JSON.parse(localStorage.getItem('user')).id) {
         return;
     }

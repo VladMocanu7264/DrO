@@ -1,6 +1,6 @@
 const API_BASE_URL = "http://localhost:3000";
 
-
+let username = '';
 const drinkListSelect = document.getElementById('drink-list-select');
 const listContainer = document.querySelector('.lists-container');
 
@@ -41,7 +41,6 @@ async function fetchUserData(username) {
         }
 
         const userData = await response.json();
-        console.log("User data fetched:", userData);
         return userData;
     } catch (error) {
         alert("Eroare: " + error.message);
@@ -100,16 +99,18 @@ function loadLists(lists, listId) {
 
     const oldBtn = listHeader.querySelector('.copy-list-button');
     if (oldBtn) oldBtn.remove();
-
-    const copyButton = document.createElement('button');
-    copyButton.classList.add('action-button', 'copy-list-button');
-    copyButton.textContent = 'Copiază';
-    copyButton.dataset.listId = listId;
-    copyButton.addEventListener('click', () => {
-        const listId = copyButton.dataset.listId;
-        copyList(listId);
-    });
-    listHeader.appendChild(copyButton);
+    const currentUsername = JSON.parse(localStorage.getItem("user")).username;
+    if (currentUsername !== username) {
+        const copyButton = document.createElement('button');
+        copyButton.classList.add('action-button', 'copy-list-button');
+        copyButton.textContent = 'Copiază';
+        copyButton.dataset.listId = listId;
+        copyButton.addEventListener('click', () => {
+            const listId = copyButton.dataset.listId;
+            copyList(listId);
+        });
+        listHeader.appendChild(copyButton);
+    }
 }
 
 function loadDrinkList(lists) {

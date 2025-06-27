@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const entries = Object.entries(selectedDrinks);
         if (entries.length === 0) {
-            listContainer.innerHTML = "<p>No drinks selected.</p>";
+            listContainer.innerHTML = "<p>Nicio băutură selectată.</p>";
             return;
         }
 

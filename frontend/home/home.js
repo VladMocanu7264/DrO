@@ -203,6 +203,9 @@ async function addDrinkToFavorites(drinkId) {
     if (response.status === 404) {
       throw new Error("Băutura nu a fost găsită.");
     }
+    if (response.status === 409) {
+      throw new Error("Băutura este deja la favorite!");
+    }
     if (response.status === 200) {
       alert("Băutura a fost adăugată la favorite!");
       return;

@@ -29,7 +29,7 @@
           <a href="../home/index.html">Acasa</a>
           <a href="../lists/index.html">Liste</a>
           <a href="../groups/index.html">Grupuri</a>
-          <a href="#" class="is-active">Stats</a>
+          <a href="#" class="is-active">Statistici</a>
           <a href="/rss"><i class="fa-solid fa-rss"></i></a>
           <a href="../about/index.html"><i class="fa-solid fa-circle-info"></i></a>
           <a href="../help/index.html"><i class="fa-solid fa-circle-question"></i></a>
@@ -40,6 +40,24 @@
         </button>
       </div>
     </nav>
+    <div class="mobile-menu">
+      <a href="../home/index.html">Acasa</a>
+      <a href="../lists/index.html">Liste</a>
+      <a href="../groups/index.html">Grupuri</a>
+      <a href="../stats/index.html">Statistici</a>
+      <div class="mobile-action-icons">
+        <a href="/rss">
+          <i class="fa-solid fa-rss"></i>
+        </a>
+        <a href="../about/index.html">
+          <i class="fa-solid fa-circle-info"></i>
+        </a>
+        <a href="../help/index.html">
+          <i class="fa-solid fa-circle-question"></i>
+        </a>
+      </div>
+      <a href="../login/index.html" id="login-link">Login</a>
+    </div>
   </header>
 
   <div class="catalog">
@@ -89,7 +107,8 @@
           <div class="tag-graph">
             <div class="bar-chart-wrapper">
               <div id="tag-bar-chart"></div>
-              <div class="download-wrapper download-below  download-bar-chart" onclick="downloadSVG('tag-bar-chart', 'tags-bar-chart.svg')">
+              <div class="download-wrapper download-below  download-bar-chart"
+                onclick="downloadSVG('tag-bar-chart', 'tags-bar-chart.svg')">
                 <i class="fa-solid fa-download download-svg"></i>
               </div>
             </div>
@@ -100,6 +119,7 @@
   </div>
 
   <script src="../public/config.js"></script>
+  <script src="../public/js/main.js"></script>
   <script src="stats.js"></script>
 </body>
 

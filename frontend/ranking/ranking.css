@@ -127,6 +127,12 @@
     width: 100%;
 }
 
+.drink-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
 .read-more {
     padding: 0.5rem 1rem;
     background-color: var(--primary);

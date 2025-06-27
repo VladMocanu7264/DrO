@@ -42,7 +42,8 @@ async function render() {
 
 
 function createDrinkCard(drink, index) {
-    console.log(drink);
+    const selectedDrinks = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+    const isChecked = selectedDrinks.hasOwnProperty(drink.id);
     const card = document.createElement('div');
     card.classList.add('rectangle');
 
@@ -59,19 +60,38 @@ function createDrinkCard(drink, index) {
         <img class="drink-img" src="${drink.image_url}" alt="${drink.name}">
     </div>
     <h3>${drink.name}</h3>
-    <p><strong>Grad nutrițional: </strong> ${drink.nutrition_grade}</p>
-    <p><strong>Brand: </strong> ${drink.brand}</p>
+        <div class="drink-info">
+      <p><strong>Brand:</strong> ${drink.brand || "N/A"}</p>
+      <p><strong>Cantitate:</strong> ${drink.quantity || "?"} ml</p>
+      <p><strong>Nutriție:</strong> ${drink.nutrition_grade || "-"}</p>
+          <label>
+      <input type="checkbox" class="drink-checkbox" data-drink-id="${drink.id}" ${isChecked ? "checked" : ""}>
+      Statistici
+    </label>
+    </div>
   `;
+    const checkbox = card.querySelector(".drink-checkbox");
+    checkbox.addEventListener("change", (e) => {
+        const selected = JSON.parse(localStorage.getItem("selectedDrinks") || "{}");
+
+        if (e.target.checked) {
+            selected[drink.id] = drink;
+        } else {
+            delete selected[drink.id];
+        }
+
+        localStorage.setItem("selectedDrinks", JSON.stringify(selected));
+    });
     return card;
 }
 
 function checkAuth() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    window.location.href = "../login/index.html";
-    return false;
-  }
-  return token;
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "../login/index.html";
+        return false;
+    }
+    return token;
 }
 
 document.addEventListener('DOMContentLoaded', getRanking);
