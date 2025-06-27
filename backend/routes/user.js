@@ -91,6 +91,7 @@ async function handleGetUser(req, res) {
             username: user.username,
             email: isSelf ? user.email : 'hidden',
             description: user.description,
+            is_admin: user.is_admin,
             image: imageDataUrl,
             lists
         };
@@ -174,7 +175,7 @@ function handlePatchMe(req, res) {
 }
 
 function matchPatchEmail(req) {
-    return req.pathname === '/users/me/email' && req.method === 'PATCH';
+    return req.pathname === '/users/me/email' && req.method === 'PUT';
 }
 
 async function handlePatchEmail(req, res) {

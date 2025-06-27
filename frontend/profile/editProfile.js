@@ -152,7 +152,7 @@ async function editEmail() {
     const token = checkAuth();
     try {
         const response = await fetch(`http://localhost:3000/users/me/email`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 "Authorization": `Bearer ${token}`

@@ -81,6 +81,7 @@ overlay.addEventListener('click', () => {
 
 
 function loadGroups(groups) {
+    console.log(groups);
     groupList.innerHTML = '';
     groups.forEach((group) => {
         const groupRow = document.createElement('tr');

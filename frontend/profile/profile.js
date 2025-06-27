@@ -120,6 +120,7 @@ const adminGroupsBtn = document.getElementById('groups-button');
 function checkAdminAccess() {
 
     const userRole = JSON.parse(localStorage.getItem('user'));
+    console.log(userRole);
 
     if (!userRole.is_admin) {
         adminUsersBtn.style.display = 'none';

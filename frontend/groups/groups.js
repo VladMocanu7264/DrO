@@ -29,7 +29,7 @@ async function getAllGroupsForUser() {
     }
 }
 
-async function getPostsByGroup(groupId, page = 1, limit = 2) {
+async function getPostsByGroup(groupId, page = 1, limit = 10) {
     if (!groupId) {
         alert("ID-ul grupului lipsește.");
         return;
