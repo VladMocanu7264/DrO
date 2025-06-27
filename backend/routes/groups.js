@@ -31,6 +31,9 @@ function matchGetGroupPosts(req) {
     return false;
 }
 
+const fs = require('fs');
+const path = require('path');
+
 async function handleGetGroupPosts(req, res) {
     try {
         const { groupId } = req.params;
@@ -72,24 +75,49 @@ async function handleGetGroupPosts(req, res) {
 
         const memberId = member?.id;
 
-        const result = posts.map(post => ({
-            id: post.id,
-            text: post.text,
-            time: post.time,
-            likes: post.Likes.length,
-            likedByUser: post.Likes.some(like => like.MemberId === memberId),
-            member: {
-                username: post.Member.User.username,
-                image_path: post.Member.User.image_path,
-                id: post.Member.User.id,
-            },
-            drink: post.Drink
+        const result = await Promise.all(posts.map(async post => {
+            const user = post.Member.User;
+            let imageDataUrl = null;
+
+            if (user.image_path) {
+                const filePath = path.join(__dirname, '../public', user.image_path);
+                const ext = path.extname(user.image_path).toLowerCase();
+
+                let mime = 'image/jpeg';
+                if (ext === '.png') mime = 'image/png';
+                else if (ext === '.webp') mime = 'image/webp';
+                else if (ext === '.gif') mime = 'image/gif';
+                else if (ext === '.svg') mime = 'image/svg+xml';
+
+                try {
+                    const base64Data = fs.readFileSync(filePath).toString('base64');
+                    imageDataUrl = `data:${mime};base64,${base64Data}`;
+                } catch (err) {
+                    if (process.env.LOG_ENABLED === 'true') {
+                        console.error('Error reading image for user', user.username, err);
+                    }
+                }
+            }
+
+            return {
+                id: post.id,
+                text: post.text,
+                time: post.time,
+                likes: post.Likes.length,
+                likedByUser: post.Likes.some(like => like.MemberId === memberId),
+                member: {
+                    username: user.username,
+                    id: user.id,
+                    image: imageDataUrl
+                },
+                drink: post.Drink
+            };
         }));
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ posts: result, max_pages: Math.ceil(count / limit) }));
     } catch (err) {
-        console.log("Error: " + err);
+        console.log("Error in handleGetGroupPosts:", err);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal server error' }));
     }

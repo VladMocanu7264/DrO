@@ -310,7 +310,7 @@ async function generatePosts(posts) {
         postDiv.innerHTML = `
       <div class="post-content">
         <div class="user-info">
-          <img src="${post.member.image_path}" alt="${post.member.username}" class="user-image">
+          <img src="${post.member.image}" alt="${post.member.username}" class="user-image">
           <a style="text-decoration:None; color:white" href="../profile-by-id/index.html?username=${encodeURIComponent(post.member.username)}"><p class="card-user">${post.member.username}</p></a>
         </div>
         <p class="post-text">${post.text}</p>
