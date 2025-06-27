@@ -1,9 +1,9 @@
-const API_BASE_URL = "https://c18c9536-f420-43e6-9492-a9a4331cd516.mock.pstmn.io";
+const API_BASE_URL = "http://localhost:3000";
 
-async function getDrinksByRanking(limit = 10) {
+async function getDrinksByRanking() {
     const token = checkAuth();
     try {
-        const response = await fetch(`${API_BASE_URL}/drinks/ranking?limit=${limit}`, {
+        const response = await fetch(`${API_BASE_URL}/drinks/ranking`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -42,6 +42,7 @@ async function render() {
 
 
 function createDrinkCard(drink, index) {
+    console.log(drink);
     const card = document.createElement('div');
     card.classList.add('rectangle');
 
@@ -64,5 +65,13 @@ function createDrinkCard(drink, index) {
     return card;
 }
 
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../login/index.html";
+    return false;
+  }
+  return token;
+}
 
 document.addEventListener('DOMContentLoaded', getRanking);

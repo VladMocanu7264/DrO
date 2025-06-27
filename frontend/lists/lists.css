@@ -72,6 +72,13 @@
   align-items: center;
 }
 
+.price-tag {
+  background-color: var(--primary);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 0.5rem;
+}
+
 #select-all-drink,
 #deselect-all-drink {
   background-color: var(--secondary);
@@ -552,6 +559,11 @@
   font-size: 13px;
 }
 
+.select-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .list-actions-btns {
   display: flex;
   align-items: center;
@@ -611,6 +623,10 @@
 
 /* --- Responsive: small screens --- */
 @media (max-width: 900px) {
+  .list-actions-btns {
+    flex-direction: column;
+  }
+
   .text-box {
     width: 400px;
   }
@@ -639,6 +655,14 @@
 
   .sort-section {
     justify-content: center;
+    flex-direction: column;
+  }
+
+  .select-buttons {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: row;
   }
 
   .search-options {

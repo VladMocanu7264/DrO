@@ -236,7 +236,7 @@ async function handleGetFavorites(req, res) {
             where: { UserId: req.user.id },
             include: {
                 model: Drink,
-                attributes: ['id', 'name', 'brand', 'image_url', 'nutrition_grade', 'quantity', 'packaging']
+                attributes: ['id', 'name', 'brand', 'image_url', 'nutrition_grade', 'quantity', 'packaging', 'price']
             }
         });
 

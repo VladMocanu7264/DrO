@@ -7,6 +7,7 @@ const createGroupButton = document.getElementsByClassName("add-group-button");
 let currentPage = 1;
 let totalPages = 1;
 const limit = 5;
+let isGroupAdmin = false;
 
 async function getAllGroupsForUser() {
     const token = checkAuth();
@@ -28,7 +29,7 @@ async function getAllGroupsForUser() {
     }
 }
 
-async function getPostsByGroup(groupId, page = 1, limit = 10) {
+async function getPostsByGroup(groupId, page = 1, limit = 2) {
     if (!groupId) {
         alert("ID-ul grupului lipsește.");
         return;
@@ -53,6 +54,29 @@ async function getPostsByGroup(groupId, page = 1, limit = 10) {
     } catch (error) {
         alert("Eroare:" + error);
         return [];
+    }
+}
+
+async function checkIfUserIsGroupAdmin(groupId) {
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/${groupId}/is-admin`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Eroare la verificarea drepturilor de administrator");
+        }
+        isGroupAdmin = await response.json();
+        // if (isGroupAdmin) {
+        //     document.querySelector('.add-group-button').classList.remove('hidden');
+        // }
+        return isGroupAdmin.isAdmin;
+    } catch (error) {
+        alert("Eroare:" + error);
     }
 }
 
@@ -86,6 +110,66 @@ async function likePost(postId) {
     }
 }
 
+async function deletePostById(postId) {
+    if (!postId) {
+        alert("ID-ul postării lipsește.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/${selectedGroupId}/posts/${postId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (response.status === 403) {
+            throw new Error("Nu ai permisiunile necesare.");
+        }
+        if (response.status === 404) {
+            throw new Error("Postarea nu a fost găsită.");
+        }
+        if (!response.ok) {
+            throw new Error("Eroare la ștergerea postării");
+        }
+        return true;
+    } catch (error) {
+        alert("Eroare:" + error);
+        return false;
+    }
+}
+
+async function kickUserFromGroup(selectedGroupId, userId) {
+    if (!userId) {
+        alert("ID-ul utilizatorului lipsește.");
+        return;
+    }
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/${selectedGroupId}/kick/${userId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (response.status === 403) {
+            throw new Error("Nu ai permisiunile necesare.");
+        }
+        if (response.status === 404) {
+            throw new Error("Utilizatorul nu a fost găsit.");
+        }
+        if (!response.ok) {
+            throw new Error("Eroare la ștergerea utilizatorului din grup.");
+        }
+        return true;
+    } catch (error) {
+        alert("Eroare:" + error);
+        return false;
+    }
+}
+
 async function postGroup(name, description) {
     if (!name || !description) {
         alert("Numele și descrierea grupului sunt necesare.");
@@ -109,6 +193,26 @@ async function postGroup(name, description) {
     } catch (error) {
         alert("Eroare:" + error);
         return false;
+    }
+}
+
+async function leaveGroup() {
+    const token = checkAuth();
+    try {
+        const response = await fetch(`${API_BASE_URL}/groups/${selectedGroupId}/leave`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Eroare la părăsirea grupului');
+        }
+        alert('Ai părăsit grupul cu succes.');
+        window.location.href = '../groups/index.html';
+    } catch (error) {
+        alert('Eroare:' + error);
     }
 }
 
@@ -145,6 +249,7 @@ async function generateRadioFilter(inputName = 'category') {
 
         input.addEventListener('change', async () => {
             const fetchedPosts = await getPostsByGroup(group.id);
+            isGroupAdmin = await checkIfUserIsGroupAdmin(group.id);
             fetchedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             selectedGroupId = group.id;
             if (!fetchedPosts || fetchedPosts.length === 0) {
@@ -153,7 +258,7 @@ async function generateRadioFilter(inputName = 'category') {
                 generateEmptyGroup();
                 return;
             }
-            generatePosts(fetchedPosts);
+            await generatePosts(fetchedPosts);
         });
 
         item.appendChild(input);
@@ -165,21 +270,44 @@ async function generateRadioFilter(inputName = 'category') {
 function generateEmptyGroup() {
     const postsContainer = document.querySelector('.posts-container');
     if (!postsContainer) return;
+
     postsContainer.innerHTML = `
-        <div class="empty-post">
-            <h2>Acest grup nu are postări încă.</h2>
-            <p>Poți adăuga o postare nouă pentru a începe discuția.</p>
-        </div>
-    `;
+    <div class="empty-post">
+      <h2>Acest grup nu are postări încă.</h2>
+      <p>Poți adăuga o postare nouă pentru a începe discuția.</p>
+    </div>
+  `;
+
+    const leaveGroupButton = document.createElement('button');
+    leaveGroupButton.id = 'leave-group-btn';
+    leaveGroupButton.textContent = 'Părăsește grupul';
+    leaveGroupButton.addEventListener('click', async () => {
+        if (confirm('Ești sigur că vrei să părăsești acest grup?')) {
+            await leaveGroup();
+        }
+    });
+    postsContainer.appendChild(leaveGroupButton);
 }
 
-function generatePosts(posts) {
+
+async function generatePosts(posts) {
     const postsContainer = document.querySelector('.posts-container');
     if (!postsContainer) return;
 
     postsContainer.innerHTML = '';
 
+    const leaveGroupButton = document.createElement('button');
+    leaveGroupButton.id = 'leave-group-btn';
+    leaveGroupButton.textContent = 'Părăsește grupul';
+    leaveGroupButton.addEventListener('click', async () => {
+        if (confirm('Ești sigur că vrei să părăsești acest grup?')) {
+            await leaveGroup();
+        }
+    });
+    postsContainer.appendChild(leaveGroupButton);
+
     posts.forEach((post) => {
+        console.log(post);
         const postDiv = document.createElement('div');
         postDiv.classList.add('post');
         postDiv.innerHTML = `
@@ -202,10 +330,10 @@ function generatePosts(posts) {
       <img src="${post.drink.image_url}" alt="${post.drink.name}" class="drink-image">
     `;
         const likeIcon = postDiv.querySelector('.like-icon');
+        likeIcon.title = 'Apreciază postarea';
         const likesCount = postDiv.querySelector('.likes-count');
 
         likeIcon.addEventListener('click', async () => {
-            console.log("Like icon clicked for post ID:", post.id);
             let postLiked = await likePost(post.id);
             if (postLiked) {
                 likesCount.textContent = parseInt(likesCount.textContent) + 1;
@@ -213,10 +341,84 @@ function generatePosts(posts) {
         }
         );
 
+        if (isGroupAdmin) {
+            createDeletePostButton(post, postDiv, postsContainer);
+            createKickUserButton(post.member, postDiv, postsContainer);
+
+        }
+
         postsContainer.appendChild(postDiv);
     });
 }
 
+function createDeletePostButton(post, postDiv, postsContainer) {
+    const deleteBtn = document.createElement('i');
+    deleteBtn.classList.add('fa-solid');
+    deleteBtn.classList.add('fa-trash');
+    deleteBtn.classList.add('delete-post-btn');
+    deleteBtn.title = 'Șterge postarea';
+    deleteBtn.addEventListener('click', async () => {
+        if (confirm('Esti sigur că vrei să ștergi acest post?')) {
+            const ok = await deletePostById(post.id);
+            if (ok) {
+                postDiv.remove();
+                if (postsContainer.children.length === 0) {
+                    const fetchedPosts = await getPostsByGroup(selectedGroupId);
+                    isGroupAdmin = await checkIfUserIsGroupAdmin(selectedGroupId);
+                    fetchedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    if (!fetchedPosts || fetchedPosts.length === 0) {
+                        totalPages = 0;
+                        updatePaginationControls();
+                        generateEmptyGroup();
+                        return;
+                    }
+                    await generatePosts(fetchedPosts);
+                }
+            } else {
+                alert('A apărut o eroare la ștergere.');
+            }
+        }
+    });
+    postDiv.querySelector('.drink-info').appendChild(deleteBtn);
+}
+
+function createKickUserButton(member, postDiv, postsContainer) {
+    console.log(member);
+    console.log(JSON.parse(localStorage.getItem('user')).id);
+    if (member.id === JSON.parse(localStorage.getItem('user')).id) {
+        return;
+    }
+    const kickBtn = document.createElement('i');
+    kickBtn.classList.add('fa-solid');
+    kickBtn.classList.add('fa-user-slash');
+    kickBtn.classList.add('delete-post-btn');
+    kickBtn.title = 'Dă afară utilizatorul din grup';
+    kickBtn.addEventListener('click', async () => {
+        if (confirm(`Ești sigur că vrei să dai afară utilizatorul ${member.username} din grup?`)) {
+            const ok = await kickUserFromGroup(selectedGroupId, member.id);
+            if (ok) {
+                postDiv.remove();
+                if (postsContainer.children.length === 0) {
+                    const fetchedPosts = await getPostsByGroup(selectedGroupId);
+                    isGroupAdmin = await checkIfUserIsGroupAdmin(selectedGroupId);
+                    fetchedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    if (!fetchedPosts || fetchedPosts.length === 0) {
+                        totalPages = 0;
+                        updatePaginationControls();
+                        generateEmptyGroup();
+                        return;
+                    }
+                    await generatePosts(fetchedPosts);
+                }
+            }
+            else {
+                alert('A apărut o eroare la darea afară a utilizatorului.');
+            }
+
+        }
+    });
+    postDiv.querySelector('.user-info').appendChild(kickBtn);
+}
 
 async function handleAddGroup() {
     const input = document.getElementById('new-group-name');
@@ -250,7 +452,6 @@ function checkAuth() {
 
 function updatePaginationControls() {
     const pagination = document.querySelector('.pagination');
-    console.log("Updating pagination controls:", currentPage, totalPages);
     if (totalPages >= 1) {
         pagination.classList.remove('hidden');
     } else {
@@ -262,12 +463,12 @@ function updatePaginationControls() {
     document.getElementById('next-page').disabled = currentPage >= totalPages;
 }
 
-document.getElementById('prev-page').addEventListener('click', () => {
+document.getElementById('prev-page').addEventListener('click', async () => {
     if (currentPage > 1) {
         getPostsByGroup(selectedGroupId, currentPage - 1).then(generatePosts);
     }
 });
-document.getElementById('next-page').addEventListener('click', () => {
+document.getElementById('next-page').addEventListener('click', async () => {
     if (currentPage < totalPages) {
         getPostsByGroup(selectedGroupId, currentPage + 1).then(generatePosts);
     }

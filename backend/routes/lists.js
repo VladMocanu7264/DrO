@@ -57,7 +57,7 @@ async function handleGetList(req, res) {
                 model: ListDrink,
                 include: {
                     model: Drink,
-                    attributes: ['id', 'name', 'image_url','nutrition_grade','quantity','brand']
+                    attributes: ['id', 'name', 'image_url','nutrition_grade','quantity','brand', 'price']
                 }
             }
         });
@@ -72,7 +72,8 @@ async function handleGetList(req, res) {
             image_url: ld.Drink.image_url,
             nutrition_grade: ld.Drink.nutrition_grade,
             quantity: ld.Drink.quantity,
-            brand: ld.Drink.brand
+            brand: ld.Drink.brand,
+            price: ld.Drink.price
         }));
 
         const result = {
