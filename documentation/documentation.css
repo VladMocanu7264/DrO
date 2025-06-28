@@ -1,7 +1,5 @@
 html {
     font-family: sans-serif;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%
 }
 
 body {
@@ -146,19 +144,13 @@ button,
 html input[type=button],
 input[type=reset],
 input[type=submit] {
-    appearance: button;
+    appearance: none;
     cursor: pointer
 }
 
 button[disabled],
 html input[disabled] {
     cursor: default
-}
-
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-    border: 0;
-    padding: 0
 }
 
 input {
@@ -171,19 +163,9 @@ input[type=radio] {
     padding: 0
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    height: auto
-}
-
 input[type=search] {
     appearance: textfield;
     box-sizing: content-box
-}
-
-input[type=search]::-webkit-search-cancel-button,
-input[type=search]::-webkit-search-decoration {
-    appearance: none
 }
 
 fieldset {
@@ -278,11 +260,7 @@ header>h1 {
 }
 
 div.banner {
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-justify-content: space-between;
-    -ms-flex-pack: justify;
     justify-content: space-between
 }
 
@@ -323,7 +301,6 @@ h3 {
 h4 {
     font-weight: 300;
     font-size: 1.2em;
-    -webkit-font-feature-settings: "c2sc";
     font-feature-settings: "c2sc";
     font-variant: small-caps;
     margin: 2em 0 .5em
@@ -355,7 +332,7 @@ a.onto {
 a.onto,
 code,
 pre {
-    font-family: Roboto Mono, monospace
+    font-family: "Roboto Mono", monospace;
 }
 
 p.issue {
