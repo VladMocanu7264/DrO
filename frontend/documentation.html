@@ -37,17 +37,19 @@
     </div>
     <section typeof="sa:Abstract" id="abstract" role="doc-abstract">
         <h1>Abstract</h1>
-        <p>
+    <p>
         <section>
             <p>
-                DrinkApp represents a modern implementation of a beverage exploration and management system, structured
+                DrO (Soft Drink Web Organizer) represents a modern implementation of a beverage exploration and
+                management system, structured
                 using the Scholarly HTML document model. This web-based platform enables users to authenticate, browse
                 curated drink collections, create personalized lists, and interact with drink-related content through a
                 responsive and modular interface. Designed entirely with standard web technologies—HTML5, CSS3, and
-                vanilla JavaScript—DrinkApp emphasizes clean architecture, semantic navigation, and seamless integration
+                vanilla JavaScript — DrO emphasizes clean architecture, semantic navigation, and seamless integration
                 with RESTful APIs. This documentation outlines the structure, encoding, and core functionalities of the
                 system, highlighting its adherence to open web standards and its interoperability across modern
-                browsers. By leveraging Scholarly HTML, DrinkApp contributes to a more structured and accessible digital
+                browsers. By leveraging Scholarly HTML, this website contributes to a more structured and accessible
+                digital
                 ecosystem in the domain of beverage organization and social consumption.
             </p>
             <p>
@@ -62,7 +64,7 @@
             </p>
         </section>
 
-        </p>
+    </p>
     </section>
     <section id="introduction" role="doc-introduction">
         <h1>1. Introduction</h1>
@@ -84,410 +86,847 @@
         </p>
         <h2>1.2 Document Conventions</h2>
         <p>
-            The document is written in English and is divided in multiple sub-sections that explain the functionalities
-            of the application.
+            This document follows standard Software Requirements Specification conventions, including hierarchical
+            section numbering, descriptive headings, and structured formatting for ease of reading and reference. The
+            layout is aligned with the IEEE SRS template and encoded in Scholarly HTML to ensure semantic clarity and
+            interoperability across modern browsers and academic tools.
+        </p>
+        <p>
+            The text is displayed using the Roboto font with a sans-serif fallback to maintain visual consistency across
+            platforms. Inline code elements such as API endpoints, file names, or variable names are presented in a
+            monospace font. Where appropriate, semantic HTML5 tags are used to structure the document clearly and
+            meaningfully, enhancing both modularity and compatibility with automated processing tools.
         </p>
         <h2>1.3 Intended Audience and Reading Suggestions</h2>
         <p>
-            This document is intended for the users of the website, as well as for the teacher that will review the
-            project and other developers that take interest in the website.</p>
+            This document is intended for individuals who enjoy discovering and organizing drinks, whether they are
+            casual users looking for inspiration or enthusiasts who wish to keep track of their favorite beverages. The
+            application addresses anyone interested in exploring drinks by category or taste, creating personalized
+            drink lists, and saving favorites in a structured and visually appealing environment. Moreover, the website
+            is designed to be accessible and intuitive for users of all ages, from teenagers to older adults.
+        </p>
         <p>
-            The document should be read as it is, being well-divided.
+            Readers are encouraged to begin with the Introduction section to understand the purpose and context of the
+            application, followed by the functional and technical sections that match their interests. End users may
+            focus on the usage-related chapters, while those with a more technical background can refer to the
+            implementation and requirements sections for further insight.
         </p>
         <h2>1.4 Product Scope</h2>
-        <p>Our goals is to unite the herbal community in a place that feels like home. The website is meant to be seen
-            as a hobby for enthusiasts. The objective is to offer them a way to express their collections, as well as
-            explore others as well as extend their botanical knowledge. The website also represented for us a way to
-            learn the basics of web development and to implement them in a project that we are passionate about.
+        <p>
+            Our goal is to bring together a community of drink enthusiasts in a space that encourages exploration and
+            personal expression. The website is meant to be a casual and enjoyable platform for users who are passionate
+            about beverages, offering them a place to discover new drinks, save
+            their favorites, and create personalized drink lists.
         </p>
+        <p>
+            The objective is to give users an easy and organized way to manage their drink preferences, browse curated
+            selections, and share their taste with others. At the same time, the development of this platform allowed us
+            to deepen our understanding of web technologies by applying them in a real-world context aligned with a
+            theme we genuinely care about.
+        </p>
+
     </section>
     <section id="overall-description">
         <h1>2. Overall Description</h1>
 
         <h2>2.1 Product Perspective</h2>
         <p>
-            The website is a standalone application that is meant to be used by herbal enthusiasts. The application
-            serves as a platform that has the goal to promote the sharing of knowledge and passion for plants. For us,
-            the main benefit was exposing ourselves to the concepts of web development and to learn how to implement
-            them without relying on frameworks. This project will stand as a stepping stone for us as programmers
-            and as a way to learn how to work in a team. Even its flaws will be seen as a learning experience for us.
+        <p>
+            DrinkApp is a stand-alone web application designed to function independently, without requiring integration
+            with external platforms or third-party systems. It represents a complete, modular product that covers all
+            core functionalities related to user authentication, drink browsing, personal list management, and
+            interaction with a backend through standardized RESTful APIs. Its structure is built around the principle of
+            modularity, where each page operates as an independent functional unit within the broader system.
+        </p>
+        <p>
+            While there are other applications that catalog drinks or offer cocktail recipes, DrinkApp focuses on the
+            personalized organization of beverages, giving users full control over their collections and preferences.
+            The application is targeted towards casual users and drink enthusiasts rather than commercial or enterprise
+            environments. Its simplicity, responsive design, and intuitive navigation make it suitable for both desktop
+            and mobile usage, without relying on external libraries or frameworks.
+        </p>
         </p>
         <p>
             Our goals are to:
         </p>
         <ul>
-            <li>Offer users a simple to use and yet attractive interface that works well both on desktop and mobile.
-            </li>
-            <li>Be fully functioning on modern Web browsers.</li>
-            <li>
-                Be customizable for inclusion in arbitrary Web sites, while remaining easy to process
-                and interoperable.
-            </li>
-            <li>Fix errors and bugs promptly and keep collaborating as a team.</li>
-            <li>Long-term viability.</li>
-            <li>Offer an easy way of communication with the administrations.</li>
-            <li>Give users the opportunity to express themselves and explore the botanic world of knowledge.</li>
+            <li>Provide users with a clean, intuitive interface for discovering and organizing drinks.</li>
+            <li>Ensure full compatibility with all major modern web browsers.</li>
+            <li>Allow users to create, manage, and personalize drink lists with ease.</li>
+            <li>Facilitate efficient drink filtering and searching based on tags or categories.</li>
+            <li>Enable seamless interaction with the backend through secure API communication.</li>
+            <li>Offer a lightweight and responsive experience on both desktop and mobile devices.</li>
+            <li>Encourage users to explore new beverages and share their preferences in a structured way.</li>
         </ul>
 
         <h2>2.2 Product Functions</h2>
         <p>
-            Users benefit of a multi-criteria search feature that allows them to explore the website more efficiently,
-            filtering the plants. On the same page, the users can like to save their favorite plants and revisit them
-            later. The statistics such as views and likes are tracked for each plants, and the user can see them. The
-            user can also see the most liked plants in a leaderboard. The user can also export the statistics as CSV and
-            PDF and JSON, and we also created a RSS feed for the website. The export system offers the possibility to
-            choose between the top metric (either views or likes) and there being an extra option of exporting a
-            PDF containing even more information aobut the plants, such as the percentage share of the species or
-            which one of the plants has the most views and likes.
+            DrO Website offers users the ability to create a personal account through a secure registration and login
+            process. Once authenticated, users gain access to personalized features such as managing their own drink
+            collections and saving preferences. The authentication system ensures that each user has a unique profile,
+            which stores their custom lists and favorite drinks.
         </p>
         <p>
-            Users can contact us to express their opinions and feedback on the website and report bugs as well in a form
-            that can be found on the contact page. We've implemented a mailing system that redirects the form inputs to
-            our email. In case the form malfunctions you can contact us directly at herbalwebmanager@gmail.com. The
-            website also has a help page that offers insight on how to use the website.
+            One of the core features of the application is the drink discovery feed. Users can browse a curated list of
+            drinks, which can be filtered based on predefined categories such as "sodas", "waters", "lemonade","teas"
+            and so on. Also, the drinks can be sorted by a nutrition score such as "A", "B", "C", "D" and/or "E".
+            In addition to this, you can select a quantity interval for these drinks between 0 and 5000 ml.
+            There is also a functionality to sort the drinks by different criterias, like "name","brand","nutrition
+            grade","price". Each drink item includes a panel with detailed information such as name, brand, quantity,
+            nutrition score
+            and price, allowing users to make informed choices about what they want to save or try.
         </p>
         <p>
-            In order to gain access to all functionalities, users must use the sign up and login functions as logging in
-            provides the users with the aforementioned features. The authentication is done via sessions and cookies.
-            In case the user tries to access paths that don't exist, they will be redirected to a custom Not Found page
-            in order to be informed about the error that occured. Most pages are protected against unauthorized access
-            and the user will be redirected to the login page if they try to access them without being logged in. Even
-            after logging in, the admin page is still protected and the user will be redirected to the home page if they
-            try to access it. In case logged users try to access the signup/login pages again they will be redirected to
-            the home page instead. The user can also log out in order to end the session.
-        </p>
-        <h3>Structure</h3>
-        <p>
-            The website is built on HTML, CSS and Javascript. We've used NodeJS for the backend implementation and
-            MongoDB for storing the necessary data, connecting the two with Mongoose. We have not used any frameworks
-            in the implementation of the website, as we wanted to learn the basics of web development. The website is
-            structured in a way that the user can easily navigate through the pages and access the functionalities.
-            We have structured the files in a way that is easy to understand and navigate. The website is responsive
-            and works well on all devices.
+            Users can interact with drinks by adding them to a list of favorites, making it easy to revisit them later.
+            Additionally, the application allows the creation and management of custom drink lists. These lists can be
+            named, edited, and populated with selected drinks based on personal taste or thematic groupings.
         </p>
         <p>
-            The file structure is separated on the backend and frontend. The backend consists of the server.js file
-            that starts the server, and the rest are separated in different folders such as the database interraction
-            with models, services and controllers. Besides the database connectivity the files are separated on folders
-            based on routes, scripts, utilities. The frontend consists of the html and css files. We have also used
-            AJAX.
+            Drink lists can be modified at any time: users may rename them, delete them, or remove specific drinks from
+            them. Depending on the implementation stage, lists can also be set as public or private, giving users
+            control over how their collections are shared or displayed. The application maintains a clear and responsive
+            interface to support these interactions seamlessly across devices.
         </p>
         <p>
-            When the user accesses the website, they are greeted by the home page. Until they log in they can access:
+            The application includes group-related features that allow users to join or create groups
+            where information and personal imperssions about drinks can be shared among members.
         </p>
-        <ul>
-            <li>The home component</li>
-            <li>The signup component</li>
-            <li>The login component</li>
-            <li>The recovery components</li>
-            <li>The not found page in case of missed routings</li>
-        </ul>
         <p>
-            After logging in the users gain a lot more options being able to navigate through the easy to follow
-            interface in order to reach these features:
+            In addition to managing drinks and lists, users also have access to a profile section where they can update
+            their personal information. They can change their profile picture, edit their display name, email address,
+            and personal description, as well as update their account password. For full control over their data, the
+            application also provides the option to permanently delete the account, which results in the removal of all
+            associated content such as saved drinks and personal lists.
         </p>
-        <ul>
-            <li>Home page</li>
-            <li>About page</li>
-            <li>Help page</li>
-            <li>Contact page</li>
-            <li>Multi-criteria Search</li>
-            <li>User Profile</li>
-            <li>Can upload plants and can see which plants they've uploaded</li>
-            <li>Liked Plants</li>
-            <li>Liked Plants</li>
-            <li>Top/leaderboards</li>
-            <li>Statistics</li>
-            <li>Access Unsplash API image search</li>
-            <li>Logout to end the session</li>
-        </ul>
         <p>
-            Furthermore, if the user that logged in is an admin, they also gain access to the admin page, where they can
-            add, edit and delete users and plant entries in case of inappropriate content or breaking the Terms of
-            Service, as well as in the case that users are in need of help with such actions, such as requests of
-            deletion or impossibility to gain access to their account.
+            Users with administrative privileges have access to a dedicated admin panel where they can perform
+            high-level management operations. Administrators can view and delete user accounts, remove entire groups
+            created by users, or delete drinks from the global drink database when necessary. These actions help
+            maintain the integrity of the platform and allow moderation of content that may violate usage guidelines or
+            clutter the system with redundant data.
+        </p>
+        <p>
+            The application also features a ranking system that displays the most popular drinks based on how frequently
+            they appear in users' favorite lists. This leaderboard offers a real-time overview of trending beverages
+            within the community and encourages users to explore what others are enjoying. The ranking is automatically
+            updated as users add or remove drinks from their favorites, providing a dynamic and relevant reflection of
+            collective preferences.
+        </p>
+        <p>
+            DrO website also includes a statistics page where users can visualize aggregated data about the available
+            drinks.
+            These statistics are generated based on attributes such as quantity (e.g., volume in milliliters), nutrition
+            grade, and assigned tags. This feature adds an analytical dimension to the application
+            and enhances the exploratory experience.
         </p>
 
         <h2>2.3 User Classes and Characteristics</h2>
         <p>
-            The website is intended for herbal enthusiasts that want to share their passion with others, as it was
-            mentioned before. The users can be divided in: hobbyists, professionals, students, teachers, biological
-            researchers etc.
+            The primary user class of DrinkApp is composed of regular users who access the platform for personal use.
+            These users can create an account, log in securely, and interact with the main features of the application
+            such as browsing drinks, filtering by tags, saving favorites, and managing custom drink lists.
         </p>
         <p>
-            The characteristics of these user classes are the will to learn and share knowledge, the passion for plants
-            and the desire to explore the botanical world as well as develop as better people overall, and even as
-            programmers, being able to explore the website and see how it was built.
+            A secondary user class is represented by administrators, who have access to an extended set of
+            functionalities through a dedicated admin panel. These users are responsible for overseeing the integrity of
+            the system by managing user accounts, moderating content, and removing inappropriate or redundant data such
+            as duplicate drinks or inactive groups. Administrator access is restricted and requires elevated privileges
+            assigned manually.
         </p>
 
         <h2>2.4 Operating Environment</h2>
         <p>
-            For now the website runs locally, but maybe at some point we will consider hosting. The application runs on
-            all modern web browsers and is platform independent. The website is responsive and works well on all
-            devices.
+            DrinkApp is a web-based application that requires only a modern web browser and an active internet
+            connection to function. It is designed to run on a wide range of client devices, including desktop
+            computers, laptops, tablets, and smartphones.
+        </p>
+
+        <p>
+            The application is fully compatible with operating systems such as Windows, macOS, Linux, Android, and iOS,
+            as long as a supported browser is available. Recommended browsers include Google Chrome, Mozilla
+            Firefox, Microsoft Edge, Safari and Opera. No installation is required, and the
+            application runs entirely in the browser environment using client-side technologies.
         </p>
 
         <h2>2.5 Design and Implementation Constraints</h2>
         <p>
-            Due to the fact that the project expanded way quicker than we expected, the code became bloated at parts
-            which made it harder to maitain. To combat this issue we took the approach of refactoring the code and
-            structuring it as good as we can to differentiate the paths accordingly. While adding the backend we had to
-            expand the already done frontend pages and add new ones which took time and effort and the at least the css
-            code is not as clean as we'd wish it to be. Besides that, we are really happy with how our project turned
-            out and there are very little things that we would change if we were to start over.
+            The development of DrinkApp was carried out under several deliberate design and implementation constraints.
+            The most significant constraint was the requirement to avoid the use of any frontend frameworks or
+            libraries. The entire application was developed using only native web technologies — HTML5, CSS3, and
+            vanilla JavaScript — to encourage a deep understanding of core browser capabilities and to reduce external
+            dependencies.
+        </p>
+
+        <p>
+            Additionally, the frontend operates strictly on the client side and relies on RESTful API calls to
+            communicate with the backend. This separation imposes certain design considerations, such as handling
+            asynchronous requests manually and managing application state without the help of external tools. All
+            frontend pages follow a "Pretty URLs" folder structure, which requires server-side support for routing if
+            deployed on environments that do not natively handle static directory indexing.
         </p>
 
         <h2>2.6 User Documentations</h2>
         <p>
-            Users can navigate to help page to get relevant insight on how to use the application. If they feel like the
-            information is insufficient they can always reach out to us through our contact form in order to find out
-            the answers they need.
+            DrinkApp provides two dedicated documentation pages designed to assist users in understanding and navigating
+            the application: the <strong>About</strong> page and the <strong>Help</strong> page. These sections are
+            accessible from the main navigation bar and offer relevant information for both first-time and returning
+            users.
+        </p>
+
+        <p>
+            The <strong>About</strong> page offers a detailed overview of the application, its purpose, and its key
+            functionalities. It includes a structured table of contents covering topics such as data management, user
+            and group administration, statistics, rankings, RSS, favorites, and group interaction. The
+            <strong>Help</strong> page focuses on user support and contact options. It includes instructions for
+            reaching out in case of technical issues via a support email, as well as a visual presentation of the team
+            members responsible for the project. A link to full technical documentation is also provided.
         </p>
 
         <h2>2.7 Assumptions and Dependencies</h2>
         <p>
-            We assume that the user has a basic understanding of how to use a website and that they have a modern web
-            browser. The website is dependent on the user's device and internet connection. The website is also
-            dependent on the user's input and the data they provide. The website is also dependent on the user's
-            feedback and suggestions. The experience is dependent on the user's willingness to explore and learn. We
-            also assume that we might have missed some bugs and that the user will report them to us. The dependencies
-            are related to the device and browser the user has, as well as their internet connection.
+            This application assumes that users access the platform from a device with a stable internet connection and
+            a modern web browser that supports HTML5, CSS3, and JavaScript. It is also assumed that JavaScript is
+            enabled in the browser, as core functionality relies on client-side logic.
+        </p>
+
+        <p>
+            DrO website depends on the proper functioning of a backend service that exposes RESTful API endpoints. These
+            endpoints are required for user authentication, data retrieval, drink list management, and statistics
+            generation. If the backend service is unavailable or misconfigured, the application’s dynamic features may
+            be partially or completely inaccessible.
+        </p>
+
+        <p>
+            Additional assumptions include server-side support for clean URLs (Pretty URLs) and proper CORS
+            configuration to allow secure cross-origin requests between frontend and backend components.
         </p>
     </section>
     <section id="external-interface-requirements">
         <h1>3. External Interface Requirements</h1>
         <h2>3.1 User Interfaces</h2>
         <p>
-            The website shares the same header and footer on each page. The whole idea is to present a green enviroment
-            in order to make the user feel like they are in a garden. For the header "logo" we used the font "The Bold
-            Font". Every element is created with the idea to be easy to use and to be user-friendly, as well as pleasing
-            the eye. The difference between the pages that share the same header is the presence of the redirect buttons
-            that are only found on the main pages of the logged users, otherwise the page has a "Go back" button to
-            redirect to the last visited page.
+            The website uses a consistent layout across all pages, with a shared header that ensure a smooth
+            and cohesive user experience. The header contains navigation links to the main sections of the platform —
+            such as Home, Lists, Groups, and Statistics — and also includes icons for accessing the About and Help
+            pages, along with the user profile area.
+        </p>
+
+        <p>
+            The entire interface is built with clarity and accessibility in mind. A bold, modern font is used throughout
+            the platform to enhance readability and maintain a professional yet friendly appearance. Colors are
+            carefully chosen to align with the theme of soft drinks, using vibrant tones on a clean background to keep
+            the user engaged.
+        </p>
+
+        <p>
+            All pages are responsive and work seamlessly across devices. Main sections for authenticated users include
+            persistent redirect buttons for easy navigation between modules, while secondary pages are accessible
+            through direct navigation or through links embedded in the main interface. The layout is intuitive, and key
+            actions such as adding to favorites, creating lists, or editing profile details are always clearly visible
+            and accessible.
         </p>
 
         <h2>3.2 Hardware Interfaces</h2>
         <p>
-            The application runs on various devices, such as desktops, laptops, tablets and mobile phones. The website
-            is responsive.A internet connection is a requirement for the website to run.
+            The application runs smoothly on a wide variety of devices, including desktops, laptops, tablets, and
+            smartphones. DrinkApp is fully responsive, ensuring that the interface adapts automatically to different
+            screen sizes and device types.
+        </p>
+        <p>
+            Since the application is entirely web-based, an active internet connection is required for it to function
+            properly. No installation or specific hardware configurations are needed beyond a standard input device
+            (keyboard, mouse, or touchscreen) and access to a supported web browser.
         </p>
 
         <h2>3.3 Software Interface</h2>
         <p>
-            In order to run the application, the user needs a modern web browser. The website is platform independent.
-            Even though the platform is independent the experience will be more smooth one some browsers than on others.
+            The frontend of the application is built entirely with standard web technologies—namely
+            HTML, CSS and JavaScript—without relying on any third-party frameworks or libraries.
+            The layout is modular, each page having its own folder structure following the "Pretty URLs" convention, and
+            the code is split into semantic files for structure, style, and behavior.
+        </p>
+
+        <p>
+            Communication with the backend is achieved through a set of custom RESTful API endpoints
+            that expose all major entities of the system (users, drinks, lists, favorites, groups, etc.).
+            The frontend initiates HTTP requests using JavaScript’s <code>fetch()</code> API, and all requests and
+            responses are exchanged in JSON format.
+        </p>
+
+        <p>
+            All essential operations—such as user registration, login, password recovery, data retrieval, list creation,
+            profile updates, and favorite management—are performed through
+            HTTP methods: <code>GET</code> (data retrieval), <code>POST</code> (creation), <code>PATCH</code> (partial
+            update), and <code>DELETE</code> (removal).
+            Each operation is scoped to a specific endpoint, designed to follow a consistent, predictable route naming
+            convention.
+        </p>
+
+        <p>
+            The frontend securely handles authentication by storing a JWT (JSON Web Token) in memory
+            and attaching it as a bearer token in the <code>Authorization</code> header of each request
+            that targets a protected resource. This allows the backend to validate the identity and permissions of the
+            user for each operation.
+        </p>
+
+        <p>
+            Error handling is also implemented on the client side, where the frontend gracefully displays feedback for
+            failed requests such as invalid input, expired tokens, or missing data.
+            The application is designed to offer fallback behaviors and user-friendly error messages wherever
+            applicable.
         </p>
 
         <h2>3.4 Communication Interface</h2>
         <p>
-            Through the contact form the user can send an email to the admins of the website. The form is simple and
-            easy to use and fill, as well as useful in terms of providing the administration the information needed to
-            improve the QoL of the users. In order for us to communicate to our users we have implemented a mailing
-            system that is used both for the contact form and for the password recovery system. The mailing system is
-            used to send the user an email with a link to reset their password in case they forget it.
+            The DrO platform provides multiple communication mechanisms to facilitate user interaction
+            with the system and the development team.
+            First, a dedicated Help page is available, offering users direct support instructions, a support
+            email
+            (<a href="mailto:support@drosite.example.com">support@drosite.example.com</a>), and a link to the complete
+            technical documentation.
+            This ensures users can easily report bugs, request assistance, or seek clarification.
+        </p>
+
+        <p>
+            In addition, the system includes a mailing mechanism integrated with the authentication flow: during account
+            creation and password recovery,
+            users receive confirmation or reset instructions via email. All system-generated emails follow a standard
+            format and are sent through the
+            backend using secure SMTP configuration.
+        </p>
+
+        <p>
+            While there is currently no direct contact form, communication is structured through predefined support
+            channels, allowing users to access
+            reliable help while maintaining platform security and simplicity.
+        </p>
+
+        <h2>3.5 API Interfaces</h2>
+        <p>
+            The application interacts with a custom REST API that handles all core functionalities related to user
+            accounts, drinks, favorites, lists, groups, and rankings.
+            The API follows standard HTTP methods such as <code>GET</code>, <code>POST</code>, <code>PATCH</code>, and
+            <code>DELETE</code>, and communicates using JSON format.
+        </p>
+
+        <p>
+            All authenticated requests require a valid JSON Web Token (JWT) passed via the <code>Authorization</code>
+            header. For example, endpoints such as
+            <code>/drinks/feed</code>, <code>/lists/:id</code>, or <code>/profile/update</code> are protected and
+            personalized based on the user's identity.
+        </p>
+
+        <p>
+            The API is modular and versioned, making it easy to extend in the future. A secure .env file is used on the
+            frontend to store the base URL of the API,
+            ensuring a separation between logic and configuration. This architecture enables the frontend to remain
+            fully decoupled from the backend, simplifying
+            development and deployment.
         </p>
     </section>
 
     <section id="system-features">
-        <h1>4. System Features</h1>
-        <h2>4.1 Account Management</h2>
+        <h1>4. Structure</h1>
+        <h2>4.1 Entry Page</h2>
         <p>
-            We have implemented a system that allows the user to sign up and log in. The user can also recover their
-            password in case they forget it. The user can also log out in order to end the session. The authentication
-            is done via sessions and cookies. The user can also see their profile and edit their password from that
-            page. The user is redirected to the home page if they try to access the signup/login pages again when being
-            logged in and they are redirected to the login page if they try to access pages that require authentication
-            without being logged in. The admin page is also protected and the user is redirected to the home page if
-            they try to access it. We use the bcrypt library in order to hash our users' passwords and make sure the
-            website is as secure as possible. The accounts can be edited/deleted by the administration on the admin
-            page in case the rules are broken.
+        <p>
+            The Entry Page serves as the landing point for all users, whether authenticated or not. It presents a clean
+            and minimal layout with two primary options: navigating to the Login or Signup pages. This page is
+            implemented using standard HTML and CSS, with no external frameworks. Its role is to route users toward
+            authentication flows in a clear and user-friendly manner.
+        </p>
         </p>
 
 
-        <h2>4.2 Multi-Criteria Search System</h2>
+        <h2>4.2 Log-In Page</h2>
         <p>
-            We have implemented a multi-search criteria system that lets users efficiently filter the plants they are
-            looking for on different criteria such as name (the search will return any plants that contain the substring
-            given in the search bar), species, family, color and location. The search system is easy to use and
-            navigate. The user can also access the Unsplash API image search in order to find images for the plants they
-            upload. The search system is also responsive and works well on all devices. The search system is also
-            protected against unauthorized access and the user will be redirected to the login page if they try to
-            access
-            it without being logged in. In the search page the users may like the plants they find interesting and
-            revisit
-            them later.
+            The Login Page allows existing users to authenticate using their registered credentials. It features input
+            fields for email and password, both validated on the client side for correct format and completeness. Upon
+            submission, the data is sent via a POST request to the authentication API endpoint, and if successful, a JWT
+            token is returned and stored for future access. Error messages are clearly displayed beneath the respective
+            fields in case of invalid input or failed authentication attempts. The page also includes a link to the
+            password recovery flow for users who have forgotten their credentials.
         </p>
 
-        <h2>4.3 Statistics Export System</h2>
+        <h2>4.3 Register Page</h2>
         <p>
-            We implemented a leaderboard page that shows the most liked plants. Through the top page the user can
-            navigate to the statistics page where they can export the most liked or viewed plants as CSV, PDF and JSON
-            and as well as RSS feed. The user can also export a PDF containing even more information about the plants,
-            such as the percentage share of the species or which one of the plants has the most views and likes. The
-            export system offers the possibility to choose between the top metric (either views or likes). The export
-            system is easy to use and navigate. The export system is also responsive and works well on all devices. The
-            prerequisite to access the statistics files are software application that allow opening and reading such
-            formats.
+            The Register Page enables new users to create an account by filling out a form that includes a username,
+            email, and password. Each field is validated both in real-time and upon submission. The username must be
+            3–20 characters long and contain only letters, digits, or underscores, while the email is validated using a
+            regular expression to ensure a proper format. The password must meet minimum security criteria. If all
+            validations pass, the data is sent via a POST request to the backend, which creates the user account and
+            returns a success response. Errors such as duplicate usernames or invalid data are shown inline, providing
+            clear feedback to the user.
         </p>
 
-        <h2>4.4 Leaderboards</h2>
+        <h2>4.4 Home Page</h2>
         <p>
-            With our like system we have made a many-to-many table that stores the relationship between the users and
-            the plants, and the most liked plants are shown at the top of the leaderboards. We decided not to limit the
-            number of the plants shown here, but order them based on the criteria. The leaderboards are a good way to
-            explore the most appreciated plants on our website and to see what is the best the community offered up
-            until now.
+            The Home Page serves as the central hub for authenticated users, offering a personalized feed of drinks. The
+            page retrieves drink data from the backend via asynchronous API calls and displays it in a grid-based
+            layout, with each drink card showing key information such as the product name, nutrition grade, image, and
+            available tags. Users can filter the feed using a sidebar with dynamic tag filters, which are also fetched
+            from the backend. Sorting options such as “Order by name” or “Order by cathegory” are provided to improve
+            navigation.
+        </p>
+        <p>
+            One of the core features of the Home Page is the drink discovery feed. Users can browse a curated list of
+            drinks, which can be filtered based on predefined categories such as "sodas", "waters", "lemonade", or
+            "teas". Additionally, drinks can be sorted by nutrition grade ("A" to "E"), or filtered by quantity (between
+            0 and 5000 ml). Sorting by other criteria such as "name", "brand", or "price" is also supported. Each drink
+            panel includes detailed information that helps users decide whether to add the item to their favorites or
+            explore it further. All these interactions are responsive and handled efficiently through JavaScript, using
+            JWT authentication for secure access.
         </p>
 
-        <h2>4.5 Favorite plants</h2>
+        <h2>4.5 Lists Page</h2>
         <p>
-            The user can like the plants they find interesting and revisit them later. The user can also see the plants
-            they liked in the liked plants page. The user can also unlike the plants they liked. The user can also see
-            the number of likes a plant has. The user can also see the most liked plants in the leaderboards. The user
-            can also see the most liked plants in the statistics page. The user can also export the most liked plants
-            as CSV, PDF and JSON. The user can also export a PDF containing even more information about the plants, such
-            as the percentage share of the species or which one of the plants has the most views and likes. The user can
-            also choose between the top metric (either views or likes) in the export system. The user can also see the
-            most liked plants in the leaderboards. The user can also see the most liked plants in the statistics page.
+            The Lists Page allows users to create and manage personalized collections of drinks. Each user can have
+            multiple custom lists where they can add or remove drinks according to their preferences. Lists can be given
+            a name and a visibility status (public or private), allowing users to share their recommendations or keep
+            them private.
+        </p>
+        <p>
+            From the interface, users can perform actions such as renaming a list, deleting it, or modifying its
+            contents by removing or adding drinks. Each list displays a panel of the included drinks, showing basic
+            information (name, image, nutrition grade) to facilitate quick browsing. The backend provides all
+            list-related data through protected API endpoints, and all modifications are saved in real-time via
+            authenticated HTTP requests.
         </p>
 
-        <h2>4.6 User-friendly interface</h2>
+        <h2>4.6 Group Page</h2>
         <p>
-            The website has a user-friendly interface that is easy to use and navigate. The user will have a pleasant
-            experience while using the website. The website is also responsive and works well on all devices.
+            The Group Page provides a collaborative space where users can join thematic groups focused on specific
+            interests, such as healthy drinks, energy beverages, or sustainable brands. Each group has a dedicated
+            section where users can view shared drink recommendations, browse other members’ lists, and interact through
+            posts or comments.
+        </p>
+        <p>
+            Within a group, users can see the group's name, description, and drink collections associated
+            with the community. Administrative users have access to special actions such as
+            deleting inapropriate posts, removing members, or moderating content. All interactions are secured through
+            authenticated API requests, and users must first join a group to gain access to its full features.
         </p>
 
-        <h2>4.7 Administration page</h2>
+        <h2>4.7 Join Group Page</h2>
         <p>
-            We implemented a page for the admins to manage the data that does not comply with our vision and rules or in
-            cases that the users need help with their accounts. The admin can add, edit and delete users and plant
-            entries. The admin page is protected against unauthorized access and the user will be redirected to the home
-            page if they try to access it without being logged in. The admin page is also responsive and works well on
+            The Join Group Page allows users to browse a list of public groups available on the platform. Each group
+            entry displays key information such as the name or a short description. Users can search for groups using
+            keywords or filter them by category to find
+            communities that match their interests.
+        </p>
+        <p>
+            To join a group, users simply click the “Join” button, which triggers a secure request to the server and
+            grants access to the corresponding Group Page. If a group is private, the request is sent for approval by an
+            administrator. Once joined, users can actively participate in the group’s discussions, view shared drinks,
+            and contribute to the collective knowledge of the group.
         </p>
 
-        <h2>4.8 Cloud NoSQL MongoDB Integration</h2>
+        <h2>4.8 Profile Page</h2>
         <p>
-            Using Mongoose we have connected our NodeJS backend to a MongoDB database. The database is hosted on the
-            cloud and can be accessed from anywhere. The database is secure and the user's data is protected. The
-            database is also protected against unauthorized access. The database is also protected against common
-            security threats such as SQL injection and the inputs are sanitized.
+            The Profile Page allows users to view and manage their personal account information. Key elements displayed
+            on this page include the username, profile picture, email address, and a short personal description. This
+            page serves as the central point for accessing user-related actions and customization.
+        </p>
+        <p>
+            Users can edit their profile details directly from this page, including updating their profile image,
+            changing their email or username, modifying their description, and resetting their password. Additionally,
+            the page provides two critical account options: the ability to securely log out and the option to
+            permanently delete the account. All changes and actions are validated and executed through secure backend
+            communication.
         </p>
 
-        <h2>4.9 Mailing System</h2>
+        <h2>4.9 Profile-By-Id Page</h2>
         <p>
-            We've used nodemailer in order to connect with our mailing system. The mailing system is used to send the
-            user an email with a link to reset their password in case they forget it. The mailing system is also used
-            for the contact form. The mailing system is secure and the user's data is protected. The email service that
-            we are using is gmail.
+            The Profile by ID Page allows users to view the public profile of another registered user by accessing their
+            profile in the groups page. The page displays key information such as the user’s profile picture, username,
+            email
+            address, and personal description. This view is read-only and tailored for exploration purposes.
+        </p>
+        <p>
+            In addition to basic user information, the page lists all public drink lists created by the user. Visitors
+            can browse through these lists and explore their contents. A special feature available on this page is the
+            “Copy List” button, which enables users to duplicate a selected list into their own account with a single
+            click, encouraging sharing and discovery within the community.
         </p>
 
-        <h2>4.10 Public API connectivity</h2>
+        <h2>4.10 Ranking Page</h2>
         <p>
-            We have implemented a public API that allows the user to access the Unsplash API image search in order to
-            find images for the plants they upload. The API is easy to use and navigate. The API is also responsive and
-            works well on all devices. Upon clicking the images the user is redirected to the Unsplash website on the
-            respective post.
+            The Ranking Page displays the top 10 drinks that have been added to users’ favorite lists the most times.
+            This leaderboard highlights the most appreciated beverages across the platform, based on cumulative user
+            preferences.
+        </p>
+        <p>
+            Each ranked drink is shown with its image, name, and associated tags, offering visitors a quick overview of
+            what the community values most. The ranking is updated dynamically to reflect real-time changes as users
+            modify their favorite lists, allowing for a transparent and evolving popularity chart.
         </p>
 
-        <h2>4.11 AJAX</h2>
+        <h2>4.11 Stats Page</h2>
         <p>
-            We've used AJAX in order to make the website more responsive and to make the user experience better. We used
-            it both to display the status of the operation on the forms such as "Sending..." changing into the result of
-            the operation, as well as inserting elements into the DOM without refreshing the page. We also used it to
-            make the search system more efficient and to make the website more interactive. Another prime example is the
-            signup form where we constantly check if the password meets the criteria before letting the user submit the
-            form.
+            The Stats Page provides a visual representation of selected drinks through dynamic charts and summaries.
+            Users can select specific beverages from the available dataset to generate tailored statistics based on
+            their attributes.
+        </p>
+        <p>
+            The statistics include diagrams for quantity distribution, nutrition grade analysis, and tag frequency.
+            These visual insights help users better understand the nutritional and categorical properties of drinks,
+            offering a data-driven perspective on their selections.
         </p>
 
-        <h2>4.12 Using libraries with open libraries</h2>
+        <h2>4.12 About Page</h2>
         <p>
-            We made sure that the libraries we used in order to perform tasks are open source and free to use. We used
-            the bcrypt library in order to hash our users' passwords and make sure the website is as secure as possible.
-            We used the nodemailer library in order to connect with our mailing system. We used the mongoose library in
-            order to connect our NodeJS backend to a MongoDB database. We used libraries to export the files in
-            different formats such as CSV, PDF and JSON. We used the Unsplash API in order to access the image search.
-            We used the RSS feed library in order to export the statistics as RSS feed.
+            The About Page offers a clear and structured overview of the application's purpose, features, and usage
+            instructions. It is designed to help new users understand the scope and goals of the platform, as well as to
+            navigate its main functionalities.
+        </p>
+        <p>
+            The content presented includes a structured table of contents, followed by a detailed
+            project description. Sections cover aspects such as data management, user and group administration,
+            statistics and export features, rankings, favorites, and group interactions. This makes the page both
+            informative and accessible, contributing to a smooth onboarding experience.
         </p>
 
-        <h2>4.13 REST API</h2>
+        <h2>4.13 Help Page</h2>
         <p>
-            We followed the REST API principles in order to make the website more efficient and to make the user
-            experience better. We added endpoints for the user to access the functionalities of the website. We also
-            added endpoints for the admin. The website treats GET, POST, PUT and DELETE requests. The separation between
-            the models, controllers and services is done in order to make the code more readable and maintainable.
+            The Help Page is designed to offer users quick access to support resources and assistance. It includes a
+            clearly visible section for <strong>Support & Contact</strong>, where users can find an email address for
+            reporting bugs or asking technical questions. Additionally, a link to the full documentation is provided,
+            guiding users to more detailed information.
         </p>
-
-        <h2>4.14 MVC</h2>
         <p>
-            Our application is structured in a way that follows the MVC pattern. The models are used to interact with
-            the database, the controllers are used to handle the requests and the services are used to handle the
-            business logic. The separation between the models, controllers and services is done in order to make the
-            code more readable and maintainable.
-        </p>
-
-        <h2>4.15 HTML and CSS validation</h2>
-        <p>
-            We made sure that the HTML and CSS code is valid and that the website is accessible. We used the W3C
-            validator in order to validate the HTML and CSS code. We also made sure that the website is responsive and
-            works well on all devices. We also made sure that the website is secure and the user's data is protected.
-        </p>
-
-        <h2>4.16 OOP</h2>
-        <p>
-            For our project we used the principles of Object Oriented Programming in order to make the code more
-            readable and maintainable. We used classes and objects for the controllers and services in order to make the
-            code more organized. We also used classes and objects for the models in order to interact with the database.
+            Below the contact section, the page features a friendly presentation of the development team. Each member is
+            represented with a playful drink-themed image, along with their name, reinforcing the visual identity and
+            fun tone of the application. This helps humanize the platform and encourages users to reach out confidently
+            for help.
         </p>
 
     </section>
 
+    <section id="system-features">
+        <h1>5. System Features</h1>
+        <h2>5.1 Account Management</h2>
+        <p>
+            We have implemented a system that allows the user to sign up and log in. The user can also log out to end
+            their session at any time. Authentication is managed through sessions and cookies. Once logged in, users can
+            view and edit their profile details, including their password. If a logged-in user tries to access the login
+            or signup pages again, they are redirected to the home page. Similarly, if an unauthenticated user attempts
+            to access restricted pages, they are redirected to the login page. The admin page is also protected, and any
+            unauthorized access attempts result in redirection to the home page. Passwords are stored in encrypted form
+            to ensure the security of user data. Accounts can be edited or deleted by administrators from the admin page
+            if any rules are violated.
+        </p>
+
+
+        <h2>5.2 Multi-Criteria Search System</h2>
+
+        <p>The application provides users with multiple options to search and filter drinks based on various criteria.
+            Users can filter drinks by predefined categories such as "sodas", "waters", "lemonades", and "teas".
+
+            In addition, drinks can be sorted by nutrition grade (A, B, C, D, or E), by brand, name, price, or quantity.
+            Users can also define a custom quantity range (from 0 to 5000 ml) to narrow down the results.
+
+            All these filtering and sorting options are applied instantly to the drink feed, offering a flexible and
+            user-friendly way to discover new beverages tailored to their preferences.
+        </p>
+
+        <h2>5.3 Statistics Export System</h2>
+        <p>The statistics page provides an interactive and informative way for users to explore various data related to
+            their selected drinks. They can analyze the distribution of drinks by quantity, nutrition grade, or tags
+            through intuitive pie and bar charts, all built without external frameworks. These visualizations help users
+            gain a deeper understanding of the characteristics of the drinks added in the application.</p>
+
+        <p>The user has the option to download the data as CSV or JSON files, directly from the graphical interface.
+            This enables further processing of the data or integration into other external systems. For each type of
+            displayed statistic, there is a dedicated download button, making it easy to save individual sets of
+            relevant information.</p>
+
+        <p>Additionally, for the ranking page, which displays the most popular drinks based on how many users added them
+            to their favorites, we have implemented an RSS feed. This feed provides an automated way to track updates in
+            the top rankings, allowing applications or users to be notified whenever changes occur. Thus, our statistics
+            and export system offers both accessibility and automation.</p>
+
+        <h2>5.4 Leaderboards</h2>
+        <p> In our application, we have implemented a dynamic leaderboard system that highlights the most appreciated
+            drinks among users, based on how often they have been added to personal favorite lists. This system relies
+            on a many-to-many relationship between users and drinks, allowing us to calculate and rank the most
+            favorited items in real time. The leaderboard displays the top 10 drinks with the highest number of unique
+            users who added them to their favorites, offering a clear view of the community’s preferences. </p>
+
+        <p> The purpose of this page is to help users discover popular drinks curated through collective taste, rather
+            than editorial suggestion. The drinks are ordered descending by favorite count and updated automatically as
+            user preferences evolve. This encourages interaction and exploration, offering users a way to find trending
+            items and see which drinks are consistently appreciated across the platform. </p>
+
+        <h2>5.5 User Friendly-Interface</h2>
+        <p> Our platform was designed with a strong focus on user experience, providing an intuitive and accessible
+            interface that ensures ease of navigation and usability for users of all ages and technical backgrounds. The
+            layout is clean and logically structured, allowing users to quickly understand how to interact with
+            different features, from browsing and filtering drinks to managing their personal lists and preferences.
+            Interactive elements such as tooltips, hover effects, and clear feedback messages contribute to a seamless
+            interaction with the platform. </p>
+        <p> Additionally, the website is fully responsive and adapts gracefully to various screen sizes and devices,
+            including desktops, tablets, and smartphones. This guarantees a consistent and enjoyable experience across
+            all platforms. All design decisions were made with accessibility and clarity in mind, resulting in an
+            application that feels modern, lightweight, and pleasant to use, even during extended browsing sessions.
+        </p>
+
+        <h2>5.6 Administration Page</h2>
+        <p> The administrator page integrates all functionalities available to a regular user, such as viewing and
+            editing their own profile information – including username, email, description, and password – as well as
+            the ability to delete their account or log out from the application. Beyond these common features, the
+            administrator is granted elevated privileges that allow for full moderation and oversight of platform
+            content. </p>
+        <p> Through this panel, administrators can view and permanently delete any user-generated content, including
+            drinks and groups created on the platform. They also have the authority to manage user accounts by removing
+            those who violate platform rules or engage in inappropriate behavior. These administrative capabilities are
+            essential for maintaining the quality and integrity of the application and ensure a safe, respectful, and
+            organized environment for all users. The interface for the admin section preserves the same intuitive and
+            responsive design, making moderation tasks efficient and accessible. </p>
+
+        <h2>5.7 REST API</h2>
+        <p> Our application is built upon REST API principles to ensure modularity, scalability, and a clear separation
+            of responsibilities between the frontend and backend. We implemented well-structured endpoints that follow a
+            consistent and logical URL schema, allowing both regular users and administrators to interact with the
+            system in a predictable and efficient manner. </p>
+        <p> For regular users, endpoints are available to handle authentication, account management, drink and list
+            creation, viewing, editing, and deletion. Administrators have access to extended routes that provide
+            functionality for managing global resources, such as deleting drinks, user accounts, and entire groups
+            directly from the database. The API supports all standard HTTP methods—GET for fetching resources, POST for
+            creating, PUT/PATCH for updating, and DELETE for removing entities. </p>
+
+        <h2>5.8 MVC Arhitecture</h2>
+        <p>
+            The backend is built using the Model-View-Controller (MVC) architectural pattern, which ensures a clear
+            separation of concerns between the data layer (models), the application logic (controllers), and the
+            external interface (views, i.e., API responses). To further organize the codebase, we introduced service
+            layers that handle business logic separately, making the system easier to maintain, extend, and test.
+        </p>
+
+        <p>
+            This structured design improves both scalability and clarity, allowing developers to isolate and modify
+            specific functionalities without interfering with others. Combined with our RESTful API, the MVC
+            architecture ensures better reliability, easier debugging, and readiness for future integrations, such as
+            mobile clients or external services.
+        </p>
+
+        <h2>5.9 HTML and CSS validation</h2>
+        <p>
+            To ensure a high standard of quality and accessibility, we carefully validated all the HTML and CSS code
+            using the official W3C validation tools. This process helped us identify and correct structural or syntactic
+            issues, making the website more reliable and compliant with web standards.
+        </p>
+
+        <p>
+            In addition, we verified that the layout remains fully responsive across a wide range of screen sizes and
+            devices, offering a consistent and pleasant user experience. We also focused on maintaining the security of
+            the website and the protection of user data through good development practices, contributing to both
+            usability and trust.
+        </p>
+
+        <h2>5.10 Ranking Page</h2>
+        <p>
+            The Ranking Page displays the top 10 drinks that have been added to users’ favorite lists the most times.
+            This leaderboard highlights the most appreciated beverages across the platform, based on cumulative user
+            preferences.
+        </p>
+        <p>
+            Each ranked drink is shown with its image, name, and associated tags, offering visitors a quick overview of
+            what the community values most. The ranking is updated dynamically to reflect real-time changes as users
+            modify their favorite lists, allowing for a transparent and evolving popularity chart.
+        </p>
+
+        <h2>5.11 Stats Page</h2>
+        <p>
+            The Stats Page provides a visual representation of selected drinks through dynamic charts and summaries.
+            Users can select specific beverages from the available dataset to generate tailored statistics based on
+            their attributes.
+        </p>
+        <p>
+            The statistics include diagrams for quantity distribution, nutrition grade analysis, and tag frequency.
+            These visual insights help users better understand the nutritional and categorical properties of drinks,
+            offering a data-driven perspective on their selections.
+        </p>
+
+        <h2>5.12 About Page</h2>
+        <p>
+            The About Page offers a clear and structured overview of the application's purpose, features, and usage
+            instructions. It is designed to help new users understand the scope and goals of the platform, as well as to
+            navigate its main functionalities.
+        </p>
+        <p>
+            The content presented includes a structured table of contents, followed by a detailed
+            project description. Sections cover aspects such as data management, user and group administration,
+            statistics and export features, rankings, favorites, and group interactions. This makes the page both
+            informative and accessible, contributing to a smooth onboarding experience.
+        </p>
+
+        <h2>5.13 Help Page</h2>
+        <p>
+            The Help Page is designed to offer users quick access to support resources and assistance. It includes a
+            clearly visible section for <strong>Support & Contact</strong>, where users can find an email address for
+            reporting bugs or asking technical questions. Additionally, a link to the full documentation is provided,
+            guiding users to more detailed information.
+        </p>
+        <p>
+            Below the contact section, the page features a friendly presentation of the development team. Each member is
+            represented with a playful drink-themed image, along with their name, reinforcing the visual identity and
+            fun tone of the application. This helps humanize the platform and encourages users to reach out confidently
+            for help.
+        </p>
+    </section>
+
     <section id="other-nonfunctional-requirements">
-        <h1>5. Other Nonfunctional Requirements</h1>
-        <h2>5.1 Performance Requirements</h2>
+        <h1>6. Other Nonfunctional Requirements</h1>
+        <h2>6.1 Performance Requirements</h2>
         <p>
-            There shouldn't be any performance issues with the website. The website should load fast and be responsive
-            regardless of the device used.
+            The application is optimized to ensure a smooth and responsive user experience, with minimal loading times
+            across all supported devices. Static assets are efficiently served, and JavaScript execution is streamlined
+            to reduce delays during navigation and interaction.
+        </p>
+        <p>
+            API requests are expected to return responses within 300ms in typical scenarios, with pagination and
+            filtering mechanisms in place to prevent excessive data load. Backend endpoints return only the necessary
+            data, which helps improve both speed and scalability as the number of users or items grows.
         </p>
 
-        <h2>5.2 Safety Requirements</h2>
+        <h2>6.2 Security Requirements</h2>
         <p>
-            The platform is safe to use and the user's data is protected. The website is secure and the user's data is
-            not at risk. The user's data is stored securely and is not shared with third parties.
+            The system implements multiple safety measures to ensure the protection of user data and prevent any form of
+            unauthorized access or data leakage.
+            Passwords are stored in encrypted form using secure hashing algorithms, and no sensitive user information is
+            exposed in plain text, either on the client or server side.
+            All form inputs are validated to prevent injection attacks or accidental data corruption.
         </p>
 
-        <h2>5.3 Security Requirements</h2>
         <p>
-            The passwords are hashed and the website is protected against common security threats such as SQL injection
-            and the inputs are sanitized. We would like to implement a CAPTCHA system in the future to protect the
-            website against bots. Another safety measure we would like to implement is a two-factor authentication
-            system and the HTTPS protocol. The website is also protected against unauthorized access. The passwords must
-            meet the criteria of having the length of at least 8 characters, at least one lowercase letter, one
-            uppercase letter, one digit and one special character in order to be accepted. We use regex in order to
-            validate the input and if it is aligned with the requirements we hash it before entering the password in the
+            In order to prevent unauthorized data access, the backend enforces strict access control. Each user only has
+            permission to view or modify their own data.
+            Administrative functions such as user deletion, group removal, or drink moderation are restricted
+            exclusively to users with elevated privileges.
+            These admin operations are separated from the regular user interface and require authentication with a valid
+            JWT token tied to an admin account.
+        </p>
+
+        <p>
+            During the registration process, security-focused validation rules are applied to prevent abuse and ensure
+            clean data.
+            Usernames must contain between 3 and 20 characters and may only include letters, digits, and underscores.
+            Email addresses are validated using regular expressions to ensure they follow the correct format.
+            These constraints help prevent account spamming and contribute to maintaining the integrity of the user
             database.
         </p>
 
-        <h2>5.4 Software Quality Attributes</h2>
+        <h2>6.3 Safety Requirements</h2>
         <p>
-            The website offers a user-friendly interface that makes it easy to navigate and use. The website is
-            responsive and works well on all devices. The website is also secure and the user's data is protected. The
-            website is also protected against unauthorized access. The website is also protected against common security
-            threats such as SQL injection and the inputs are sanitized. Another quality attribute is the community that
-            can be formed through the interaction on the website. The cloud database is also a good attribute to have
-            especially considering the website is not hosted yet and worked locally and had the option to be accessed
-            from anywhere.
+            Although the application does not deal with physical safety concerns, several measures are taken to ensure
+            safe digital interactions.
+            The platform limits the potential for misuse or instability by validating user input, enforcing strict data
+            formats, and maintaining predictable system behavior.
+            All critical operations are gated by appropriate checks to avoid unintentional data manipulation or system
+            disruption.
+        </p>
+        <p>
+            User input is thoroughly validated both on the client and server side to prevent malformed data and
+            accidental misuse.
+            Error handling is implemented gracefully, so even in unexpected scenarios, the system provides informative
+            feedback without compromising stability.
+            Additionally, the frontend does not expose raw error traces or server-side messages, reducing the risk of
+            information leakage.
+        </p>
+        <p>
+            To prevent database leaks or integrity issues, the system avoids exposing direct database identifiers and
+            filters all user-submitted input.
+            Although the platform does not involve physical safety, digital safety is a priority.
+            Regular backend-side validations, limited input lengths, and careful handling of exceptions reduce the risk
+            of service abuse or accidental system crashes.
+        </p>
+
+        <h2>6.4 Software Quality Attributes</h2>
+        <p>
+            The application prioritizes usability and responsiveness across all supported platforms. Its intuitive
+            layout, clear labeling, and consistent design patterns ensure that users can easily navigate and interact
+            with the system, regardless of technical background. All features are structured to provide quick feedback
+            and minimal friction.
+        </p>
+        <p>
+            Maintainability is a key focus of the implementation. The frontend is developed using modular HTML, CSS, and
+            JavaScript code without any external frameworks, which facilitates debugging and future extensions. The
+            backend is structured into well-defined endpoints that follow RESTful conventions, making it easier to
+            understand, test, and refactor components independently.
+        </p>
+        <p>
+            The system is also built with reliability and fault tolerance in mind. Failures in API communication, user
+            input errors, or edge cases are handled gracefully, with clear user messages and fallback mechanisms where
+            needed. As a result, the application remains stable and predictable even under atypical usage conditions.
+            Additionally, all database queries are parameterized to prevent SQL injection attacks.
+        </p>
+
+        <h2>6.5 Business Rules</h2>
+        <p>
+            The application enforces a set of business rules to ensure data consistency, user experience integrity, and
+            alignment with platform goals. Each user must create an account to access personalized functionalities such
+            as creating drink lists, adding favorites, or posting new drinks. Usernames must be unique and conform to
+            specific validation rules, while emails are checked for correctness using regular expressions.
+        </p>
+        <p>
+            Administrative actions, such as managing user accounts or moderating drinks and groups, are restricted to
+            users with elevated privileges. These operations are separated from the general interface and require
+            JWT-based authentication tied to an admin account. Additionally, duplicate list names are not allowed per
+            user, and a drink cannot be added multiple times to the same list.
+        </p>
+        <p>
+            Tags and nutrition grades associated with drinks follow a standardized structure to facilitate filtering and
+            statistics generation. Any action that modifies persistent data, such as deleting a user or removing a
+            drink, is subject to validation to prevent data inconsistency or accidental loss.
         </p>
     </section>
 
     <section id="other-mentions">
-        <h1>6. Other mentions</h1>
+        <h1>7. Other mentions</h1>
         <p>
-            The website is a project that we are passionate about and we hope that it will be useful to the users. We
-            are open to feedback and suggestions and we are looking forward to hearing from the users. We hope that the
-            website will be a place where the users can share their passion for plants and learn from each other. It was
-            a great learning experience from us and we are happy with how the project turned out. We hope that the users
-            will enjoy using the website as much as we enjoyed building it.
+            This project was developed with the aim of creating a functional and educational web platform where users
+            can discover, organize, and explore various drinks. We believe that building such an application helped us
+            better understand both technical and user-centered aspects of web development, while also delivering a
+            useful tool for everyday use.
         </p>
+        <p>
+            We are open to future improvements and feedback from users, as we strongly believe that a collaborative
+            approach leads to better products. Whether it's filtering drinks by nutrition score, creating personalized
+            lists, or exploring aggregated statistics, we hope the platform will provide a meaningful and intuitive
+            experience. We truly enjoyed working on this project and hope it will be just as enjoyable to use.
+        </p>
+        <h1>8. References</h1>
+                <ul>
+                    <li><strong>FII UAIC</strong><br>
+                        <a href="https://proiecte-web.github.io/" target="_blank">
+                            Practical Projects - Web Technologies
+                        </a>, by Dr. Sabin-Corneliu Buraga, Dr. Andrei Panu; 2025.
+                    </li>
+
+                    <li><strong>Scholarly HTML</strong><br>
+                        <a href="https://w3c.github.io/scholarly-html/" target="_blank">
+                            Scholarly HTML - Community Draft
+                        </a>
+                    </li>
+
+                    <li><strong>IEEE-Template</strong><br>
+                        <a href="https://template-selector.ieee.org/" target="_blank">
+                            IEEE System Requirements Specification Template
+                        </a>
+                    </li>
+
+                    <li><strong>PageSpeed</strong><br>
+                        <a href="https://pagespeed.web.dev/" target="_blank">
+                            Google PageSpeed Insights
+                        </a>
+                    </li>
+
+                    <li><strong>CSL</strong><br>
+                        <a href="https://citationstyles.org/" target="_blank">
+                            Citation Styles Language
+                        </a>
+                    </li>
+                </ul>
     </section>
 
 </html>
