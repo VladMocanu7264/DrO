@@ -1,42 +1,16 @@
-console.log("Ranking");
+console.log("RSS");
 
 const API_BASE_URL = "http://localhost:3000";
 const modalsContainer = document.querySelector("#text-box-container");
 const overlay = document.querySelector(".overlay");
 const body = document.body;
-async function getDrinkDetails(drinkId) {
-    if (!drinkId) {
-        alert("ID-ul băuturii lipsește.");
-        return;
-    }
-    const token = checkAuth();
-    try {
-        const response = await fetch(`${API_BASE_URL}/drinks/${drinkId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("Eroare la obținerea detaliilor băuturii");
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        alert("Eroare:" + error);
-    }
-}
 
 async function getDrinksByRanking() {
-    const token = checkAuth();
     try {
         const response = await fetch(`${API_BASE_URL}/drinks/ranking`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -167,15 +141,6 @@ async function createDrinkModal(drink) {
     modal.querySelector('.close-modal')
         .addEventListener('click', () => toggleModal(drink.id, false));
     return modal;
-}
-
-function checkAuth() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        window.location.href = "../login/index.html";
-        return false;
-    }
-    return token;
 }
 
 function closeAllModals() {

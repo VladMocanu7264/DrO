@@ -1,19 +1,19 @@
-const { sequelize, Drink, Tag, DrinkTag, Favorite } = require('../database');
-const { isRelevantTag, withAuth } = require('../helpers');
-const { Op, fn, col, literal } = require('sequelize');
+const {sequelize, Drink, Tag, DrinkTag, Favorite} = require('../database');
+const {isRelevantTag, withAuth} = require('../helpers');
+const {Op, fn, col, literal} = require('sequelize');
 
 const LOG_ENABLED = process.env.LOG_ENABLED === 'true';
 
 function matchGetDrinkById(req) {
     const match = req.pathname.match(/^\/drinks\/([0-9]+)$/);
     if (match && req.method === 'GET') {
-        return { params: { id: match[1] } };
+        return {params: {id: match[1]}};
     }
     return false;
 }
 
 async function handleGetDrinkById(req, res) {
-    const { id } = req.params;
+    const {id} = req.params;
     const userId = req.user?.id;
 
     try {
@@ -28,8 +28,8 @@ async function handleGetDrinkById(req, res) {
         });
 
         if (!drink) {
-            res.writeHead(404, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ error: 'Drink not found' }));
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            return res.end(JSON.stringify({error: 'Drink not found'}));
         }
 
         const allTags = drink.DrinkTags.map(dt => dt.Tag.name).filter(isRelevantTag);
@@ -38,7 +38,7 @@ async function handleGetDrinkById(req, res) {
         let isFavorite = false;
         if (userId) {
             const fav = await Favorite.findOne({
-                where: { UserId: userId, DrinkId: id }
+                where: {UserId: userId, DrinkId: id}
             });
             if (fav !== null && fav !== undefined) {
                 isFavorite = true;
@@ -59,12 +59,12 @@ async function handleGetDrinkById(req, res) {
             favorited: isFavorite
         };
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(output));
     } catch (error) {
         if (LOG_ENABLED) console.error('Error in handleGetDrinkById:', error);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal server error'}));
     }
 }
 
@@ -104,13 +104,13 @@ async function handleGetFeed(req, res) {
         const where = {};
 
         if (grades) {
-            where.nutrition_grade = { [Op.in]: grades.map(g => g.toLowerCase()) };
+            where.nutrition_grade = {[Op.in]: grades.map(g => g.toLowerCase())};
         }
 
         if (search) {
             where[Op.or] = [
-                { name: { [Op.iLike]: `%${search}%` } },
-                { brand: { [Op.iLike]: `%${search}%` } }
+                {name: {[Op.iLike]: `%${search}%`}},
+                {brand: {[Op.iLike]: `%${search}%`}}
             ];
         }
 
@@ -138,8 +138,8 @@ async function handleGetFeed(req, res) {
             include[0].include[0].required = true;
             include[0].include[0].where = {
                 [Op.or]: [
-                    { name: { [Op.in]: tags } },
-                    { id: { [Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t)) } }
+                    {name: {[Op.in]: tags}},
+                    {id: {[Op.in]: tags.filter(t => !isNaN(t)).map(t => parseInt(t))}}
                 ]
             };
         }
@@ -166,24 +166,25 @@ async function handleGetFeed(req, res) {
         }));
 
         console.log(Math.ceil(total / limit), total, limit);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify({
             max_pages: Math.ceil(total / limit),
             drinks: result
         }));
     } catch (err) {
         if (LOG_ENABLED) console.error('Feed error:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal server error'}));
     }
 }
 
 function matchGetFilters(req) {
     return req.pathname === '/drinks/filters' && req.method === 'GET';
 }
+
 async function handleGetFilters(req, res) {
     try {
-        const tags = await Tag.findAll({ attributes: ['id', 'name'] });
+        const tags = await Tag.findAll({attributes: ['id', 'name']});
         const grades = await Drink.findAll({
             attributes: [[fn('DISTINCT', col('nutrition_grade')), 'nutrition_grade']],
             raw: true
@@ -198,31 +199,31 @@ async function handleGetFilters(req, res) {
 
         const response = {
             sortOptions: [
-                { key: 'name', label: 'Name (A–Z)' },
-                { key: '-name', label: 'Name (Z–A)' },
-                { key: 'brand', label: 'Brand (A–Z)' },
-                { key: '-brand', label: 'Brand (Z–A)' },
-                { key: 'nutrition_grade', label: 'Nutrition Grade (A–Z)' },
-                { key: '-nutrition_grade', label: 'Nutrition Grade (Z–A)' },
-                { key: 'price', label: 'Price (Low to High)' },
-                { key: '-price', label: 'Price (High to Low)' }
+                {key: 'name', label: 'Name (A–Z)'},
+                {key: '-name', label: 'Name (Z–A)'},
+                {key: 'brand', label: 'Brand (A–Z)'},
+                {key: '-brand', label: 'Brand (Z–A)'},
+                {key: 'nutrition_grade', label: 'Nutrition Grade (A–Z)'},
+                {key: '-nutrition_grade', label: 'Nutrition Grade (Z–A)'},
+                {key: 'price', label: 'Price (Low to High)'},
+                {key: '-price', label: 'Price (High to Low)'}
             ],
             tags: tags
                 .filter(tag => isRelevantTag(tag.name))
-                .map(t => ({ id: t.id, name: t.name })),
+                .map(t => ({id: t.id, name: t.name})),
             nutrition_grades: grades
                 .map(g => g.nutrition_grade)
                 .filter(Boolean)
                 .sort((a, b) => a.localeCompare(b)),
-            quantity: quantities || { min_quantity: 0, max_quantity: 0 }
+            quantity: quantities || {min_quantity: 0, max_quantity: 0}
         };
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(response));
     } catch (error) {
         if (LOG_ENABLED) console.error('Error in handleGetFilters:', error);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal server error'}));
     }
 }
 
@@ -233,7 +234,7 @@ function matchGetFavorites(req) {
 async function handleGetFavorites(req, res) {
     try {
         const favorites = await Favorite.findAll({
-            where: { UserId: req.user.id },
+            where: {UserId: req.user.id},
             include: {
                 model: Drink,
                 attributes: ['id', 'name', 'brand', 'image_url', 'nutrition_grade', 'quantity', 'packaging', 'price']
@@ -242,12 +243,12 @@ async function handleGetFavorites(req, res) {
 
         const result = favorites.map(fav => fav.Drink);
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(result));
     } catch (error) {
         if (LOG_ENABLED) console.error('Error in handleGetFavorites:', error);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal server error'}));
     }
 }
 
@@ -260,33 +261,33 @@ async function handlePostFavorite(req, res) {
     req.on('data', chunk => body += chunk);
     req.on('end', async () => {
         try {
-            const { drinkId } = JSON.parse(body);
+            const {drinkId} = JSON.parse(body);
             if (!drinkId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ error: 'Missing drinkId' }));
+                res.writeHead(400, {'Content-Type': 'application/json'});
+                return res.end(JSON.stringify({error: 'Missing drinkId'}));
             }
 
             const drink = await Drink.findByPk(drinkId);
             if (!drink) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ error: 'Drink not found' }));
+                res.writeHead(404, {'Content-Type': 'application/json'});
+                return res.end(JSON.stringify({error: 'Drink not found'}));
             }
 
             const [fav, created] = await Favorite.findOrCreate({
-                where: { UserId: req.user.id, DrinkId: drinkId }
+                where: {UserId: req.user.id, DrinkId: drinkId}
             });
 
             if (!created) {
-                res.writeHead(409, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ message: 'The drink is already in favorites' }));
+                res.writeHead(409, {'Content-Type': 'application/json'});
+                return res.end(JSON.stringify({message: 'The drink is already in favorites'}));
             }
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Added to favorites' }));
+            res.writeHead(200, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({message: 'Added to favorites'}));
         } catch (err) {
             if (LOG_ENABLED) console.error('Post favorite error:', err);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal server error' }));
+            res.writeHead(500, {'Content-Type': 'application/json'});
+            res.end(JSON.stringify({error: 'Internal server error'}));
         }
     });
 }
@@ -294,7 +295,7 @@ async function handlePostFavorite(req, res) {
 function matchDeleteFavorite(req) {
     const match = req.pathname.match(/^\/favorites\/([a-zA-Z0-9]+)$/);
     if (match && req.method === 'DELETE') {
-        return { params: { drinkId: match[1] } };
+        return {params: {drinkId: match[1]}};
     }
     return false;
 }
@@ -302,15 +303,15 @@ function matchDeleteFavorite(req) {
 async function handleDeleteFavorite(req, res) {
     try {
         const deleted = await Favorite.destroy({
-            where: { UserId: req.user.id, DrinkId: req.params.drinkId }
+            where: {UserId: req.user.id, DrinkId: req.params.drinkId}
         });
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Removed from favorites' }));
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({message: 'Removed from favorites'}));
     } catch (err) {
         if (LOG_ENABLED) console.error('Delete favorite error:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal server error'}));
     }
 }
 
@@ -323,28 +324,26 @@ async function handleGetDrinkRanking(req, res) {
 
     try {
         const results = await sequelize.query(`
-            SELECT
-                d.id,
-                d.name,
-                d.brand,
-                d.image_url,
-                d.quantity,
-                d.nutrition_grade,
-                d.price,
-                COUNT(f."id") AS "favoritesCount"
+            SELECT d.id,
+                   d.name,
+                   d.brand,
+                   d.image_url,
+                   d.quantity,
+                   d.nutrition_grade,
+                   d.price,
+                   COUNT(f."id") AS "favoritesCount"
             FROM "Drinks" d
-            LEFT JOIN "Favorites" f ON d.id = f."DrinkId"
+                     LEFT JOIN "Favorites" f ON d.id = f."DrinkId"
             GROUP BY d.id
-            ORDER BY "favoritesCount" DESC
-            LIMIT :limit
+            ORDER BY "favoritesCount" DESC LIMIT :limit
         `, {
-            replacements: { limit },
+            replacements: {limit},
             type: sequelize.QueryTypes.SELECT
         });
 
         const drinksWithTags = await Promise.all(results.map(async (drink) => {
             const tags = await DrinkTag.findAll({
-                where: { DrinkId: drink.id },
+                where: {DrinkId: drink.id},
                 include: {
                     model: Tag,
                     attributes: ['id']
@@ -366,21 +365,21 @@ async function handleGetDrinkRanking(req, res) {
             };
         }));
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(drinksWithTags));
     } catch (error) {
         if (process.env.LOG_ENABLED === 'true') {
             console.error("Error in /drinks/ranking:", error);
         }
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: "Internal server error" }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: "Internal server error"}));
     }
 }
 
 function matchGetIsFavorite(req) {
     const match = req.pathname.match(/^\/drinks\/([0-9]+)\/favorite$/);
     if (match && req.method === 'GET') {
-        return { params: { drinkId: match[1] } };
+        return {params: {drinkId: match[1]}};
     }
     return false;
 }
@@ -390,33 +389,92 @@ async function handleGetIsFavorite(req, res) {
     const userId = req.user?.id;
 
     if (!userId) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ favorited: false }));
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        return res.end(JSON.stringify({favorited: false}));
     }
 
     try {
         const fav = await Favorite.findOne({
-            where: { UserId: userId, DrinkId: drinkId }
+            where: {UserId: userId, DrinkId: drinkId}
         });
         const isFavorite = Boolean(fav);
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ favorited: isFavorite }));
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        return res.end(JSON.stringify({favorited: isFavorite}));
     } catch (err) {
         if (LOG_ENABLED) console.error('Error in handleGetIsFavorite:', err);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        return res.end(JSON.stringify({error: 'Internal server error'}));
+    }
+}
+
+function matchGetRSS(req) {
+    return req.pathname === "/rss" && req.method === 'GET';
+}
+
+async function handleGetRSS(req, res) {
+    try {
+        const results = await sequelize.query(`
+            SELECT d.id,
+                   d.name,
+                   d.brand,
+                   d.image_url,
+                   d.quantity,
+                   d.nutrition_grade,
+                   d.price,
+                   COUNT(f."id") AS "favoritesCount"
+            FROM "Drinks" d
+                     LEFT JOIN "Favorites" f ON d.id = f."DrinkId"
+            GROUP BY d.id
+            ORDER BY "favoritesCount" DESC LIMIT 10
+        `, {
+            type: sequelize.QueryTypes.SELECT
+        });
+
+        const now = new Date().toUTCString();
+
+        const description = results.map((d, idx) => `
+            ${idx + 1}. ${d.name} — ${d.brand || 'N/A'} — ${d.quantity || '?'}ml — Grade: ${d.nutrition_grade || '-'} — ❤️ ${d.favoritesCount}
+        `).join('<br/>');
+
+        const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
+            <rss version="2.0">
+              <channel>
+                <title>DrO - Clasamentul băuturilor</title>
+                <link>http://localhost:7264/rss/index.html</link>
+                <description>Clasamentul actualizat al băuturilor populare (public)</description>
+                <language>ro-ro</language>
+                <lastBuildDate>${now}</lastBuildDate>
+            
+                <item>
+                  <title>Top băuturi - ${new Date().toLocaleString("ro-RO")}</title>
+                  <link>http://localhost:7264/rss/index.html</link>
+                  <guid isPermaLink="false">ranking-${Date.now()}</guid>
+                  <pubDate>${now}</pubDate>
+                  <description><![CDATA[${description}]]></description>
+                </item>
+              </channel>
+            </rss>`;
+
+        res.writeHead(200, {'Content-Type': 'application/rss+xml'});
+        res.end(rssFeed);
+    } catch (error) {
+        if (process.env.LOG_ENABLED === 'true') {
+            console.error("Error generating RSS:", error);
+        }
+        res.writeHead(500, {'Content-Type': 'text/plain'});
+        res.end("Internal server error");
     }
 }
 
 module.exports = [
-    { match: matchGetDrinkById, handle: withAuth(handleGetDrinkById) },
-    { match: matchGetFilters, handle: handleGetFilters },
-    { match: matchGetFeed, handle: withAuth(handleGetFeed) },
-    { match: matchGetFavorites, handle: withAuth(handleGetFavorites) },
-    { match: matchPostFavorite, handle: withAuth(handlePostFavorite) },
-    { match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite) },
-    { match: matchGetDrinkRanking, handle: withAuth(handleGetDrinkRanking) },
-    { match: matchGetIsFavorite, handle: withAuth(handleGetIsFavorite) }
-
+    {match: matchGetDrinkById, handle: withAuth(handleGetDrinkById)},
+    {match: matchGetFilters, handle: handleGetFilters},
+    {match: matchGetFeed, handle: withAuth(handleGetFeed)},
+    {match: matchGetFavorites, handle: withAuth(handleGetFavorites)},
+    {match: matchPostFavorite, handle: withAuth(handlePostFavorite)},
+    {match: matchDeleteFavorite, handle: withAuth(handleDeleteFavorite)},
+    {match: matchGetDrinkRanking, handle: handleGetDrinkRanking},
+    {match: matchGetIsFavorite, handle: withAuth(handleGetIsFavorite)},
+    {match: matchGetRSS, handle: handleGetRSS}
 ];
